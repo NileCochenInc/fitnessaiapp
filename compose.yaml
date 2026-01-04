@@ -24,6 +24,18 @@ services:
     ports:
       - "5433:5432" #docker port 5432 to local port 5433
 
+  ai:
+    build:
+      context: ./ai-service #relative directory to python file
+    restart: always
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/fitnessdb
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000" #expose api port
+
+
 #create image file system
 #allow database to persist even if container dies
 volumes:
