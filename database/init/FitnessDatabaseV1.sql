@@ -62,24 +62,6 @@ CREATE TABLE entries (
         ON DELETE CASCADE
 );
 
---data about entry eg "weight per set"
-CREATE TABLE entry_metrics (
-    id BIGSERIAL PRIMARY KEY,
-    entry_id BIGINT NOT NULL,
-    metric_id BIGINT NOT NULL,
-    value_number DOUBLE PRECISION,
-    value_text TEXT,
-    unit VARCHAR(50),
-    CONSTRAINT fk_entry_metrics_entry
-        FOREIGN KEY (entry_id) REFERENCES entries(id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_entry_metrics_metric
-        FOREIGN KEY (metric_id) REFERENCES metric_definitions(id)
-        ON DELETE CASCADE,
-    CONSTRAINT entry_metrics_definitions_uniq
-        UNIQUE (entry_id, metric_id)
-);
-
 --user created metrics
 CREATE TABLE metric_definitions (
     id BIGSERIAL PRIMARY KEY,
@@ -100,6 +82,24 @@ CREATE TABLE metric_definitions (
         ),
     CONSTRAINT uniq_global_key
         UNIQUE (key, is_global)  -- ensures no duplicate global names
+);
+
+--data about entry eg "weight per set"
+CREATE TABLE entry_metrics (
+    id BIGSERIAL PRIMARY KEY,
+    entry_id BIGINT NOT NULL,
+    metric_id BIGINT NOT NULL,
+    value_number DOUBLE PRECISION,
+    value_text TEXT,
+    unit VARCHAR(50),
+    CONSTRAINT fk_entry_metrics_entry
+        FOREIGN KEY (entry_id) REFERENCES entries(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_entry_metrics_metric
+        FOREIGN KEY (metric_id) REFERENCES metric_definitions(id)
+        ON DELETE CASCADE,
+    CONSTRAINT entry_metrics_definitions_uniq
+        UNIQUE (entry_id, metric_id)
 );
 
 --N to N metric_definitions to exercises
