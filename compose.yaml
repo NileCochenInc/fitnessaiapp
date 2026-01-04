@@ -10,7 +10,7 @@
 services:
   server:
     build:
-      context: .
+      context: ./front-and-back-end
     environment:
       NODE_ENV: production
     ports:
