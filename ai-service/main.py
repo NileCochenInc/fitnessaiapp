@@ -26,7 +26,7 @@ def database_trial():
         print("Tables in database:", tables)
 
         # Example: query the 'users' table
-        cur.execute("SELECT * FROM users LIMIT 5;")
+        cur.execute("SELECT * FROM workouts;")
         users = cur.fetchall()
         print("Users:", users)
 
@@ -46,6 +46,6 @@ if __name__ == "__main__":
 
 
 while True:
-    print(DATABASE_URL)
-    sys.stdout.flush() #flush buffer
+    #print(DATABASE_URL)
+    #sys.stdout.flush() #flush buffer
     time.sleep(10)
