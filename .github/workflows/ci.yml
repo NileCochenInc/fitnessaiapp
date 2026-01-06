@@ -1,0 +1,29 @@
+name: CI
+
+#CI workflow triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+
+#actions workflow
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+
+    steps:
+      #set up VM
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and start containers
+        run: docker compose up --build -d #-d detach mode dont hog terminal
+
+      - name: Shutdown
+        run: docker compose down
+
+
