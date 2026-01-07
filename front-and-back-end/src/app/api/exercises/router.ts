@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { createWorkout } from "@/lib/workouts";
+import { createExercise } from "@/lib/exercises";
 
+//get exercise
 
-//get workouts
-
-//post workouts
+//post exercise
 export async function POST(req: Request) {
   try {
-    const body:JSON = await req.json();  //get request
+    const body:JSON = await req.json();  // get request
     
     // Call backend function
-    const workout = await createWorkout(1, body);  // userId = 1 for now
+    const workout = await createExercise(1, body);  // userId = 1 for now
     
     return NextResponse.json(workout, { status: 201 });
   } catch (err) {
@@ -20,7 +19,6 @@ export async function POST(req: Request) {
 }
 
 
+//put exercise
 
-//put workouts
-
-//delete workouts
+//delete exercise
