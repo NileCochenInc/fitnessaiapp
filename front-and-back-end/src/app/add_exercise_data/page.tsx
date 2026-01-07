@@ -1,106 +1,199 @@
-"use client"; // must be client component for interactivity
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Button from '../../components/Button';
+import Button from "../../components/Button";
 
+/* ---------- Types ---------- */
 
-
-type Entry = {
+type Metric = {
   metric: string;
   value: string;
   unit: string;
 };
 
+type Entry = {
+  metrics: Metric[];
+};
 
-
+/* ---------- Component ---------- */
 
 export default function Page() {
-    const router = useRouter();
+  const router = useRouter();
 
-    const [metrics, setMetrics] = useState<Entry[]>([
-        { metric: "", value: "", unit: "" } //start with one blank entry in entries (to be overwritten)
+  /* ---------- State ---------- */
+  const [entries, setEntries] = useState<Entry[]>([
+    {
+      metrics: [{ metric: "", value: "", unit: "" }]
+    }
+  ]);
+
+  /* ---------- Entry Actions ---------- */
+
+  const addEntry = () => {
+    setEntries(prev => [
+      ...prev,
+      { metrics: [{ metric: "", value: "", unit: "" }] }
     ]);
+  };
 
-    const addMetric = () => {
-        setMetrics(prev => [
-            ...prev,
-            { metric: "", value: "", unit: "" }
-        ]);
-    };
+  const removeEntry = (entryIndex: number) => {
+    setEntries(prev => prev.filter((_, i) => i !== entryIndex));
+  };
 
-    const updateMetrics = (
-        index: number,
-        field: keyof Entry,
-        value: string
-    ) => {
-        setMetrics(prev =>
-            prev.map((entry, i) =>
-                i === index ? { ...entry, [field]: value } : entry
-            )
-        );
-    };
+  /* ---------- Metric Actions ---------- */
 
-    
+  const addMetric = (entryIndex: number) => {
+    setEntries(prev =>
+      prev.map((entry, i) =>
+        i === entryIndex
+          ? {
+              ...entry,
+              metrics: [...entry.metrics, { metric: "", value: "", unit: "" }]
+            }
+          : entry
+      )
+    );
+  };
 
-    const pushExercise = () => {
-        //push workout_exercise to backend
-        //push excercise name
-    };
+  const removeMetric = (entryIndex: number, metricIndex: number) => {
+    setEntries(prev =>
+      prev.map((entry, i) =>
+        i === entryIndex
+          ? {
+              ...entry,
+              metrics: entry.metrics.filter((_, j) => j !== metricIndex)
+            }
+          : entry
+      )
+    );
+  };
 
+  const updateMetric = (
+    entryIndex: number,
+    metricIndex: number,
+    field: keyof Metric,
+    value: string
+  ) => {
+    setEntries(prev =>
+      prev.map((entry, i) =>
+        i === entryIndex
+          ? {
+              ...entry,
+              metrics: entry.metrics.map((metric, j) =>
+                j === metricIndex
+                  ? { ...metric, [field]: value }
+                  : metric
+              )
+            }
+          : entry
+      )
+    );
+  };
 
+  /* ---------- Save ---------- */
 
-    return (
-        <div>
-            <h1>**exercise**</h1>
-            <h2>Add data</h2>
-            <h1>Add entry</h1>
-            <form>
-                {metrics.map((entry, index) => ( 
-                    <div key={index}>
-                        <label>
-                            metric:
-                            <input 
-                                type="text" 
-                                placeholder="weight"
-                                value={entry.metric}
-                                onChange={e =>
-                                    updateMetrics(index, "metric", e.target.value)
-                                }
-                            />
-                        </label>
-                        <label>
-                            data:
-                            <input 
-                                type="text"
-                                value={entry.value}
-                                onChange={e =>
-                                    updateMetrics(index, "value", e.target.value)
-                                }
-                            />
-                        </label>
-                        <label>
-                            Unit:
-                            <input 
-                                type="text" 
-                                placeholder="lbs"
-                                value={entry.unit}
-                                onChange={e =>
-                                    updateMetrics(index, "unit", e.target.value)
-                                }
-                            />
-                        </label>
-                        
-                    </div>
-                ))}
-                <Button 
-                    label="Add other metric"
-                    onClick={addMetric}
-                    type="button"
-                /> {/* add another entry form */}
-            </form>
-            <Button label="save" />
-        </div>
-        );
+  const pushExercise = () => {
+    console.log(entries);
+    // send `entries` to backend
+  };
 
+  /* ---------- Render ---------- */
+
+  return (
+    <div>
+      <h1>**exercise**</h1>
+      <h2>Add data</h2>
+
+      <form>
+        {entries.map((entry, entryIndex) => (
+          <div key={entryIndex} style={{ marginBottom: "1rem" }}>
+            <h3>Entry {entryIndex + 1}</h3>
+
+            {entry.metrics.map((metric, metricIndex) => (
+              <div key={metricIndex} style={{ marginBottom: "0.5rem" }}>
+                <label>
+                  Metric:
+                  <input
+                    type="text"
+                    placeholder="weight"
+                    value={metric.metric}
+                    onChange={e =>
+                      updateMetric(
+                        entryIndex,
+                        metricIndex,
+                        "metric",
+                        e.target.value
+                      )
+                    }
+                  />
+                </label>
+
+                <label>
+                  Value:
+                  <input
+                    type="text"
+                    value={metric.value}
+                    onChange={e =>
+                      updateMetric(
+                        entryIndex,
+                        metricIndex,
+                        "value",
+                        e.target.value
+                      )
+                    }
+                  />
+                </label>
+
+                <label>
+                  Unit:
+                  <input
+                    type="text"
+                    placeholder="lbs"
+                    value={metric.unit}
+                    onChange={e =>
+                      updateMetric(
+                        entryIndex,
+                        metricIndex,
+                        "unit",
+                        e.target.value
+                      )
+                    }
+                  />
+                </label>
+
+                <Button
+                  label="- metric"
+                  type="button"
+                  onClick={() =>
+                    removeMetric(entryIndex, metricIndex)
+                  }
+                />
+              </div>
+            ))}
+
+            <Button
+              label="Add metric"
+              type="button"
+              onClick={() => addMetric(entryIndex)}
+            />
+
+            <Button
+              label="Remove entry"
+              type="button"
+              onClick={() => removeEntry(entryIndex)}
+            />
+          </div>
+        ))}
+
+        <Button
+          label="Add entry"
+          type="button"
+          onClick={addEntry}
+        />
+      </form>
+
+      <Button label="Save" onClick={pushExercise} />
+    </div>
+  );
 }
