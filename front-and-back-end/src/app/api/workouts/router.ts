@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createWorkout } from "@/lib/workouts";
+import { createWorkout, WorkoutJSON } from "@/lib/workouts";
 
 
 //get workouts
@@ -7,12 +7,30 @@ import { createWorkout } from "@/lib/workouts";
 //post workouts
 export async function POST(req: Request) {
   try {
-    const body:JSON = await req.json();  //get request
+
+
+    const raw = await req.json();  //get request
     
-    // Call backend function
-    const workout = await createWorkout(1, body);  // userId = 1 for now
+    //validate data
+    if (
+      typeof raw === 'object' &&
+      raw !== null &&
+      'user_id' in raw &&
+      'date' in raw &&
+      'workout_kind' in raw
+    ) {
+      //call backend function if valid data
+      const body = raw as WorkoutJSON;
+      const workout = await createWorkout(body);
+      return NextResponse.json(workout, { status: 201 });
+
+    } else {
+
+      //return invalid data if data is invalid
+      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+
+    }
     
-    return NextResponse.json(workout, { status: 201 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to create workout" }, { status: 500 });

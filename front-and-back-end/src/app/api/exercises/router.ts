@@ -18,7 +18,6 @@ export async function POST(req: Request) {
   }
 }
 
-
 //put exercise
 
 //delete exercise
