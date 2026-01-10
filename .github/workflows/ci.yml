@@ -56,9 +56,10 @@ jobs:
             fi
           done
 
-
       - name: Run tests
         run: pnpm test
         env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/fitnessdb_test
+          DATABASE_URL: postgres://postgres:postgres@postgres-test:5432/fitnessdb_test
         working-directory: ./front-and-back-end
+
+
