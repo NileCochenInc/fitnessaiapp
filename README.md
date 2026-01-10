@@ -19,6 +19,9 @@ pnpm run dev
 Start test database
 docker compose --profile test up postgres-test -d
 
+Run all containers including test DB:
+docker compose --profile test up -d
+
 Stop test database
 docker compose --profile test down
 
