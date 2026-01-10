@@ -23,6 +23,8 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
+        volumes:
+              - ./database/init:/docker-entrypoint-initdb.d
 
     steps:
       - name: Checkout code
@@ -42,11 +44,6 @@ jobs:
         run: pnpm install
         working-directory: ./front-and-back-end
 
-      - name: Run migrations
-        run: pnpm run migrate:test
-        env:
-          DATABASE_URL: postgres://postgres:postgres@postgres-test:5432/fitnessdb_test
-        working-directory: ./front-and-back-end
 
       - name: Run tests
         run: pnpm test
