@@ -15,3 +15,12 @@ docker exec -it fitness-ai-app-postgres-1 psql -U postgres -d fitnessdb
 
 Run next.js app with hot reloads
 pnpm run dev
+
+Start test database
+docker compose --profile test up postgres-test -d
+
+Stop test database
+docker compose --profile test down
+
+Run tests
+pnpm run test

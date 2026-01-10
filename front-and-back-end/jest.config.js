@@ -1,22 +1,22 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  // Use ts-jest to run TypeScript files
   preset: 'ts-jest',
-
-  // Node environment for API/backend tests
   testEnvironment: 'node',
 
-  // Map @/ imports to the front-and-back-end folder
+  // Load environment variables before tests
+  setupFiles: ['<rootDir>/jest.env.ts'],
+
+  // Map @/ imports to the front-and-back-end/src folder
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1'
+    '^@/(.*)$': '<rootDir>/src/$1'
   },
 
   // Where Jest looks for test files
-  testMatch: ['**/tests/**/*.test.ts'],
+  testMatch: ['<rootDir>/src/tests/**/*.test.ts'],
 
-  // Optional: ignore node_modules
+  // Ignore node_modules
   modulePathIgnorePatterns: ['<rootDir>/node_modules/'],
 
-  // Optional: clear mocks between tests
+  // Clear mocks automatically
   clearMocks: true,
 };
