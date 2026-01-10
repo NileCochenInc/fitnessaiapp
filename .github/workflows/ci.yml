@@ -23,8 +23,7 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
-        volumes:
-              - ./database/init:/docker-entrypoint-initdb.d
+
 
     steps:
       - name: Checkout code
@@ -46,6 +45,9 @@ jobs:
         run: pnpm install
         working-directory: ./front-and-back-end
 
+      # <-- copy your database init files here
+      - name: Copy database init files
+        run: docker cp ./database/init postgres-test:/docker-entrypoint-initdb.d
 
       - name: Run tests
         run: pnpm test
