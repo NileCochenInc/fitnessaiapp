@@ -13,11 +13,15 @@ export default function Page() {
     router.push("/add_workout"); // navigate to /about
   };
 
+  const goToPreviousWorkouts = () => {
+    router.push("/previous_workouts"); // navigate to /previous_workouts
+  }
+
   return (
     <div>
       <p>Welcome</p>
       <Button label="Add workout" onClick={goToAddWorkout}/>
-      <Button label="See previous workouts"/>
+      <Button label="See previous workouts" onClick={goToPreviousWorkouts}/>
       <Button label="AI advice"/>
     </div>
   );

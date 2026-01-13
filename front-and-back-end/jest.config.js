@@ -1,22 +1,31 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
+  // Define separate projects for frontend and backend
+  projects: [
+    {
+      displayName: "frontend",
+      preset: "ts-jest", 
 
-  // Load environment variables before tests
-  setupFiles: ['<rootDir>/jest.env.ts'],
+      testEnvironment: "jsdom", // needed for React component tests
+      testMatch: ["<rootDir>/src/tests/frontend/**/*.test.{ts,tsx}"], // frontend tests folder
+      setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"], // jest-dom for matchers
+      moduleNameMapper: {
+        "^@/(.*)$": "<rootDir>/src/$1" // supports @/ imports
+      },
+      clearMocks: true,
+    },
+    {
+      displayName: "backend",
+      preset: "ts-jest", // ← THIS was missing
 
-  // Map @/ imports to the front-and-back-end/src folder
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
-  },
-
-  // Where Jest looks for test files
-  testMatch: ['<rootDir>/src/tests/**/*.test.ts'],
-
-  // Ignore node_modules
-  modulePathIgnorePatterns: ['<rootDir>/node_modules/'],
-
-  // Clear mocks automatically
-  clearMocks: true,
+      testEnvironment: "node", // for pure Node backend tests
+      testMatch: ["<rootDir>/src/tests/unit/**/*.test.ts",
+                  "<rootDir>/src/tests/integration/**/*.test.ts"], // backend tests folder
+      setupFiles: ["<rootDir>/jest.env.js"], // env vars
+      moduleNameMapper: {
+        "^@/(.*)$": "<rootDir>/src/$1"
+      },
+      clearMocks: true,
+    }
+  ]
 };

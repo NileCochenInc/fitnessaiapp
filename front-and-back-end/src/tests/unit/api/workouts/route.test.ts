@@ -55,6 +55,12 @@ describe("POST /workouts handler", () => {
   });
 
   it("returns 500 if createWorkout throws an error", async() => {
+
+     // silence expected error logging
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
     const validWorkout = {
         user_id: 1,
         workout_date: "2026-01-12",
@@ -79,6 +85,9 @@ describe("POST /workouts handler", () => {
 
     // Ensure createWorkout was called with the valid data
     expect(workoutsLib.createWorkout).toHaveBeenCalledWith(validWorkout);
+
+    // restore console
+    consoleSpy.mockRestore();
   });
 
 
