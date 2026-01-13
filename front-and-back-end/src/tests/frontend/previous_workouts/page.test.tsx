@@ -1,7 +1,7 @@
 // __tests__/previous_workouts.test.tsx
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-
+import { act } from "@testing-library/react";
 import Page from "@/app/previous_workouts/page"; // Using @ alias
 import * as nextRouter from "next/navigation";
 
@@ -14,26 +14,41 @@ global.fetch = jest.fn();
 // Mock Next.js router
 // ------------------------
 const pushMock = jest.fn();
-jest.spyOn(nextRouter, "useRouter").mockReturnValue({ push: pushMock } as any);
-
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock }),
+}));
 // ------------------------
 // Tests
 // ------------------------
 describe("Previous Workouts Page", () => {
   beforeEach(() => {
+    // Reset mocks
     (fetch as jest.Mock).mockReset();
     pushMock.mockReset();
+
+    // Suppress "not wrapped in act" warnings
+    jest.spyOn(console, "error").mockImplementation((msg, ...args) => {
+      if (typeof msg === "string" && msg.includes("not wrapped in act")) return;
+      // still log other errors normally
+      console.error(msg, ...args);
+    });
   });
 
-  it("shows loading state initially", () => {
+  it("shows loading state initially", async () => {
+
     render(<Page />);
+
     expect(screen.getByText(/loading workouts/i)).toBeInTheDocument();
   });
 
   it("shows error message if fetch fails", async () => {
     (fetch as jest.Mock).mockRejectedValue(new Error("Failed to fetch"));
 
-    render(<Page />);
+    
+    await act(async () => {
+      render(<Page />);
+    });
+
 
     await waitFor(() => {
       expect(screen.getByText(/error: failed to fetch/i)).toBeInTheDocument();
@@ -54,7 +69,9 @@ describe("Previous Workouts Page", () => {
       json: async () => mockWorkouts,
     });
 
-    render(<Page />);
+    await act(async () => {
+      render(<Page />);
+    })
 
     await waitFor(() => {
       expect(screen.getByText(/previous workouts/i)).toBeInTheDocument();
@@ -74,7 +91,9 @@ describe("Previous Workouts Page", () => {
       json: async () => [],
     });
 
-    render(<Page />);
+    await act(async () => {
+      render(<Page />);
+    });
     const button = screen.getByText(/add new workout/i);
     fireEvent.click(button);
 
@@ -87,7 +106,9 @@ describe("Previous Workouts Page", () => {
       json: async () => [],
     });
 
-    render(<Page />);
+    await act(async () => {
+      render(<Page />);
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/no previous workouts found/i)).toBeInTheDocument();
@@ -95,4 +116,9 @@ describe("Previous Workouts Page", () => {
 
     expect(screen.getByText(/add new workout/i)).toBeInTheDocument();
   });
+
+  afterEach(() => {
+    (console.error as jest.Mock).mockRestore();
+  });
+
 });
