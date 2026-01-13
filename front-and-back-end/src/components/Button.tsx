@@ -1,17 +1,17 @@
-type ButtonProps = {
-  label: string //button label
-  onClick?: () => void //optional button on click function
-  type?: "button" | "submit" | "reset"
-}
+import { ButtonHTMLAttributes } from "react";
 
-export default function Button({ label, onClick, type}: ButtonProps) {
+
+type ButtonProps = {
+  label: string;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
+export default function Button({ label, ...props }: ButtonProps) {
   return (
     <button
-      onClick={onClick}
-      className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-      type={type}
+      {...props}
+      className={`px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 ${props.className ?? ""}`}
     >
       {label}
     </button>
-  )
+  );
 }

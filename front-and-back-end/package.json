@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "test:unit": "jest tests/unit",                
-    "test:integration": "jest tests/integration",  
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
@@ -17,7 +17,8 @@
     "next": "16.1.1",
     "pg": "^8.16.3",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

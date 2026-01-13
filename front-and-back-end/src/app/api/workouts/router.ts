@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { createWorkout, WorkoutJSON } from "@/lib/workouts";
+import { createWorkout } from "@/lib/workouts";
+import { WorkoutJSON } from "@/types/workouts";
+import { WorkoutSchema } from "@/types/workouts";
+
 
 
 //get workouts
@@ -13,11 +16,14 @@ export async function POST(req: Request) {
     
     //validate data
     if (
-      typeof raw === 'object' &&
+      typeof raw === "object" &&
       raw !== null &&
-      'user_id' in raw &&
-      'date' in raw &&
-      'workout_kind' in raw
+      typeof raw.user_id === "number" &&
+      raw.user_id.trim() !== "" &&
+      typeof raw.date === "string" &&
+      raw.date.trim() !== "" &&
+      typeof raw.workout_kind === "string" &&
+      raw.workout_kind.trim() !== ""
     ) {
       //call backend function if valid data
       const body = raw as WorkoutJSON;
