@@ -10,33 +10,24 @@ import { WorkoutSchema } from "@/types/workouts";
 //post workouts
 export async function POST(req: Request) {
   try {
-
-
     const raw = await req.json();  //get request
-    
-    //validate data
-    if (
-      typeof raw === "object" &&
-      raw !== null &&
-      typeof raw.user_id === "number" &&
-      raw.user_id.trim() !== "" &&
-      typeof raw.date === "string" &&
-      raw.date.trim() !== "" &&
-      typeof raw.workout_kind === "string" &&
-      raw.workout_kind.trim() !== ""
-    ) {
-      //call backend function if valid data
-      const body = raw as WorkoutJSON;
-      const workout = await createWorkout(body);
-      return NextResponse.json(workout, { status: 201 });
 
-    } else {
+    //valid data using zod schema
+    const result = WorkoutSchema.safeParse(raw);
 
-      //return invalid data if data is invalid
-      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
-
+    //return error if data is invalid
+    if (!result.success) {
+      return NextResponse.json({ 
+        error: "invalid workout data",
+      }, 
+        { status: 400 }
+      );
     }
     
+    //call backend function if valid data
+    const workout = await createWorkout(result.data);
+    return NextResponse.json(workout, { status: 201 });
+
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to create workout" }, { status: 500 });
