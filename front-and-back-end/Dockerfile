@@ -1,43 +1,20 @@
 # syntax=docker/dockerfile:1
+FROM node:20-alpine
 
-ARG NODE_VERSION=20.11.1
-ARG PNPM_VERSION=10.26.2
+WORKDIR /app
 
-################################################################################
-# Base image
-FROM node:${NODE_VERSION}-alpine AS base
-WORKDIR /usr/src/app
+# Install pnpm globally
+RUN npm install -g pnpm
 
-# Install pnpm
-RUN npm install -g pnpm@${PNPM_VERSION}
-
-################################################################################
-# Dependencies (needed for build)
-FROM base AS deps
-
+# Copy package files and install deps
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
-################################################################################
-# Build stage
-FROM deps AS build
-
+# Copy the rest of the code
 COPY . .
-RUN pnpm run build
 
-################################################################################
-# Runtime stage (minimal)
-FROM node:${NODE_VERSION}-alpine AS final
-WORKDIR /usr/src/app
-
-ENV NODE_ENV=production
-USER node
-
-# Copy standalone output
-COPY --from=build /usr/src/app/.next/standalone ./
-COPY --from=build /usr/src/app/.next/static ./.next/static
-COPY --from=build /usr/src/app/public ./public
-
+# Expose dev port
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# Start Next.js in dev mode for hot reload
+CMD ["pnpm", "dev"]
