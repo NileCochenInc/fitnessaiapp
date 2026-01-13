@@ -1,4 +1,4 @@
-import { createWorkout } from "@/lib/workouts";
+import { createWorkout, getWorkoutsByUserId } from "@/lib/workouts";
 import { WorkoutJSON } from "@/types/workouts";
 
 import pool from "@/lib/db"
@@ -13,7 +13,7 @@ function ensureTestEnv() {
 }
 
 
-describe("workouts lib test", () => {
+describe("createWorkout integration tests", () => {
 
     it("make sure jest is connected to test database not production database", () => {
         ensureTestEnv();
@@ -65,6 +65,62 @@ describe("workouts lib test", () => {
 
         
     });
+
+
+});
+
+describe("getWorkoutsByUserId tests", () => {
+    it("make sure jest is connected to test database not production database", () => {
+        ensureTestEnv();
+        
+        expect(true).toBe(true)
+
+    })
+
+
+    it("returns workouts for a valid user ID with workouts, sorted by date descending", async () => {
+        // Arrange: create two workouts for the same user
+        const demoWorkout1: WorkoutJSON = {
+            user_id: 1,
+            workout_date: "2023-01-01",
+            workout_kind: "strength",
+        };
+        const demoWorkout2: WorkoutJSON = {
+            user_id: 1,
+            workout_date: "2023-01-05",
+            workout_kind: "cardio",
+        };
+
+        const created1 = await createWorkout(demoWorkout1);
+        const created2 = await createWorkout(demoWorkout2);
+
+        // Act
+        const workouts = await getWorkoutsByUserId(1);
+
+        // Assert
+        expect(workouts.length).toBeGreaterThanOrEqual(2);
+        expect(workouts[0].workout_date >= workouts[1].workout_date).toBe(true);
+        expect(workouts).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({ id: created1.id, workout_kind: "strength" }),
+                expect.objectContaining({ id: created2.id, workout_kind: "cardio" }),
+            ])
+        );
+
+        // Clean up
+        await pool.query(`DELETE FROM workouts WHERE id = ANY($1)`, [[created1.id, created2.id]]);
+    });
+
+
+    /* not used as ID = 99999 may eventually exist
+    it("returns an empty array for a valid user ID with no workouts", async () => {
+        // Act
+        const workouts = await getWorkoutsByUserId(99999); // assume this user ID doesn't exist
+
+        // Assert
+        expect(workouts).toEqual([]);
+    });
+    */
 
 
 });

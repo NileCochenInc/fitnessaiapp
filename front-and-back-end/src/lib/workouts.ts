@@ -35,4 +35,35 @@ export async function createWorkout(workoutData: WorkoutJSON) {
     
 }
 
+//Get workouts by user id
+
+export async function getWorkoutsByUserId(user_id: number) {
+
+    //edge case: validate user_id (positive integer)
+    if (typeof user_id !== "number" || !Number.isInteger(user_id) || user_id <= 0) {
+        throw new Error("Invalid user_id");
+    } 
+
+
+    try {
+        const res = await pool.query(
+            `SELECT
+                id,
+                user_id,
+                workout_date::text AS workout_date,
+                workout_kind
+            FROM workouts
+            WHERE user_id = $1
+            ORDER BY workout_date DESC`,
+            [user_id]
+        );
+
+        return res.rows; //can be [] if no workouts found
+    } catch (error) {
+        console.error("Database error in getWorkoutsByUserId:", error);
+        throw new Error("Database error");
+    }
+
+}
+
 
