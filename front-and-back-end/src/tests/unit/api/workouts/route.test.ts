@@ -1,4 +1,4 @@
-import { POST } from "@/app/api/workouts/router";
+import { POST } from "@/app/api/workouts/route";
 import * as workoutsLib from "@/lib/workouts";
 
 jest.mock("@/lib/workouts", () => ({

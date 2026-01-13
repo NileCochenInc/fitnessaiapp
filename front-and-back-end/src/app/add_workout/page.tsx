@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from '../../components/Button';
-import { WorkoutJSON } from "@/types/workouts";
+import { WorkoutSchema, WorkoutJSON } from "@/types/workouts";
 
 
 
@@ -28,24 +28,36 @@ export default function Page() {
 
 
         setLoading(true);
+        setError(null);
 
-        try {
-
-
-            const payload: WorkoutJSON = {
+        const payload: WorkoutJSON = {
                 user_id: 1, //hardcoded user id for now
                 workout_date: date,
                 workout_kind: workout_kind
-            }
+        }
+
+        //validate form data
+        const parsed = WorkoutSchema.safeParse(payload);
+
+        //handle validation failure
+        if (!parsed.success) {
+        
+            const messages = parsed.error.issues.map(issue => `${issue.path.join(".")}: ${issue.message}`);
+            setError(messages.join(", "));
+            return;
+        }
+
+    
+        try {
+
             
             //make POST request to backend
             const res = await fetch("/api/workouts", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(parsed.data),
             });
+
 
             //throw error if request fails
             if (!res.ok) {
