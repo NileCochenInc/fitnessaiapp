@@ -17,10 +17,8 @@ export default function Page() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    
 
-    const goToAddExercise = () => {
-        router.push("/edit_exercise"); // navigate to /edit_exercise
-    };
 
     const pushWorkout = async () => {
         //push new workout to database
@@ -71,7 +69,7 @@ export default function Page() {
             console.log("Created workout:", workout);
 
             //navigate to add exercise page if successful
-            goToAddExercise();
+            router.push(`/edit_exercises?workoutid=${workout.id}`);
 
         
         } catch (err) {

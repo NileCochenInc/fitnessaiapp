@@ -1,4 +1,4 @@
-import { createWorkout, getWorkoutsByUserId, deleteWorkout } from "@/lib/workouts";
+import { createWorkout, getWorkoutsByUserId, deleteWorkout, updateWorkout } from "@/lib/workouts";
 import { WorkoutJSON } from "@/types/workouts";
 
 import pool from "@/lib/db"
@@ -165,4 +165,63 @@ describe("deleteWorkout integration tests", () => {
         expect(deletionResult).toBe(false);
     }); */
 
+});
+
+describe("updateWorkout integration tests", () => {
+  it("make sure jest is connected to test database not production database", () => {
+    ensureTestEnv();
+    expect(true).toBe(true);
+  });
+
+  it("successfully updates workout_date and workout_kind in the DB", async () => {
+    // Arrange: create a workout to update
+    const demoWorkout: WorkoutJSON = {
+      user_id: 1,
+      workout_date: "2023-01-01",
+      workout_kind: "strength",
+    };
+    const createdWorkout = await createWorkout(demoWorkout);
+
+    // Act: update the workout using the current three-param function
+    const updatedWorkout = await updateWorkout(
+      Number(createdWorkout.id),  // workout_id
+      1,                          // user_id
+      {                           // workoutData (without user_id)
+        workout_date: "2023-02-01",
+        workout_kind: "rowing",
+      }
+    );
+
+    // Assert: returned object matches update
+    expect(updatedWorkout).toEqual({
+      id: createdWorkout.id,
+      user_id: "1",
+      workout_date: "2023-02-01",
+      workout_kind: "rowing",
+    });
+
+    // Verify DB state
+    const res = await pool.query(
+      `SELECT id, user_id, workout_date::text AS workout_date, workout_kind
+       FROM workouts
+       WHERE id = $1`,
+      [createdWorkout.id]
+    );
+    expect(res.rows[0]).toEqual({
+      id: createdWorkout.id,
+      user_id: "1",
+      workout_date: "2023-02-01",
+      workout_kind: "rowing",
+    });
+
+    // Clean up
+    await pool.query(`DELETE FROM workouts WHERE id = $1`, [createdWorkout.id]);
+  });
+
+  it("throws an error if the workout does not exist or user_id does not match", async () => {
+    // Using a workout ID that doesn't exist
+    await expect(
+      updateWorkout(999999, 1, { workout_date: "2023-01-01", workout_kind: "strength" })
+    ).rejects.toThrow("Workout not found or you do not have permission to edit it");
+  });
 });

@@ -8,12 +8,12 @@ jest.mock('@/lib/db', () => ({
 }));
 
 
-import { createWorkout, getWorkoutsByUserId, deleteWorkout } from "@/lib/workouts";
+import { createWorkout, getWorkoutsByUserId, deleteWorkout, updateWorkout } from "@/lib/workouts";
 import { WorkoutJSON } from "@/types/workouts";
 import pool from "@/lib/db"
 
 
-describe("workouts lib unit tests", () => {
+describe("createWorkout unit tests", () => {
     beforeEach(() => {
         (pool.query as jest.Mock).mockReset(); // reset mock between tests
     });
@@ -49,7 +49,6 @@ describe("workouts lib unit tests", () => {
     });
 
 });
-
 
 
 describe("getWorkoutsByUserId unit tests", () => {
@@ -129,4 +128,68 @@ describe("deleteWorkout unit tests", () => {
         // restore console.error
         consoleSpy.mockRestore();
     });
+});
+
+describe("updateWorkout unit tests", () => {
+  const validWorkoutData: Omit<WorkoutJSON, "user_id"> = {
+    workout_date: "2023-01-01",
+    workout_kind: "strength",
+  };
+
+  beforeEach(() => {
+    (pool.query as jest.Mock).mockReset();
+  });
+
+  it("throws if workout_id is invalid", async () => {
+    await expect(updateWorkout(0, 1, validWorkoutData)).rejects.toThrow("Invalid workout_id");
+    await expect(updateWorkout(-5, 1, validWorkoutData)).rejects.toThrow("Invalid workout_id");
+    await expect(updateWorkout(1.5, 1, validWorkoutData)).rejects.toThrow("Invalid workout_id");
+  });
+
+    it("throws if workoutData fails schema validation", async () => {
+    await expect(
+        updateWorkout(1, 1, { workout_date: "", workout_kind: "strength" })
+    ).rejects.toThrow();
+
+    await expect(
+        updateWorkout(1, 1, { workout_date: "2023-01-01", workout_kind: "invalid_kind" })
+    ).rejects.toThrow();
+    });
+
+  it("throws if workout_date is invalid format", async () => {
+    await expect(updateWorkout(1, 1, { ...validWorkoutData, workout_date: "not-a-date" }))
+      .rejects.toThrow("Invalid workout_date format");
+  });
+
+  it("calls pool.query with correct SQL and parameters", async () => {
+    (pool.query as jest.Mock).mockResolvedValue({ rowCount: 1, rows: [{ id: 123, user_id: "1", workout_date: "2023-01-01", workout_kind: "strength" }] });
+
+    const result = await updateWorkout(123, 1, validWorkoutData);
+
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining("UPDATE workouts"),
+      [123, validWorkoutData.workout_date, validWorkoutData.workout_kind, 1]
+    );
+
+    expect(result).toEqual({
+      id: 123,
+      user_id: "1",
+      workout_date: "2023-01-01",
+      workout_kind: "strength"
+    });
+  });
+
+  it("throws 'Workout not found' if rowCount === 0", async () => {
+    (pool.query as jest.Mock).mockResolvedValue({ rowCount: 0 });
+
+    await expect(updateWorkout(999, 1, validWorkoutData))
+      .rejects.toThrow("Workout not found or you do not have permission to edit it");
+  });
+
+  it("throws a database error if query fails", async () => {
+    (pool.query as jest.Mock).mockRejectedValue(new Error("DB failure"));
+
+    await expect(updateWorkout(1, 1, validWorkoutData))
+      .rejects.toThrow("DB failure");
+  });
 });

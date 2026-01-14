@@ -85,7 +85,7 @@ export default function Page() {
                     workout_date={workout.workout_date} 
                     workout_kind={workout.workout_kind}
                     onDelete={handleDelete}
-                    onEdit={() => router.push(`/edit_workout/${workout.id}`)}
+                    onEdit={() => router.push(`/edit_exercises?workoutid=${workout.id}`)}
                 />
             ))}
         </ul>

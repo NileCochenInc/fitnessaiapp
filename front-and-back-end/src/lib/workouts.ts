@@ -66,8 +66,44 @@ export async function getWorkoutsByUserId(user_id: number) {
 
 }
 
-//remove workout by id
-// Remove workout by id, only if it belongs to the given user
+//Edit workout by id
+export async function updateWorkout(workout_id: number, user_id: number, workoutData: Omit<WorkoutJSON, 'user_id'>) {
+    // Validate workout_id
+    if (!Number.isInteger(workout_id) || workout_id <= 0) {
+        throw new Error("Invalid workout_id");
+    }
+
+    // Validate input data
+    try {
+        WorkoutSchema.parse({ ...workoutData, user_id }); // keep user_id for validation if needed
+    } catch (e) {
+        throw new Error("Invalid workout data");
+    }
+
+    const { workout_date, workout_kind } = workoutData;
+
+    // Validate date
+    if (isNaN(new Date(workout_date).getTime())) {
+        throw new Error("Invalid workout_date format");
+    }
+
+    const res = await pool.query(
+        `UPDATE workouts
+         SET workout_date = $2, workout_kind = $3
+         WHERE id = $1 AND user_id = $4
+         RETURNING id, user_id, workout_date::text AS workout_date, workout_kind`,
+        [workout_id, workout_date, workout_kind, user_id]
+    );
+
+    if (res.rowCount === 0) {
+        throw new Error("Workout not found or you do not have permission to edit it");
+    }
+
+    return res.rows[0];
+}
+
+
+//Remove workout by id, only if it belongs to the given user
 export async function deleteWorkout(user_id: number, workout_id: number) {
     // Validate user_id
     if (typeof user_id !== "number" || !Number.isInteger(user_id) || user_id <= 0) {

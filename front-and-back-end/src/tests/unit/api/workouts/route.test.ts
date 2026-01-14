@@ -1,4 +1,4 @@
-import { POST, GET, DELETE } from "@/app/api/workouts/route";
+import { POST, GET, DELETE, PUT } from "@/app/api/workouts/route";
 import * as workoutsLib from "@/lib/workouts";
 import { NextRequest } from "next/server";
 
@@ -7,6 +7,7 @@ jest.mock("@/lib/workouts", () => ({
   createWorkout: jest.fn(),
   getWorkoutsByUserId: jest.fn(),
   deleteWorkout: jest.fn(),
+  updateWorkout: jest.fn(),
 }));
 
 
@@ -212,4 +213,107 @@ describe("DELETE /workouts handler", () => {
 
   });
 
+});
+
+
+describe("PUT /workouts handler", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("returns 400 if workoutId or userId query param is missing", async () => {
+    const req = { url: "http://localhost/api/workouts?userId=1" } as unknown as NextRequest;
+    const res = await PUT(req);
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json).toEqual({ error: "Missing workoutId or userId query parameter" });
+  });
+
+  it("returns 400 if workoutId or userId is invalid", async () => {
+    const req1 = { url: "http://localhost/api/workouts?userId=1&workoutId=0" } as unknown as NextRequest;
+    const res1 = await PUT(req1);
+    expect(res1.status).toBe(400);
+    expect((await res1.json()).error).toBe("Invalid workout_id");
+
+    const req2 = { url: "http://localhost/api/workouts?userId=-5&workoutId=1" } as unknown as NextRequest;
+    const res2 = await PUT(req2);
+    expect(res2.status).toBe(400);
+    expect((await res2.json()).error).toBe("Invalid user_id");
+  });
+
+  it("returns 400 if request body is invalid", async () => {
+    // Ensure updateWorkout is mocked but NOT called
+    (workoutsLib.updateWorkout as jest.Mock).mockResolvedValue({});
+
+    const req = {
+      url: "http://localhost/api/workouts?userId=1&workoutId=1",
+      // Pass a number instead of string for workout_date to fail Zod
+      json: async () => ({ workout_date: 12345, workout_kind: "cardio" }),
+    } as unknown as NextRequest;
+
+    const res = await PUT(req);
+
+    // updateWorkout should NOT be called
+    expect(workoutsLib.updateWorkout).not.toHaveBeenCalled();
+
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    expect(json).toEqual({ error: "Invalid workout data" });
+  });
+
+  it("calls updateWorkout and returns 200 with updated workout", async () => {
+    const mockUpdatedWorkout = { id: 1, user_id: "1", workout_date: "2026-01-13", workout_kind: "rowing" };
+    (workoutsLib.updateWorkout as jest.Mock).mockResolvedValue(mockUpdatedWorkout);
+
+    const req = {
+      url: "http://localhost/api/workouts?userId=1&workoutId=1",
+      json: async () => ({ workout_date: "2026-01-13", workout_kind: "rowing" }),
+    } as unknown as NextRequest;
+
+    const res = await PUT(req);
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    expect(json).toEqual(mockUpdatedWorkout);
+
+    expect(workoutsLib.updateWorkout).toHaveBeenCalledWith(
+      1,
+      1,
+      { workout_date: "2026-01-13", workout_kind: "rowing" }
+    );
+  });
+
+  it("returns 400 if updateWorkout throws 'Workout not found' error", async () => {
+    (workoutsLib.updateWorkout as jest.Mock).mockRejectedValue(new Error("Workout not found or you do not have permission to edit it"));
+
+    const req = {
+      url: "http://localhost/api/workouts?userId=1&workoutId=999",
+      json: async () => ({ workout_date: "2026-01-13", workout_kind: "rowing" }),
+    } as unknown as NextRequest;
+
+    const res = await PUT(req);
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json).toEqual({ error: "Workout not found or you do not have permission to edit it" });
+  });
+
+  it("returns 500 if updateWorkout throws unexpected error", async () => {
+    (workoutsLib.updateWorkout as jest.Mock).mockRejectedValue(new Error("DB failure"));
+
+    const req = {
+      url: "http://localhost/api/workouts?userId=1&workoutId=1",
+      json: async () => ({ workout_date: "2026-01-13", workout_kind: "rowing" }),
+    } as unknown as NextRequest;
+
+    const res = await PUT(req);
+    expect(res.status).toBe(500);
+    const json = await res.json();
+    expect(json).toEqual({ error: "Internal server error" });
+  });
 });
