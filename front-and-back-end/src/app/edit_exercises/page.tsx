@@ -4,7 +4,8 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Button from '@/components/Button';
 import React, { useState, useEffect } from "react";
-import ExerciseCard from "@/components/ExcerciseCard";
+import ExerciseCard from "@/components/ExerciseCard";
+import { set } from "zod";
 
 
 
@@ -31,6 +32,11 @@ export default function Page() {
     const [workoutData, setWorkoutData] = useState(dummyWorkout);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [editWorkoutMode, setEditWorkoutMode] = useState(false);
+
+    // Temporary state for inputs
+    const [editDate, setEditDate] = useState(workoutData.workout_date);
+    const [editKind, setEditKind] = useState(workoutData.workout_kind);
 
     const searchParams = useSearchParams();
     const workoutId = searchParams.get("workoutid");
@@ -66,6 +72,25 @@ export default function Page() {
     const handleEditWorkout = () => {
 
     }
+
+    const handleSave = () => {
+        if (!editDate || !editKind) {
+            setError("Both fields are required");
+            return;
+        }
+        setWorkoutData({ ...workoutData, workout_date: editDate, workout_kind: editKind });
+        setEditWorkoutMode(false);
+        setError(null);
+    };
+
+    const handleCancel = () => {
+        setEditWorkoutMode(false);
+        setEditDate(workoutData.workout_date);
+        setEditKind(workoutData.workout_kind);
+        setError(null);
+    };
+
+
     
 
 
@@ -73,11 +98,42 @@ export default function Page() {
     return (
         <div>
             {loading && <p>Loading workouts...</p>}
-            {error && <p>Error: {error}</p>}
+            {error && <p className="text-red-500">Error: {error}</p>}
             
             
             {!loading && !error && <div>
-                <h1 className="text-xl font-bold mb-4">{workoutData.workout_kind} workout on {workoutData.workout_date}</h1>
+                
+                <div className="mb-4 flex items-center gap-2">
+                <h1 className="text-xl font-bold">
+                    {workoutData.workout_kind} workout on {workoutData.workout_date}
+                </h1>
+                {!editWorkoutMode && (
+                    <Button label="Edit" onClick={() => setEditWorkoutMode(true)} />
+                )}
+                </div>
+                
+                {editWorkoutMode  && (<div className="mb-4">
+                    <label htmlFor="editDate">Edit Date:</label>
+                    <input
+                        id="editDate"
+                        type="date"
+                        value={editDate}
+                        onChange={(e) => setEditDate(e.target.value)}
+                    />
+                    <label htmlFor="editKind">Edit Kind:</label>
+                    <input
+                        id="editKind"
+                        type="text"
+                        value={editKind}
+                        onChange={(e) => setEditKind(e.target.value)}
+                    />
+                    <div className="flex gap-2 mt-2">
+                        <Button label="Save" onClick={handleSave} />
+                        <Button label="Cancel" onClick={handleCancel} />
+                    </div>
+                </div>
+                ) }
+
             
                 {exercises.length === 0 && <p>No previous exercises yet.</p>}
             
