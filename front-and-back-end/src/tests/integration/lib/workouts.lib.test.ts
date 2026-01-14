@@ -1,4 +1,4 @@
-import { createWorkout, getWorkoutsByUserId } from "@/lib/workouts";
+import { createWorkout, getWorkoutsByUserId, deleteWorkout } from "@/lib/workouts";
 import { WorkoutJSON } from "@/types/workouts";
 
 import pool from "@/lib/db"
@@ -122,5 +122,47 @@ describe("getWorkoutsByUserId tests", () => {
     });
     */
 
+    
+
+});
+
+
+describe("deleteWorkout integration tests", () => {
+
+    it("make sure jest is connected to test database not production database", () => {
+        ensureTestEnv();
+        expect(true).toBe(true);
+    });
+
+    it("should delete an existing workout successfully", async () => {
+        // Arrange: create a workout to delete
+        const demoWorkout: WorkoutJSON = {
+            user_id: 1,
+            workout_date: "2023-01-10",
+            workout_kind: "strength",
+        };
+
+        const createdWorkout = await createWorkout(demoWorkout);
+
+        // Act: delete the workout
+        const deletionResult = await deleteWorkout(1, Number(createdWorkout.id));
+
+        // Assert: deletionResult should be true
+        expect(deletionResult).toBe(true);
+
+        // Verify that the workout no longer exists in the DB
+        const res = await pool.query(
+            `SELECT id FROM workouts WHERE id = $1`,
+            [createdWorkout.id]
+        );
+        expect(res.rows.length).toBe(0);
+    });
+
+
+    /* Not used as ID = 99999 may eventually exist
+    it("should return false when deleting a non-existent workout", async () => {
+        const deletionResult = await deleteWorkout(1, 999999); // unlikely ID
+        expect(deletionResult).toBe(false);
+    }); */
 
 });

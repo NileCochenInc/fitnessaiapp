@@ -66,4 +66,38 @@ export async function getWorkoutsByUserId(user_id: number) {
 
 }
 
+//remove workout by id
+// Remove workout by id, only if it belongs to the given user
+export async function deleteWorkout(user_id: number, workout_id: number) {
+    // Validate user_id
+    if (typeof user_id !== "number" || !Number.isInteger(user_id) || user_id <= 0) {
+        throw new Error("Invalid user_id");
+    }
+
+    // Validate workout_id
+    if (typeof workout_id !== "number" || !Number.isInteger(workout_id) || workout_id <= 0) {
+        throw new Error("Invalid workout_id");
+    }
+
+    try {
+        const res = await pool.query(
+            `DELETE FROM workouts
+             WHERE id = $1 AND user_id = $2
+             RETURNING id`,
+            [workout_id, user_id]
+        );
+
+        if (res.rowCount === 0) {
+            // Nothing was deleted — either workout doesn't exist or doesn't belong to this user
+            return false;
+        }
+
+        return true; // deletion successful
+    } catch (error) {
+        console.error("Database error in deleteWorkout:", error);
+        throw new Error("Database error");
+    }
+}
+
+
 

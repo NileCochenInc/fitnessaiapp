@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Button from '../../components/Button';
+import Button from '@/components/Button';
+import WorkoutCard from "@/components/WorkoutCard";
+
 
 type Workout = {
   id: number;
-  date: string;
+  workout_date: string;
   workout_kind: string;
 };
 
@@ -19,8 +21,21 @@ export default function Page() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null); 
 
-    const userId = "123"; //hardcoded for now
+    const userId = "1"; //hardcoded for now
 
+    const handleDelete = async (id: number) => {
+        if (!confirm("Are you sure you want to delete this workout?")) return;
+
+        try {
+            const res = await fetch(`/api/workouts?userId=${userId}&workoutId=${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Failed to delete workout");
+
+            setWorkouts((prev) => prev.filter((w) => w.id !== id));
+        } catch (err: any) {
+            setError(err.message);
+        }
+    };
+    
 
     //fetch previous workouts from backend on component mount
     useEffect(() => {
@@ -31,7 +46,13 @@ export default function Page() {
                     throw new Error("Failed to fetch workouts");
                 }
                 const data: Workout[] = await response.json();
-                setWorkouts(data);
+
+                // Sort by date descending
+                const sortedData = data.sort((a, b) => {
+                    return new Date(b.workout_date).getTime() - new Date(a.workout_date).getTime();
+                });
+
+                setWorkouts(sortedData);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -58,14 +79,14 @@ export default function Page() {
 
         <ul>
             {workouts.map((workout) => (
-            <li key={workout.id} className="mb-3 border p-2 rounded">
-                <p>
-                <strong>Date:</strong> {workout.date}
-                </p>
-                <p>
-                <strong>Type:</strong> {workout.workout_kind}
-                </p>
-            </li>
+                <WorkoutCard 
+                    key = {workout.id}
+                    id = {workout.id}
+                    workout_date={workout.workout_date} 
+                    workout_kind={workout.workout_kind}
+                    onDelete={handleDelete}
+                    onEdit={() => router.push(`/edit_workout/${workout.id}`)}
+                />
             ))}
         </ul>
       </div>}

@@ -8,7 +8,7 @@ jest.mock('@/lib/db', () => ({
 }));
 
 
-import { createWorkout, getWorkoutsByUserId } from "@/lib/workouts";
+import { createWorkout, getWorkoutsByUserId, deleteWorkout } from "@/lib/workouts";
 import { WorkoutJSON } from "@/types/workouts";
 import pool from "@/lib/db"
 
@@ -71,5 +71,62 @@ describe("getWorkoutsByUserId unit tests", () => {
         await expect(getWorkoutsByUserId("abc" as any)).rejects.toThrow("Invalid user_id");
         await expect(getWorkoutsByUserId(null as any)).rejects.toThrow("Invalid user_id");
         expect(pool.query).not.toHaveBeenCalled();
+    });
+});
+
+
+describe("deleteWorkout unit tests", () => {
+    beforeEach(() => {
+        (pool.query as jest.Mock).mockReset();
+    });
+
+    it("throws an error for invalid user_id", async () => {
+        await expect(deleteWorkout(-1, 1)).rejects.toThrow("Invalid user_id");
+        await expect(deleteWorkout(0, 1)).rejects.toThrow("Invalid user_id");
+        await expect(deleteWorkout("abc" as any, 1)).rejects.toThrow("Invalid user_id");
+        expect(pool.query).not.toHaveBeenCalled();
+    });
+
+    it("throws an error for invalid workout_id", async () => {
+        await expect(deleteWorkout(1, -1)).rejects.toThrow("Invalid workout_id");
+        await expect(deleteWorkout(1, 0)).rejects.toThrow("Invalid workout_id");
+        await expect(deleteWorkout(1, "abc" as any)).rejects.toThrow("Invalid workout_id");
+        expect(pool.query).not.toHaveBeenCalled();
+    });
+
+    it("returns true when a workout is deleted successfully", async () => {
+        // Mock DB returning 1 row affected
+        (pool.query as jest.Mock).mockResolvedValue({ rowCount: 1 });
+
+        const result = await deleteWorkout(1, 123);
+        expect(result).toBe(true);
+        expect(pool.query).toHaveBeenCalledWith(
+            expect.stringContaining("DELETE FROM workouts"),
+            [123, 1]
+        );
+    });
+
+    it("returns false when workout does not exist or does not belong to user", async () => {
+        // Mock DB returning 0 rows affected
+        (pool.query as jest.Mock).mockResolvedValue({ rowCount: 0 });
+
+        const result = await deleteWorkout(1, 999);
+        expect(result).toBe(false);
+        expect(pool.query).toHaveBeenCalledWith(
+            expect.stringContaining("DELETE FROM workouts"),
+            [999, 1]
+        );
+    });
+
+    it("throws a database error if query fails", async () => {
+        (pool.query as jest.Mock).mockRejectedValue(new Error("DB failure"));
+
+        // mute console.error
+        const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        await expect(deleteWorkout(1, 123)).rejects.toThrow("Database error");
+        
+        // restore console.error
+        consoleSpy.mockRestore();
     });
 });

@@ -19,7 +19,7 @@ export default function Page() {
 
 
     const goToAddExercise = () => {
-        router.push("/add_exercise"); // navigate to /add_exercise
+        router.push("/edit_exercise"); // navigate to /edit_exercise
     };
 
     const pushWorkout = async () => {
@@ -97,7 +97,7 @@ export default function Page() {
             <label>
                 Date:
                 <input 
-                    type="text" 
+                    type="date" 
                     value={date} 
                     onChange={(e) => setDate(e.target.value)}
                 />
@@ -115,7 +115,6 @@ export default function Page() {
             {error && <p style={{ color: "red" }}>{error}</p>}
             <Button    
                 label={loading ? "Saving..." : "Save"}
-                onClick={pushWorkout}
                 disabled={loading}
             />
         </form>
