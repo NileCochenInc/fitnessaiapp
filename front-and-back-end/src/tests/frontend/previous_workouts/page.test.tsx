@@ -60,8 +60,8 @@ describe("Previous Workouts Page", () => {
 
   it("renders previous workouts correctly", async () => {
     const mockWorkouts = [
-      { id: 1, date: "2026-01-12", workout_kind: "Strength" },
-      { id: 2, date: "2026-01-11", workout_kind: "Cardio" },
+      { id: 1, workout_date: "2026-01-12", workout_kind: "Strength" },
+      { id: 2, workout_date: "2026-01-11", workout_kind: "Cardio" },
     ];
 
     (fetch as jest.Mock).mockResolvedValue({
