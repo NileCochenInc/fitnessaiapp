@@ -92,6 +92,8 @@ export default function Page() {
       </div>}
 
       <Button label="Add new workout" onClick={() => router.push("/add_workout")} />
+      <Button label="Home" onClick={() => router.push("/")} />
+        
     </div>
     );
 

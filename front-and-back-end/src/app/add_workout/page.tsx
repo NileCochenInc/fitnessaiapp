@@ -116,6 +116,7 @@ export default function Page() {
                 disabled={loading}
             />
         </form>
+        <Button label="Home" onClick={() => router.push("/")} />
         </div>
         );
 

@@ -13,19 +13,19 @@ export default function Page() {
     const router = useRouter();
     const params= useParams();
 
-
+    
     //dummy data
-    const dummyWorkout = { id: 1, workout_date: "2026-01-01", workout_kind: "Cardio" };
+    const dummyWorkout = { id: 1, workout_date: "2026-01-01", workout_kind: " " };
 
     //dummy exercises
     const dummyExercises = [
-        {exercise_id: 1, name: "Push Ups", },
-        {exercise_id: 2, name: "Squats", },
-        {exercise_id: 3, name: "Lunges", },
-        {exercise_id: 4, name: "Plank", },
-        {exercise_id: 5, name: "Burpees", },
-        {exercise_id: 6, name: "Mountain Climbers", },
-        {exercise_id: 7, name: "Jumping Jacks", },
+        {exercise_id: 1, name: " ", },
+        {exercise_id: 2, name: " ", },
+        {exercise_id: 3, name: " ", },
+        {exercise_id: 4, name: " ", },
+        {exercise_id: 5, name: " ", },
+        {exercise_id: 6, name: " ", },
+        {exercise_id: 7, name: " ", },
     ];
 
     const [exercises, setExercises] = useState(dummyExercises);
@@ -48,11 +48,47 @@ export default function Page() {
     }
 
 
-    //get workout data and exercises from backend
     useEffect(() => {
+    const fetchWorkoutAndExercises = async () => {
+        if (!workoutId) return;
 
-    
-    }, []); // empty dependency array = runs once on mount
+        setLoading(true);
+        setError(null);
+
+        try {
+        // TEMP: hard-coded userId for development
+        const userId = 1;
+
+        const res = await fetch(
+            `/api/exercises?workoutId=${workoutId}&userId=${userId}`
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            setError(data.error || "Failed to fetch workout data");
+        } else {
+            // Set workout metadata
+            setWorkoutData({
+            id: Number(workoutId),
+            workout_date: data.workout_date,
+            workout_kind: data.workout_kind,
+            });
+
+            // Set exercises array (empty if none)
+            setExercises(data.exercises || []);
+        }
+        } catch (err: any) {
+        console.error("Error fetching workout data:", err);
+        setError("Network error while fetching workout data");
+        } finally {
+        setLoading(false);
+        }
+    };
+
+    fetchWorkoutAndExercises();
+    }, [workoutId]);
+
 
 
 
@@ -195,6 +231,7 @@ export default function Page() {
 
             </form>
             <Button label="Add" onClick={pushExercise} />
+            <Button label="Back to Previous Workouts" onClick={() => router.push("/previous_workouts")} />
             
         </div>
         );
