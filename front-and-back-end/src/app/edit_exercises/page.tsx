@@ -7,29 +7,19 @@ import React, { useState, useEffect } from "react";
 import ExerciseCard from "@/components/ExerciseCard";
 import { set } from "zod";
 
-
+type Exercise = {
+  workout_exercise_id: number;
+  exercise_id: number;
+  name: string;
+};
 
 export default function Page() {
     const router = useRouter();
     const params= useParams();
 
-    
-    //dummy data
-    const dummyWorkout = { id: 1, workout_date: "2026-01-01", workout_kind: " " };
 
-    //dummy exercises
-    const dummyExercises = [
-        {exercise_id: 1, name: " ", },
-        {exercise_id: 2, name: " ", },
-        {exercise_id: 3, name: " ", },
-        {exercise_id: 4, name: " ", },
-        {exercise_id: 5, name: " ", },
-        {exercise_id: 6, name: " ", },
-        {exercise_id: 7, name: " ", },
-    ];
-
-    const [exercises, setExercises] = useState(dummyExercises);
-    const [workoutData, setWorkoutData] = useState(dummyWorkout);
+    const [exercises, setExercises] = useState<Exercise[]>([]);
+    const [workoutData, setWorkoutData] = useState({ id: 0, workout_date: "", workout_kind: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [editWorkoutMode, setEditWorkoutMode] = useState(false);
@@ -48,7 +38,7 @@ export default function Page() {
 
     }
 
-
+    //fetch workout details and exercises on page load
     useEffect(() => {
     const fetchWorkoutAndExercises = async () => {
         if (!workoutId) return;
@@ -95,53 +85,66 @@ export default function Page() {
 
 
     const pushExercise = async () => {
-    if (!workoutId) return;
-    if (!newExerciseName.trim()) {
-        setError("Exercise name cannot be empty");
-        return;
-    }
+        if (!workoutId) return;
+        if (!newExerciseName.trim()) {
+            setError("Exercise name cannot be empty");
+            return;
+        }
 
-    setLoading(true);
-    setError(null);
+        setLoading(true);
+        setError(null);
 
+        try {
+            const userId = 1; // Replace with real user ID or auth token later
+            const res = await fetch("/api/exercises", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                workoutId: Number(workoutId),
+                userId,
+                name: newExerciseName.trim(),
+            }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+            setError(data.error || "Failed to add exercise");
+            } else {
+            // Add the new exercise to state
+            setExercises((prev) => [...prev, data]);
+            setNewExerciseName(""); // clear input
+            }
+        } catch (err: any) {
+            console.error("Error adding exercise:", err);
+            setError("Network error while adding exercise");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (workout_exercise_id: number) => {
     try {
-        const userId = 1; // Replace with real user ID or auth token later
-        const res = await fetch("/api/exercises", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            workoutId: Number(workoutId),
-            userId,
-            name: newExerciseName.trim(),
-        }),
-        });
+        setLoading(true);
+        setError(null);
+        const userId = 1; // replace with real auth later
+
+        const res = await fetch(
+        `/api/exercises?workoutExerciseId=${workout_exercise_id}&userId=${userId}`,
+        { method: "DELETE" }
+        );
 
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to delete exercise");
 
-        if (!res.ok) {
-        setError(data.error || "Failed to add exercise");
-        } else {
-        // Add the new exercise to state
-        setExercises((prev) => [...prev, data]);
-        setNewExerciseName(""); // clear input
-        }
+        setExercises(prev => prev.filter(e => e.workout_exercise_id !== workout_exercise_id));
     } catch (err: any) {
-        console.error("Error adding exercise:", err);
-        setError("Network error while adding exercise");
+        setError(err.message);
     } finally {
         setLoading(false);
     }
     };
 
-    //delete exercise
-    const handleDelete = (exercise_id: number) => {
-
-    }
-
-    //navidate to add exercise data page
-    const handleEdit = (exercise_id: number) => {
-    
-    }
 
 
     const handleSave = async () => {
@@ -198,6 +201,10 @@ export default function Page() {
         setError(null);
     };
 
+    const handleEdit = (workout_exercise_id: number, name: string) => {
+        router.push(`/add_exercise_data?workout_exercise_id=${workout_exercise_id}&name=${name}&workoutId=${workoutId}`);
+    }
+
 
     
 
@@ -248,12 +255,12 @@ export default function Page() {
                     <ul>
                         {exercises.map((exercise) => (
                             <ExerciseCard 
-                                key = {exercise.exercise_id}
-                                exercise_id = {exercise.exercise_id}
+                                key={exercise.workout_exercise_id}
+                                exercise_id={exercise.exercise_id} // use exercise_id
                                 name={exercise.name}
-                                onDelete={handleDelete}
-                                onEdit={handleEdit}
-                            />
+                                onDelete={() => handleDelete(exercise.workout_exercise_id)} // pass workout_exercise_id
+                                onEdit={() => handleEdit(exercise.workout_exercise_id, exercise.name)}
+                                />
                         ))}
                     </ul>
             </div>}

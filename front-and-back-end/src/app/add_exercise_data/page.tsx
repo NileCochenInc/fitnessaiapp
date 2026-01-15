@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Button from "../../components/Button";
 
@@ -20,6 +20,25 @@ type Entry = {
 
 export default function Page() {
   const router = useRouter();
+  const params= useParams();
+
+
+  //get parameters from URL
+  const searchParams = useSearchParams();
+  const workout_exercise_id = searchParams.get("workout_exercise_id");
+  const exercise_name = searchParams.get("name");
+  const workoutId = searchParams.get("workoutId");
+
+   if (!workoutId) {
+        return <p>Error: No workout ID provided</p>;
+    }
+    if (!exercise_name) {
+        return <p>Error: No exercise provided</p>;
+    }
+    if (!workout_exercise_id) {
+        return <p>Error: No workout_exercise_id provided</p>;
+    }
+
 
   /* ---------- State ---------- */
   const [entries, setEntries] = useState<Entry[]>([
@@ -27,6 +46,11 @@ export default function Page() {
       metrics: [{ metric: "", value: "", unit: "" }]
     }
   ]);
+
+  const [exerciseName, setExerciseName] = useState(exercise_name || "");
+
+
+
 
   /* ---------- Entry Actions ---------- */
 
@@ -102,7 +126,7 @@ export default function Page() {
 
   return (
     <div>
-      <h1>**exercise**</h1>
+      <h1>{exerciseName}</h1>
       <h2>Add data</h2>
 
       <form>
@@ -194,6 +218,8 @@ export default function Page() {
       </form>
 
       <Button label="Save" onClick={pushExercise} />
+
+      <Button label="Back to Exercises" onClick={() => router.push(`/edit_exercises?workoutid=${workoutId}`)} />
     </div>
   );
 }

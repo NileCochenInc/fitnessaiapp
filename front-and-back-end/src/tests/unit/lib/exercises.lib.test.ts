@@ -58,19 +58,23 @@ describe("getExercisesForWorkout unit tests", () => {
     (pool.query as jest.Mock).mockReset();
   });
 
-  it("returns exercises with exercise_id as number", async () => {
+    it("returns exercises with exercise_id and workout_exercise_id as numbers", async () => {
     (pool.query as jest.Mock).mockResolvedValue({
-      rows: [{ exercise_id: "12", name: "Push Ups" }]
+        rows: [{ workout_exercise_id: "101", exercise_id: "12", name: "Push Ups" }]
     });
 
     const result = await getExercisesForWorkout(1, userId);
 
-    expect(result).toEqual([{ exercise_id: 12, name: "Push Ups" }]);
+    expect(result).toEqual([
+        { workout_exercise_id: 101, exercise_id: 12, name: "Push Ups" }
+    ]);
+
     expect(pool.query).toHaveBeenCalledWith(
-      expect.stringContaining("SELECT"),
-      [1, userId]
+        expect.stringContaining("SELECT"),
+        [1, userId]
     );
-  });
+    });
+
 
   it("returns empty array if no exercises", async () => {
     (pool.query as jest.Mock).mockResolvedValue({ rows: [] });

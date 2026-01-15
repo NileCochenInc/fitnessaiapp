@@ -86,10 +86,21 @@ describe("exercises.ts integration tests", () => {
 
     expect(exercises).toEqual(
         expect.arrayContaining([
-        { exercise_id: exerciseId, name: "Push Ups" },
+        expect.objectContaining({
+            exercise_id: exerciseId,
+            name: "Push Ups",
+        }),
         ])
     );
+
+    // Also check that workout_exercise_id exists and is a number
+    exercises.forEach(ex => {
+        expect(typeof ex.workout_exercise_id).toBe("number");
     });
+    });
+
+
+    
     it("getWorkoutMeta should return workout date and kind", async () => {
     const meta = await getWorkoutMeta(workoutId, userId);
 

@@ -121,9 +121,9 @@ export async function deleteWorkoutExercise(
 export async function getExercisesForWorkout(
   workoutId: number,
   userId: number
-): Promise<{ exercise_id: number; name: string }[]> {
+): Promise<{ workout_exercise_id: number; exercise_id: number; name: string }[]> {
   const res = await pool.query(
-    `SELECT e.id AS exercise_id, e.name
+    `SELECT we.id AS workout_exercise_id, e.id AS exercise_id, e.name
      FROM workout_exercises we
      JOIN workouts w ON we.workout_id = w.id
      JOIN exercises e ON we.exercise_id = e.id
@@ -133,6 +133,7 @@ export async function getExercisesForWorkout(
   );
 
   return res.rows.map(row => ({
+    workout_exercise_id: Number(row.workout_exercise_id), // needed for DELETE
     exercise_id: Number(row.exercise_id),
     name: row.name,
   }));
