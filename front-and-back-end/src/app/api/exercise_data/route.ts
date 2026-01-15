@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+/*
 import { createExerciseData } from "@/lib/exercise_data";
 
 
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to create workout" }, { status: 500 });
   }
 }
-
+*/
 
 //post exercise_data
 

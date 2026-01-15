@@ -40,14 +40,17 @@ export default function Page() {
 
     const searchParams = useSearchParams();
     const workoutId = searchParams.get("workoutid");
+   
 
     if (!workoutId) {
         return <p>Error: No workout ID provided</p>;
+
     }
 
 
     //get workout data and exercises from backend
     useEffect(() => {
+
     
     }, []); // empty dependency array = runs once on mount
 
@@ -68,19 +71,52 @@ export default function Page() {
     const handleEdit = (exercise_id: number) => {
     }
 
-    //handle changes to workout data
-    const handleEditWorkout = () => {
 
-    }
+    const handleSave = async () => {
 
-    const handleSave = () => {
+        if (!workoutId) {
+            setError("No workout ID available");
+            return;
+        }
+
         if (!editDate || !editKind) {
             setError("Both fields are required");
             return;
         }
-        setWorkoutData({ ...workoutData, workout_date: editDate, workout_kind: editKind });
-        setEditWorkoutMode(false);
+
+        setLoading(true);
         setError(null);
+
+        try {
+            const userId = 1; // Replace with real user ID if available
+            const res = await fetch(`/api/workouts?workoutId=${workoutId}&userId=${userId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    workout_date: editDate,
+                    workout_kind: editKind,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                // API returned an error
+                setError(data.error || "Failed to save workout");
+            } else {
+                // Successfully updated
+                setWorkoutData(data);
+                setEditWorkoutMode(false);
+            }
+        } catch (err: any) {
+            console.error("Error saving workout:", err);
+            setError("Network error while saving workout");
+        } finally {
+            setLoading(false);
+        }
+
     };
 
     const handleCancel = () => {
