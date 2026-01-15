@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getExercisesForWorkout, getWorkoutMeta } from "@/lib/exercises";
-
+import { getExercisesForWorkout, getWorkoutMeta, addWorkoutExercise, deleteWorkoutExercise  } from "@/lib/exercises";
 
 
 /*
@@ -80,10 +79,68 @@ export async function GET(req: NextRequest) {
 }
 
 
-//post exercise
 
+// ==================== POST ====================
+// Add or attach an exercise to a workout
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { workoutId, name, userId } = body;
 
+    if (!workoutId || !name || !userId) {
+      return NextResponse.json(
+        { error: "Missing workoutId, name, or userId" },
+        { status: 400 }
+      );
+    }
 
-//put exercise
+    // future auth: replace `userId` with session-derived value
+    const exercise = await addWorkoutExercise(workoutId, { name }, userId);
 
-//delete exercise
+    return NextResponse.json(exercise, { status: 201 });
+  } catch (err: any) {
+    console.error("Error in POST /api/exercises:", err);
+    return NextResponse.json(
+      { error: err.message || "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+// ==================== DELETE ====================
+// Remove an exercise from a workout
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const workoutExerciseIdParam = searchParams.get("workoutExerciseId");
+    const userIdParam = searchParams.get("userId");
+
+    if (!workoutExerciseIdParam || !userIdParam) {
+      return NextResponse.json(
+        { error: "Missing workoutExerciseId or userId" },
+        { status: 400 }
+      );
+    }
+
+    const workoutExerciseId = Number(workoutExerciseIdParam);
+    const userId = Number(userIdParam);
+
+    if (!Number.isInteger(workoutExerciseId) || !Number.isInteger(userId)) {
+      return NextResponse.json({ error: "Invalid ID(s)" }, { status: 400 });
+    }
+
+    // future auth: replace `userId` with session-derived value
+    await deleteWorkoutExercise(workoutExerciseId, userId);
+
+    return NextResponse.json(
+      { message: "Exercise removed from workout" },
+      { status: 200 }
+    );
+  } catch (err: any) {
+    console.error("Error in DELETE /api/exercises:", err);
+    return NextResponse.json(
+      { error: err.message || "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
