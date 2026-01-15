@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getExercisesForWorkout, getWorkoutMeta, addWorkoutExercise, deleteWorkoutExercise  } from "@/lib/exercises";
+import { getExercisesForWorkout, getWorkoutMeta, addWorkoutExercise, deleteWorkoutExercise, editWorkoutExercise  } from "@/lib/exercises";
 
 
 /*
@@ -138,6 +138,55 @@ export async function DELETE(req: NextRequest) {
     );
   } catch (err: any) {
     console.error("Error in DELETE /api/exercises:", err);
+    return NextResponse.json(
+      { error: err.message || "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+
+// ==================== PATCH ====================
+// Edit a workout exercise (name and/or note)
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { workoutExerciseId, name, note, userId } = body;
+
+    // ─── Validate required fields ─────────────────────────────
+    if (!workoutExerciseId || !userId) {
+      return NextResponse.json(
+        { error: "Missing workoutExerciseId or userId" },
+        { status: 400 }
+      );
+    }
+
+    if (!name && note === undefined) {
+      return NextResponse.json(
+        { error: "Nothing to update: provide name or note" },
+        { status: 400 }
+      );
+    }
+
+    // ─── Call library function to update ─────────────────────
+    // future auth: replace `userId` with session-derived value
+    const updated = await editWorkoutExercise(
+      Number(workoutExerciseId),
+      { name, note },
+      Number(userId)
+    );
+
+    return NextResponse.json(updated, { status: 200 });
+  } catch (err: any) {
+    console.error("Error in PATCH /api/exercises:", err);
+
+    if (err.message === "Workout exercise not found or unauthorized") {
+      return NextResponse.json(
+        { error: err.message },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
       { error: err.message || "Internal server error" },
       { status: 500 }

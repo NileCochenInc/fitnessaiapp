@@ -7,7 +7,7 @@ export async function addWorkoutExercise(
   workoutId: number,
   data: { name: string },
   userId: number
-): Promise<{ exercise_id: number; name: string }> {
+): Promise<{ workout_exercise_id: number; exercise_id: number; name: string }> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -21,7 +21,7 @@ export async function addWorkoutExercise(
       throw new Error('Workout not found or unauthorized');
     }
 
-    // 2️⃣ Check if exercise exists (global or user-specific)
+    // 2️⃣ Check if exercise exists
     let exerciseRes = await client.query(
       `SELECT id FROM exercises
        WHERE name = $1 AND (is_global = TRUE OR user_id = $2)`,
@@ -30,7 +30,6 @@ export async function addWorkoutExercise(
 
     let exerciseId: number;
     if (exerciseRes.rowCount === 0) {
-      // 3️⃣ Create new user-specific exercise
       const insertExercise = await client.query(
         `INSERT INTO exercises (name, is_global, user_id)
          VALUES ($1, FALSE, $2)
@@ -42,7 +41,7 @@ export async function addWorkoutExercise(
       exerciseId = Number(exerciseRes.rows[0].id);
     }
 
-    // 4️⃣ Insert into workout_exercises
+    // 3️⃣ Insert into workout_exercises and RETURN ID
     const insertWorkoutExercise = await client.query(
       `INSERT INTO workout_exercises (exercise_id, workout_id)
        VALUES ($1, $2)
@@ -50,9 +49,15 @@ export async function addWorkoutExercise(
       [exerciseId, workoutId]
     );
 
+    const workoutExerciseId = Number(insertWorkoutExercise.rows[0].id);
+
     await client.query('COMMIT');
 
-    return { exercise_id: Number(exerciseId), name: data.name };
+    return {
+      workout_exercise_id: workoutExerciseId,
+      exercise_id: exerciseId,
+      name: data.name,
+    };
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
@@ -60,6 +65,7 @@ export async function addWorkoutExercise(
     client.release();
   }
 }
+
 
 /**
  * Delete a workout_exercise (does not delete exercise itself)

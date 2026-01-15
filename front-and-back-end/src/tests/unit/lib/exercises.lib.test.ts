@@ -182,6 +182,102 @@ describe("deleteWorkoutExercise unit tests", () => {
   });
 });
 
+
+describe("addWorkoutExercise unit tests", () => {
+  let mockClient: any;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockClient = {
+      query: jest.fn(),
+      release: jest.fn(),
+    };
+    (pool.connect as jest.Mock).mockResolvedValue(mockClient);
+  });
+
+  it("throws if workout not found", async () => {
+    mockClient.query.mockImplementation((sql: string) => {
+      if (sql === "BEGIN") {
+        return Promise.resolve({});
+      }
+      if (sql.includes("FROM workouts")) {
+        return Promise.resolve({ rowCount: 0, rows: [] });
+      }
+      if (sql === "ROLLBACK") {
+        return Promise.resolve({});
+      }
+      return Promise.resolve({ rowCount: 0, rows: [] });
+    });
+
+    await expect(
+      addWorkoutExercise(1, { name: "Push Ups" }, 1)
+    ).rejects.toThrow("Workout not found or unauthorized");
+
+    expect(mockClient.release).toHaveBeenCalled();
+  });
+
+  it("reuses existing exercise", async () => {
+    mockClient.query.mockImplementation((sql: string) => {
+      if (sql === "BEGIN" || sql === "COMMIT") {
+        return Promise.resolve({});
+      }
+      if (sql.includes("FROM workouts")) {
+        return Promise.resolve({ rowCount: 1, rows: [{ id: 1 }] });
+      }
+      if (sql.includes("FROM exercises")) {
+        return Promise.resolve({ rowCount: 1, rows: [{ id: 42 }] });
+      }
+      if (sql.includes("INSERT INTO workout_exercises")) {
+        return Promise.resolve({ rows: [{ id: 100 }] });
+      }
+      return Promise.resolve({ rowCount: 0, rows: [] });
+    });
+
+    const result = await addWorkoutExercise(1, { name: "Push Ups" }, 1);
+
+    expect(result).toEqual({
+      workout_exercise_id: 100,
+      exercise_id: 42,
+      name: "Push Ups",
+    });
+
+    expect(mockClient.release).toHaveBeenCalled();
+  });
+
+  it("creates new exercise if not exists", async () => {
+    mockClient.query.mockImplementation((sql: string) => {
+      if (sql === "BEGIN" || sql === "COMMIT") {
+        return Promise.resolve({});
+      }
+      if (sql.includes("FROM workouts")) {
+        return Promise.resolve({ rowCount: 1, rows: [{ id: 1 }] });
+      }
+      if (sql.includes("FROM exercises")) {
+        return Promise.resolve({ rowCount: 0, rows: [] });
+      }
+      if (sql.includes("INSERT INTO exercises")) {
+        return Promise.resolve({ rows: [{ id: 99 }] });
+      }
+      if (sql.includes("INSERT INTO workout_exercises")) {
+        return Promise.resolve({ rows: [{ id: 101 }] });
+      }
+      return Promise.resolve({ rowCount: 0, rows: [] });
+    });
+
+    const result = await addWorkoutExercise(1, { name: "Squats" }, 1);
+
+    expect(result).toEqual({
+      workout_exercise_id: 101,
+      exercise_id: 99,
+      name: "Squats",
+    });
+
+    expect(mockClient.release).toHaveBeenCalled();
+  });
+});
+
+
+/*
 describe("addWorkoutExercise unit tests", () => {
   let mockClient: any;
 
@@ -241,6 +337,7 @@ describe("addWorkoutExercise unit tests", () => {
     expect(mockClient.release).toHaveBeenCalled();
   });
 });
+*/
 
 describe("editWorkoutExercise unit tests", () => {
   let mockClient: any;

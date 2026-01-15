@@ -44,20 +44,29 @@ describe("exercises.ts integration tests", () => {
     await pool.end();
   });
 
-  it("addWorkoutExercise should create new exercise and attach to workout", async () => {
-    const added = await addWorkoutExercise(workoutId, { name: "Push Ups" }, userId);
+    it("addWorkoutExercise should create new exercise and attach to workout", async () => {
+        const added = await addWorkoutExercise(workoutId, { name: "Push Ups" }, userId);
 
-    expect(added).toEqual({ exercise_id: expect.any(Number), name: "Push Ups" });
-    exerciseId = added.exercise_id;
+        expect(added).toEqual({
+            workout_exercise_id: expect.any(Number),
+            exercise_id: expect.any(Number),
+            name: "Push Ups",
+        });
 
-    // Verify in DB
-    const res = await pool.query(
-      `SELECT * FROM workout_exercises WHERE exercise_id = $1 AND workout_id = $2`,
-      [exerciseId, workoutId]
-    );
-    expect(res.rowCount).toBe(1);
-    workoutExerciseId = res.rows[0].id;
-  });
+        exerciseId = added.exercise_id;
+        workoutExerciseId = added.workout_exercise_id;
+
+        // Verify in DB
+        const res = await pool.query(
+            `SELECT * FROM workout_exercises WHERE id = $1`,
+            [workoutExerciseId]
+        );
+
+        expect(res.rowCount).toBe(1);
+        expect(Number(res.rows[0].exercise_id)).toBe(exerciseId);
+        expect(res.rows[0].workout_id).toBe(workoutId);
+    });
+
 
 
 

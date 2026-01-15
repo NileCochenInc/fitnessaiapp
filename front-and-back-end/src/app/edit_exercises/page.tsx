@@ -85,43 +85,41 @@ export default function Page() {
 
 
     const pushExercise = async () => {
-        if (!workoutId) return;
-        if (!newExerciseName.trim()) {
-            setError("Exercise name cannot be empty");
-            return;
-        }
-
+        if (!workoutId || !newExerciseName.trim()) return;
         setLoading(true);
         setError(null);
 
         try {
-            const userId = 1; // Replace with real user ID or auth token later
+            const userId = 1; // temp
             const res = await fetch("/api/exercises", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                workoutId: Number(workoutId),
-                userId,
-                name: newExerciseName.trim(),
-            }),
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    workoutId: Number(workoutId),
+                    userId,
+                    name: newExerciseName.trim(),
+                }),
             });
 
             const data = await res.json();
 
             if (!res.ok) {
-            setError(data.error || "Failed to add exercise");
+                setError(data.error || "Failed to add exercise");
             } else {
-            // Add the new exercise to state
-            setExercises((prev) => [...prev, data]);
-            setNewExerciseName(""); // clear input
+                // Make sure data.workout_exercise_id exists
+                if (!data.workout_exercise_id) {
+                    throw new Error("Backend did not return valid workout_exercise_id");
+                }
+                setExercises(prev => [...prev, data]);
+                setNewExerciseName("");
             }
         } catch (err: any) {
-            console.error("Error adding exercise:", err);
-            setError("Network error while adding exercise");
+            setError(err.message || "Network error while adding exercise");
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleDelete = async (workout_exercise_id: number) => {
     try {
