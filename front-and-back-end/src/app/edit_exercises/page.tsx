@@ -33,6 +33,7 @@ export default function Page() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [editWorkoutMode, setEditWorkoutMode] = useState(false);
+    const [newExerciseName, setNewExerciseName] = useState("");
 
     // Temporary state for inputs
     const [editDate, setEditDate] = useState(workoutData.workout_date);
@@ -93,10 +94,44 @@ export default function Page() {
 
 
 
-    const pushExercise = () => {
-        //push workout_excercise to backend
-        //push excercise name
+    const pushExercise = async () => {
+    if (!workoutId) return;
+    if (!newExerciseName.trim()) {
+        setError("Exercise name cannot be empty");
+        return;
     }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+        const userId = 1; // Replace with real user ID or auth token later
+        const res = await fetch("/api/exercises", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            workoutId: Number(workoutId),
+            userId,
+            name: newExerciseName.trim(),
+        }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+        setError(data.error || "Failed to add exercise");
+        } else {
+        // Add the new exercise to state
+        setExercises((prev) => [...prev, data]);
+        setNewExerciseName(""); // clear input
+        }
+    } catch (err: any) {
+        console.error("Error adding exercise:", err);
+        setError("Network error while adding exercise");
+    } finally {
+        setLoading(false);
+    }
+    };
 
     //delete exercise
     const handleDelete = (exercise_id: number) => {
@@ -105,6 +140,7 @@ export default function Page() {
 
     //navidate to add exercise data page
     const handleEdit = (exercise_id: number) => {
+    
     }
 
 
@@ -226,7 +262,12 @@ export default function Page() {
             <form>
 
 
-                <input type="text" placeholder="Exercise name"></input>
+                <input
+                    type="text"
+                    placeholder="Exercise name"
+                    value={newExerciseName}
+                    onChange={(e) => setNewExerciseName(e.target.value)}
+                />
 
 
             </form>
