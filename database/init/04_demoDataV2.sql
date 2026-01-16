@@ -1,6 +1,6 @@
 -- 1. Create demo user
-INSERT INTO users (username, email, goal)
-VALUES ('demo_user', 'demo@example.com', 'Build strength and consistency')
+INSERT INTO users (username, email, goal, password_hash)
+VALUES ('demo_user', 'demo@example.com', 'Build strength and consistency', '$2b$10$example_hash')
 RETURNING id;
 
 

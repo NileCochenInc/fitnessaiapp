@@ -3,7 +3,8 @@ CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    goal TEXT NOT NULL
+    goal TEXT NOT NULL,
+    password_hash TEXT NOT NULL
 );
 
 --period of athletic work

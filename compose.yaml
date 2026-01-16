@@ -13,6 +13,8 @@ services:
       - 3000:3000
     depends_on: #ensure next.js app only launches after database
       - postgres
+    env_file:
+      - ./front-and-back-end/.env
   
   #production database
   postgres:
