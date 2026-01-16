@@ -38,15 +38,18 @@ export default function EntryCard({ entry, index, onUpdateEntry, onRemoveEntry }
   };
 
   return (
-    <div className="border p-3 rounded mb-3">
-      <h3 className="font-semibold mb-2">Entry {index + 1}</h3>
+    <div className="bg-[#36393f] p-4 rounded-xl shadow-lg mb-4">
+      <h3 className="font-semibold text-[#dcddde] mb-3 text-lg">Entry {index + 1}</h3>
 
       {entry.metrics.map((metric, metricIndex) => (
-        <div key={metricIndex} className="flex gap-3 mb-3 items-end">
+        <div
+          key={metricIndex}
+          className="flex flex-col sm:flex-row sm:items-end gap-3 mb-3"
+        >
           <div className="flex flex-col">
-            <label className="text-sm font-medium">Metric</label>
+            <label className="text-sm font-medium text-[#b9bbbe]">Metric</label>
             <input
-              className="border p-1 rounded w-32"
+              className="p-2 rounded-lg border border-[#72767d] bg-[#2f3136] text-[#dcddde] w-full sm:w-32 focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
               type="text"
               placeholder="e.g. weight"
               value={metric.metric}
@@ -55,9 +58,9 @@ export default function EntryCard({ entry, index, onUpdateEntry, onRemoveEntry }
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm font-medium">Value</label>
+            <label className="text-sm font-medium text-[#b9bbbe]">Value</label>
             <input
-              className="border p-1 rounded w-20"
+              className="p-2 rounded-lg border border-[#72767d] bg-[#2f3136] text-[#dcddde] w-full sm:w-20 focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
               type="text"
               placeholder="e.g. 10"
               value={metric.value}
@@ -66,9 +69,9 @@ export default function EntryCard({ entry, index, onUpdateEntry, onRemoveEntry }
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm font-medium">Unit</label>
+            <label className="text-sm font-medium text-[#b9bbbe]">Unit</label>
             <input
-              className="border p-1 rounded w-20"
+              className="p-2 rounded-lg border border-[#72767d] bg-[#2f3136] text-[#dcddde] w-full sm:w-20 focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
               type="text"
               placeholder="e.g. lbs"
               value={metric.unit}
@@ -80,13 +83,24 @@ export default function EntryCard({ entry, index, onUpdateEntry, onRemoveEntry }
             label="– metric"
             type="button"
             onClick={() => removeMetric(metricIndex)}
+            className="bg-[#ed4245] hover:bg-[#b3393c] text-white p-2 rounded-lg w-full sm:w-auto mt-2 sm:mt-0"
           />
         </div>
       ))}
 
-      <div className="flex gap-2 mt-2">
-        <Button label="Add metric" type="button" onClick={addMetric} />
-        <Button label="Remove entry" type="button" onClick={() => onRemoveEntry(index)} />
+      <div className="flex flex-col sm:flex-row gap-2 mt-2">
+        <Button
+          label="Add metric"
+          type="button"
+          onClick={addMetric}
+          className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full sm:w-auto"
+        />
+        <Button
+          label="Remove entry"
+          type="button"
+          onClick={() => onRemoveEntry(index)}
+          className="bg-[#ed4245] hover:bg-[#b3393c] text-white p-2 rounded-lg w-full sm:w-auto"
+        />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react"; // <-- import signOut
+import { useSession, signOut } from "next-auth/react";
 import Button from "../components/Button";
 
 export default function Page() {
@@ -19,23 +19,52 @@ export default function Page() {
   const goToAddWorkout = () => router.push("/add_workout");
   const goToPreviousWorkouts = () => router.push("/previous_workouts");
 
-  // Logout function
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/login" }); // redirects to login after logout
-  };
+  const handleLogout = () => signOut({ callbackUrl: "/login" });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "loading")
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#2f3136]">
+        <p className="text-lg text-[#dcddde]">Loading...</p>
+      </div>
+    );
 
   return (
-    <div className="p-4 flex flex-col gap-2">
-      <p>Welcome {session?.user?.username}!</p>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#2f3136]">
+      <div className="bg-[#36393f] rounded-xl shadow-lg p-6 w-full max-w-md flex flex-col gap-6">
+        {/* Welcome text */}
+        <p className="text-2xl font-semibold text-center text-[#dcddde]">
+          Welcome, {session?.user?.username}!
+        </p>
 
-      <Button label="Add workout" onClick={goToAddWorkout} />
-      <Button label="See previous workouts" onClick={goToPreviousWorkouts} />
-      <Button label="AI advice" />
+        {/* Action buttons */}
+        <div className="flex flex-col gap-4">
+          <Button
+            label="Add Workout"
+            onClick={goToAddWorkout}
+            className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
+            style={{ backgroundColor: "#5865f2" }}
+          />
+          <Button
+            label="See Previous Workouts"
+            onClick={goToPreviousWorkouts}
+            className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
+            style={{ backgroundColor: "#5865f2" }}
+          />
+          <Button
+            label="AI Advice"
+            className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
+            style={{ backgroundColor: "#5865f2" }}
+          />
+        </div>
 
-      {/* Logout button */}
-      <Button label="Log out" onClick={handleLogout} className="mt-4" />
+        {/* Logout button */}
+        <Button
+          label="Log Out"
+          onClick={handleLogout}
+          className="mt-4 w-full sm:w-auto text-white hover:bg-[#b3393c]"
+          style={{ backgroundColor: "#ed4245" }}
+        />
+      </div>
     </div>
   );
 }

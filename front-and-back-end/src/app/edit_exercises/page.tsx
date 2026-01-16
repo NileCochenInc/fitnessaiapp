@@ -1,4 +1,4 @@
-"use client"; // must be client component for interactivity
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -27,26 +27,21 @@ export default function Page() {
   const [editWorkoutMode, setEditWorkoutMode] = useState(false);
   const [newExerciseName, setNewExerciseName] = useState("");
 
-  // Temporary state for inputs
   const [editDate, setEditDate] = useState(workoutData.workout_date);
   const [editKind, setEditKind] = useState(workoutData.workout_kind);
 
   if (!workoutId) {
-    return <p>Error: No workout ID provided</p>;
+    return <p className="text-[#ed4245] text-center">Error: No workout ID provided</p>;
   }
 
-  // Fetch workout details and exercises on page load
   useEffect(() => {
     const fetchWorkoutAndExercises = async () => {
       if (!workoutId) return;
-
       setLoading(true);
       setError(null);
-
       try {
         const res = await fetch(`/api/exercises?workoutId=${workoutId}`);
         const data = await res.json();
-
         if (!res.ok) {
           setError(data.error || "Failed to fetch workout data");
         } else {
@@ -55,10 +50,8 @@ export default function Page() {
             workout_date: data.workout_date,
             workout_kind: data.workout_kind,
           });
-
           setEditDate(data.workout_date);
           setEditKind(data.workout_kind);
-
           setExercises(data.exercises || []);
         }
       } catch (err: any) {
@@ -72,13 +65,10 @@ export default function Page() {
     fetchWorkoutAndExercises();
   }, [workoutId]);
 
-  // Add new exercise
   const pushExercise = async () => {
     if (!workoutId || !newExerciseName.trim()) return;
-
     setLoading(true);
     setError(null);
-
     try {
       const res = await fetch("/api/exercises", {
         method: "POST",
@@ -95,7 +85,6 @@ export default function Page() {
       }
 
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.error || "Failed to add exercise");
       } else {
@@ -112,13 +101,10 @@ export default function Page() {
     }
   };
 
-  // Delete exercise
   const handleDelete = async (workout_exercise_id: number) => {
     if (!confirm("Are you sure you want to delete this exercise?")) return;
-
     setLoading(true);
     setError(null);
-
     try {
       const res = await fetch(
         `/api/exercises?workoutExerciseId=${workout_exercise_id}`,
@@ -143,18 +129,15 @@ export default function Page() {
     }
   };
 
-  // Save workout edits
   const handleSave = async () => {
     if (!workoutId) {
       setError("No workout ID available");
       return;
     }
-
     if (!editDate || !editKind) {
       setError("Both fields are required");
       return;
     }
-
     setLoading(true);
     setError(null);
 
@@ -174,7 +157,6 @@ export default function Page() {
       }
 
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.error || "Failed to save workout");
       } else {
@@ -203,29 +185,41 @@ export default function Page() {
   };
 
   return (
-    <div>
-      {loading && <p>Loading workouts...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+    <div className="min-h-screen p-4 bg-[#2f3136] text-[#dcddde]">
+      {loading && <p className="text-center">Loading workouts...</p>}
+      {error && <p className="text-red-500 text-center mb-2">{error}</p>}
 
       {!loading && !error && (
-        <div>
-          <div className="mb-4 flex items-center gap-2">
+        <div className="max-w-2xl mx-auto flex flex-col gap-4">
+
+          {/* Workout card */}
+          <div className="bg-[#36393f] p-4 rounded-xl shadow-lg flex flex-col gap-2">
             <h1 className="text-xl font-bold">
               {workoutData.workout_kind} workout on {workoutData.workout_date}
             </h1>
+
+            {/* Edit button always below title */}
             {!editWorkoutMode && (
-              <Button label="Edit" onClick={() => setEditWorkoutMode(true)} />
+              <div className="flex justify-center mt-2">
+                <Button
+                  label="Edit"
+                  onClick={() => setEditWorkoutMode(true)}
+                  className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full sm:w-auto"
+                />
+              </div>
             )}
           </div>
 
+          {/* Edit workout form */}
           {editWorkoutMode && (
-            <div className="mb-4">
+            <div className="bg-[#36393f] p-4 rounded-xl shadow-lg flex flex-col gap-2">
               <label htmlFor="editDate">Edit Date:</label>
               <input
                 id="editDate"
                 type="date"
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
+                className="p-2 rounded-lg bg-[#2f3136] border border-[#72767d] text-[#dcddde] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
               />
               <label htmlFor="editKind">Edit Kind:</label>
               <input
@@ -233,44 +227,69 @@ export default function Page() {
                 type="text"
                 value={editKind}
                 onChange={(e) => setEditKind(e.target.value)}
+                className="p-2 rounded-lg bg-[#2f3136] border border-[#72767d] text-[#dcddde] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
               />
-              <div className="flex gap-2 mt-2">
-                <Button label="Save" onClick={handleSave} />
-                <Button label="Cancel" onClick={handleCancel} />
+              <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                <Button
+                  label="Save"
+                  onClick={handleSave}
+                  className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full sm:w-auto"
+                />
+                <Button
+                  label="Cancel"
+                  onClick={handleCancel}
+                  className="bg-[#72767d] hover:bg-[#5b5d61] text-white p-2 rounded-lg w-full sm:w-auto"
+                />
               </div>
             </div>
           )}
 
-          {exercises.length === 0 && <p>No previous exercises yet.</p>}
-
-          <ul>
+          {/* Exercises list */}
+          <ul className="flex flex-col gap-2">
+            {exercises.length === 0 && (
+              <p className="text-center text-[#b9bbbe]">No previous exercises yet.</p>
+            )}
             {exercises.map((exercise) => (
               <ExerciseCard
                 key={exercise.workout_exercise_id}
                 exercise_id={exercise.exercise_id}
                 name={exercise.name}
-                onDelete={() => handleDelete(exercise.workout_exercise_id)}
-                onEdit={() => handleEdit(exercise.workout_exercise_id, exercise.name)}
+                onDelete={() =>
+                  handleDelete(exercise.workout_exercise_id)
+                }
+                onEdit={() =>
+                  handleEdit(exercise.workout_exercise_id, exercise.name)
+                }
               />
             ))}
           </ul>
+
+          {/* Add exercise form */}
+          <div className="bg-[#36393f] p-4 rounded-xl shadow-lg flex flex-col gap-2">
+            <h2 className="text-lg font-semibold">Add exercise</h2>
+            <input
+              type="text"
+              placeholder="Exercise name"
+              value={newExerciseName}
+              onChange={(e) => setNewExerciseName(e.target.value)}
+              className="p-2 rounded-lg bg-[#2f3136] border border-[#72767d] text-[#dcddde] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+            />
+            <div className="flex flex-col sm:flex-row gap-2 mt-2">
+              <Button
+                label="Add"
+                onClick={pushExercise}
+                className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full sm:w-auto"
+              />
+              <Button
+                label="Back to Previous Workouts"
+                onClick={() => router.push("/previous_workouts")}
+                className="bg-[#72767d] hover:bg-[#5b5d61] text-white p-2 rounded-lg w-full sm:w-auto"
+              />
+            </div>
+          </div>
+
         </div>
       )}
-
-      <h1 className="text-xl font-bold mb-4">Add exercise</h1>
-      <form>
-        <input
-          type="text"
-          placeholder="Exercise name"
-          value={newExerciseName}
-          onChange={(e) => setNewExerciseName(e.target.value)}
-        />
-      </form>
-      <Button label="Add" onClick={pushExercise} />
-      <Button
-        label="Back to Previous Workouts"
-        onClick={() => router.push("/previous_workouts")}
-      />
     </div>
   );
 }

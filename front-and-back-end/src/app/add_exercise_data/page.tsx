@@ -17,11 +17,11 @@ export default function Page() {
 
   // ---------- Handle missing params or unauthenticated ----------
   if (!workoutId || !exercise_name || !workout_exercise_id) {
-    return <p>Error: Missing parameters</p>;
+    return <p className="text-red-500">Error: Missing parameters</p>;
   }
 
   if (status === "loading") {
-    return <p>Loading session...</p>;
+    return <p className="text-center text-[#dcddde]">Loading session...</p>;
   }
 
   if (!session?.user?.id) {
@@ -29,7 +29,7 @@ export default function Page() {
     return null;
   }
 
-  const userId = session.user.id; // ✅ replace all hardcoded 1s
+  const userId = session.user.id;
 
   // ---------- State ----------
   const [exerciseName, setExerciseName] = useState(exercise_name);
@@ -58,7 +58,11 @@ export default function Page() {
           })),
         }));
 
-        setEntries(mappedData.length > 0 ? mappedData : [{ metrics: [{ metric: "", value: "", unit: "" }] }]);
+        setEntries(
+          mappedData.length > 0
+            ? mappedData
+            : [{ metrics: [{ metric: "", value: "", unit: "" }] }]
+        );
       } catch (err) {
         console.error(err);
         alert("Could not load exercise entries");
@@ -109,7 +113,8 @@ export default function Page() {
     setEntries(prev => prev.map((e, i) => (i === index ? updatedEntry : e)));
   };
 
-  const removeEntry = (index: number) => setEntries(prev => prev.filter((_, i) => i !== index));
+  const removeEntry = (index: number) =>
+    setEntries(prev => prev.filter((_, i) => i !== index));
 
   // ---------- Save All Entries ----------
   const pushExercise = async () => {
@@ -144,31 +149,48 @@ export default function Page() {
   };
 
   // ---------- Render ----------
-  if (loading) return <p>Loading entries...</p>;
+  if (loading)
+    return <p className="text-center text-[#dcddde]">Loading entries...</p>;
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#2f3136] p-4 text-[#dcddde] flex flex-col items-center">
       {/* Exercise name */}
-      {!isEditingName ? (
-        <div className="flex items-center gap-2 mb-4">
-          <h1 className="text-xl font-bold">{exerciseName}</h1>
-          <Button label="Edit" type="button" onClick={startEditExerciseName} />
-        </div>
-      ) : (
-        <div className="flex items-center gap-2 mb-4">
-          <input
-            className="border p-1 rounded"
-            value={draftExerciseName}
-            onChange={e => setDraftExerciseName(e.target.value)}
-          />
-          <Button label="Save" type="button" onClick={saveExerciseName} />
-          <Button label="Cancel" type="button" onClick={cancelEditExerciseName} />
-        </div>
-      )}
+      <div className="w-full max-w-2xl mb-4">
+        {!isEditingName ? (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-[#36393f] p-4 rounded-xl shadow-lg">
+            <h1 className="text-xl font-bold">{exerciseName}</h1>
+            <Button
+              label="Edit"
+              type="button"
+              onClick={startEditExerciseName}
+              className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full sm:w-auto"
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 bg-[#36393f] p-4 rounded-xl shadow-lg">
+            <input
+              className="p-2 rounded-lg border border-[#72767d] bg-[#2f3136] text-[#dcddde] w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+              value={draftExerciseName}
+              onChange={e => setDraftExerciseName(e.target.value)}
+            />
+            <Button
+              label="Save"
+              type="button"
+              onClick={saveExerciseName}
+              className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full sm:w-auto"
+            />
+            <Button
+              label="Cancel"
+              type="button"
+              onClick={cancelEditExerciseName}
+              className="bg-[#72767d] hover:bg-[#5b5d61] text-white p-2 rounded-lg w-full sm:w-auto"
+            />
+          </div>
+        )}
+      </div>
 
-      <h2 className="mb-2">Add data</h2>
-
-      <div>
+      {/* Entries */}
+      <div className="w-full max-w-2xl flex flex-col gap-4">
         {entries.map((entry, index) => (
           <EntryCard
             key={index}
@@ -178,17 +200,26 @@ export default function Page() {
             onRemoveEntry={removeEntry}
           />
         ))}
+
+        <Button
+          label="Add entry"
+          type="button"
+          onClick={addEntry}
+          className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full"
+        />
+
+        <Button
+          label="Save"
+          onClick={pushExercise}
+          className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full mt-2"
+        />
+
+        <Button
+          label="Back to Exercises"
+          onClick={() => router.push(`/edit_exercises?workoutid=${workoutId}`)}
+          className="bg-[#72767d] hover:bg-[#5b5d61] text-white p-2 rounded-lg w-full mt-2"
+        />
       </div>
-
-      <Button label="Add entry" type="button" onClick={addEntry} className="mt-2" />
-
-      <Button label="Save" onClick={pushExercise} className="mt-4" />
-
-      <Button
-        label="Back to Exercises"
-        onClick={() => router.push(`/edit_exercises?workoutid=${workoutId}`)}
-        className="mt-2"
-      />
     </div>
   );
 }

@@ -19,7 +19,6 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      // 1️⃣ Call your signup API
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,7 +32,6 @@ export default function SignupPage() {
         return;
       }
 
-      // 2️⃣ Auto-login the user via NextAuth
       const loginResult = await signIn("credentials", {
         redirect: false,
         email,
@@ -55,48 +53,59 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: "#2f3136" }}
+    >
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-full max-w-md"
+        className="bg-[#36393f] p-8 rounded-xl shadow-lg w-full max-w-md flex flex-col gap-4"
       >
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
+        <h1 className="text-3xl font-bold mb-4 text-center text-[#dcddde]">
+          Sign Up
+        </h1>
 
         {error && (
-          <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>
+          <div className="bg-[#ed4245] text-white p-2 mb-4 rounded text-center">
+            {error}
+          </div>
         )}
 
-        <label className="block mb-2 font-semibold">Username</label>
+        <label className="block mb-1 font-semibold text-[#dcddde]">Username</label>
         <input
           type="text"
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full p-3 mb-4 rounded bg-[#2f3136] text-[#dcddde] border border-[#72767d] placeholder-[#72767d] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+          placeholder="Enter your username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
 
-        <label className="block mb-2 font-semibold">Email</label>
+        <label className="block mb-1 font-semibold text-[#dcddde]">Email</label>
         <input
           type="email"
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full p-3 mb-4 rounded bg-[#2f3136] text-[#dcddde] border border-[#72767d] placeholder-[#72767d] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+          placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
 
-        <label className="block mb-2 font-semibold">Password</label>
+        <label className="block mb-1 font-semibold text-[#dcddde]">Password</label>
         <input
           type="password"
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full p-3 mb-4 rounded bg-[#2f3136] text-[#dcddde] border border-[#72767d] placeholder-[#72767d] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+          placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
 
-        <label className="block mb-2 font-semibold">Goal</label>
+        <label className="block mb-1 font-semibold text-[#dcddde]">Goal</label>
         <input
           type="text"
-          className="w-full p-2 mb-6 border rounded"
+          className="w-full p-3 mb-6 rounded bg-[#2f3136] text-[#dcddde] border border-[#72767d] placeholder-[#72767d] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+          placeholder="Enter your fitness goal"
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
           required
@@ -105,14 +114,14 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 disabled:bg-gray-400"
+          className="w-full bg-[#5865f2] hover:bg-[#4752c4] text-white p-3 rounded transition-colors duration-200 disabled:bg-gray-500"
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
 
-        <p className="text-center mt-4 text-sm">
+        <p className="text-center mt-4 text-sm text-[#b9bbbe]">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
+          <a href="/login" className="text-[#5865f2] hover:underline">
             Log In
           </a>
         </p>
