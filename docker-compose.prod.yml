@@ -1,14 +1,11 @@
-version: '3.9'
-
 services:
   server:
     build:
       context: ./front-and-back-end
       dockerfile: Dockerfile
+    image: nilecochen/fitnessaiapp:latest
     env_file:
       - ./front-and-back-end/.env.production
-    environment:
-      NODE_ENV: production
     ports:
       - "3000:3000"
     depends_on:
