@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react"; // <-- import signOut
 import Button from "../components/Button";
 
 export default function Page() {
@@ -16,26 +16,26 @@ export default function Page() {
     }
   }, [status, router]);
 
-  const goToAddWorkout = () => {
-    router.push("/add_workout");
+  const goToAddWorkout = () => router.push("/add_workout");
+  const goToPreviousWorkouts = () => router.push("/previous_workouts");
+
+  // Logout function
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/login" }); // redirects to login after logout
   };
 
-  const goToPreviousWorkouts = () => {
-    router.push("/previous_workouts");
-  };
+  if (status === "loading") return <p>Loading...</p>;
 
-  // While checking auth, show a loading message
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  // Authenticated users see the dashboard
   return (
-    <div>
+    <div className="p-4 flex flex-col gap-2">
       <p>Welcome {session?.user?.username}!</p>
+
       <Button label="Add workout" onClick={goToAddWorkout} />
       <Button label="See previous workouts" onClick={goToPreviousWorkouts} />
       <Button label="AI advice" />
+
+      {/* Logout button */}
+      <Button label="Log out" onClick={handleLogout} className="mt-4" />
     </div>
   );
 }

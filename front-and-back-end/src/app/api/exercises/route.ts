@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getExercisesForWorkout, getWorkoutMeta, addWorkoutExercise, deleteWorkoutExercise, editWorkoutExercise  } from "@/lib/exercises";
-
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // adjust path to your NextAuth config
+import { 
+  getExercisesForWorkout, 
+  getWorkoutMeta, 
+  addWorkoutExercise, 
+  deleteWorkoutExercise, 
+  editWorkoutExercise  
+} from "@/lib/exercises";
 
 /*
-response shape:
+Response shape:
 {
   workout_id: number;
   workout_date: string;
@@ -14,43 +21,31 @@ response shape:
   }[];
 }
 */
+
+// ==================== GET ====================
 export async function GET(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const userId = Number(session.user.id);
+
     const { searchParams } = new URL(req.url);
-
     const workoutIdParam = searchParams.get("workoutId");
-    const userIdParam = searchParams.get("userId");
 
-    // ─── Validate query params ─────────────────────────────
-    if (!workoutIdParam || !userIdParam) {
-      return NextResponse.json(
-        { error: "Missing workoutId or userId query parameter" },
-        { status: 400 }
-      );
+    if (!workoutIdParam) {
+      return NextResponse.json({ error: "Missing workoutId query parameter" }, { status: 400 });
     }
 
     const workoutId = Number(workoutIdParam);
-    const userId = Number(userIdParam);
-
-    if (
-      !Number.isInteger(workoutId) ||
-      workoutId <= 0 ||
-      !Number.isInteger(userId) ||
-      userId <= 0
-    ) {
-      return NextResponse.json(
-        { error: "Invalid workoutId or userId" },
-        { status: 400 }
-      );
+    if (!Number.isInteger(workoutId) || workoutId <= 0) {
+      return NextResponse.json({ error: "Invalid workoutId" }, { status: 400 });
     }
 
-    // ─── Fetch workout meta (throws if not found / unauthorized) ───
     const meta = await getWorkoutMeta(workoutId, userId);
-
-    // ─── Fetch exercises (empty array is valid) ───────────────────
     const exercises = await getExercisesForWorkout(workoutId, userId);
 
-    // ─── Combined response ────────────────────────────────────────
     return NextResponse.json(
       {
         workout_id: workoutId,
@@ -60,136 +55,89 @@ export async function GET(req: NextRequest) {
       },
       { status: 200 }
     );
-
   } catch (error: any) {
-    console.error("Error in GET /api/workout-details:", error);
-
+    console.error("Error in GET /api/exercises:", error);
     if (error.message === "Workout not found or unauthorized") {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 404 });
     }
-
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-
-
 // ==================== POST ====================
-// Add or attach an exercise to a workout
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { workoutId, name, userId } = body;
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = Number(session.user.id);
 
-    if (!workoutId || !name || !userId) {
-      return NextResponse.json(
-        { error: "Missing workoutId, name, or userId" },
-        { status: 400 }
-      );
+    const body = await req.json();
+    const { workoutId, name } = body;
+
+    if (!workoutId || !name) {
+      return NextResponse.json({ error: "Missing workoutId or name" }, { status: 400 });
     }
 
-    // future auth: replace `userId` with session-derived value
     const exercise = await addWorkoutExercise(workoutId, { name }, userId);
-
     return NextResponse.json(exercise, { status: 201 });
   } catch (err: any) {
     console.error("Error in POST /api/exercises:", err);
-    return NextResponse.json(
-      { error: err.message || "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
   }
 }
 
 // ==================== DELETE ====================
-// Remove an exercise from a workout
 export async function DELETE(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = Number(session.user.id);
+
     const { searchParams } = new URL(req.url);
     const workoutExerciseIdParam = searchParams.get("workoutExerciseId");
-    const userIdParam = searchParams.get("userId");
 
-    if (!workoutExerciseIdParam || !userIdParam) {
-      return NextResponse.json(
-        { error: "Missing workoutExerciseId or userId" },
-        { status: 400 }
-      );
+    if (!workoutExerciseIdParam) {
+      return NextResponse.json({ error: "Missing workoutExerciseId query parameter" }, { status: 400 });
     }
 
     const workoutExerciseId = Number(workoutExerciseIdParam);
-    const userId = Number(userIdParam);
-
-    if (!Number.isInteger(workoutExerciseId) || !Number.isInteger(userId)) {
-      return NextResponse.json({ error: "Invalid ID(s)" }, { status: 400 });
+    if (!Number.isInteger(workoutExerciseId)) {
+      return NextResponse.json({ error: "Invalid workoutExerciseId" }, { status: 400 });
     }
 
-    // future auth: replace `userId` with session-derived value
     await deleteWorkoutExercise(workoutExerciseId, userId);
-
-    return NextResponse.json(
-      { message: "Exercise removed from workout" },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "Exercise removed from workout" }, { status: 200 });
   } catch (err: any) {
     console.error("Error in DELETE /api/exercises:", err);
-    return NextResponse.json(
-      { error: err.message || "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
   }
 }
 
-
 // ==================== PATCH ====================
-// Edit a workout exercise (name and/or note)
 export async function PATCH(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { workoutExerciseId, name, note, userId } = body;
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = Number(session.user.id);
 
-    // ─── Validate required fields ─────────────────────────────
-    if (!workoutExerciseId || !userId) {
-      return NextResponse.json(
-        { error: "Missing workoutExerciseId or userId" },
-        { status: 400 }
-      );
+    const body = await req.json();
+    const { workoutExerciseId, name, note } = body;
+
+    if (!workoutExerciseId) {
+      return NextResponse.json({ error: "Missing workoutExerciseId" }, { status: 400 });
     }
 
     if (!name && note === undefined) {
-      return NextResponse.json(
-        { error: "Nothing to update: provide name or note" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Nothing to update: provide name or note" }, { status: 400 });
     }
 
-    // ─── Call library function to update ─────────────────────
-    // future auth: replace `userId` with session-derived value
-    const updated = await editWorkoutExercise(
-      Number(workoutExerciseId),
-      { name, note },
-      Number(userId)
-    );
-
+    const updated = await editWorkoutExercise(Number(workoutExerciseId), { name, note }, userId);
     return NextResponse.json(updated, { status: 200 });
   } catch (err: any) {
     console.error("Error in PATCH /api/exercises:", err);
-
     if (err.message === "Workout exercise not found or unauthorized") {
-      return NextResponse.json(
-        { error: err.message },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: err.message }, { status: 404 });
     }
-
-    return NextResponse.json(
-      { error: err.message || "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
   }
 }

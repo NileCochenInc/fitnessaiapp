@@ -2,6 +2,7 @@
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Button from "../../components/Button";
 import EntryCard, { Entry } from "../../components/EntryCard";
 
@@ -12,10 +13,25 @@ export default function Page() {
   const exercise_name = searchParams.get("name");
   const workoutId = searchParams.get("workoutId");
 
+  const { data: session, status } = useSession();
+
+  // ---------- Handle missing params or unauthenticated ----------
   if (!workoutId || !exercise_name || !workout_exercise_id) {
     return <p>Error: Missing parameters</p>;
   }
 
+  if (status === "loading") {
+    return <p>Loading session...</p>;
+  }
+
+  if (!session?.user?.id) {
+    router.push("/api/auth/signin");
+    return null;
+  }
+
+  const userId = session.user.id; // ✅ replace all hardcoded 1s
+
+  // ---------- State ----------
   const [exerciseName, setExerciseName] = useState(exercise_name);
   const [draftExerciseName, setDraftExerciseName] = useState(exercise_name);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -23,19 +39,20 @@ export default function Page() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  /* ---------- Fetch entries on page load ---------- */
+  // ---------- Fetch entries on page load ----------
   useEffect(() => {
     async function fetchEntries() {
       try {
-        const res = await fetch(`/api/exercise_data?workoutExerciseId=${workout_exercise_id}&userId=1`);
+        const res = await fetch(
+          `/api/exercise_data?workoutExerciseId=${workout_exercise_id}&userId=${userId}`
+        );
         if (!res.ok) throw new Error("Failed to fetch entries");
         const data = await res.json();
 
-        // Map backend -> frontend
         const mappedData: Entry[] = data.entries.map((entry: any) => ({
           ...entry,
           metrics: entry.metrics.map((metric: any) => ({
-            metric: metric.key, // display name
+            metric: metric.key,
             value: metric.value_number ?? metric.value_text ?? "",
             unit: metric.unit ?? "",
           })),
@@ -50,10 +67,9 @@ export default function Page() {
       }
     }
     fetchEntries();
-  }, [workout_exercise_id]);
+  }, [workout_exercise_id, userId]);
 
-  /* ---------- Exercise Name Actions ---------- */
-
+  // ---------- Exercise Name Actions ----------
   const startEditExerciseName = () => {
     setDraftExerciseName(exerciseName);
     setIsEditingName(true);
@@ -65,7 +81,6 @@ export default function Page() {
   };
 
   const saveExerciseName = async () => {
-    if (!workout_exercise_id) return;
     try {
       const res = await fetch("/api/exercises", {
         method: "PATCH",
@@ -73,7 +88,7 @@ export default function Page() {
         body: JSON.stringify({
           workoutExerciseId: Number(workout_exercise_id),
           name: draftExerciseName,
-          userId: 1,
+          userId,
         }),
       });
       if (!res.ok) throw new Error("Failed to update exercise name");
@@ -86,8 +101,7 @@ export default function Page() {
     }
   };
 
-  /* ---------- Entry Actions ---------- */
-
+  // ---------- Entry Actions ----------
   const addEntry = () =>
     setEntries(prev => [...prev, { metrics: [{ metric: "", value: "", unit: "" }] }]);
 
@@ -97,35 +111,30 @@ export default function Page() {
 
   const removeEntry = (index: number) => setEntries(prev => prev.filter((_, i) => i !== index));
 
-  /* ---------- Save All Entries ---------- */
-
+  // ---------- Save All Entries ----------
   const pushExercise = async () => {
-    if (!workout_exercise_id) return;
     try {
-      // <-- MAPPING GOES HERE
       const mappedEntries = entries.map(entry => ({
         ...entry,
         metrics: entry.metrics.map(metric => ({
-          key: metric.metric,             // backend expects 'key'
-          value_number: Number(metric.value), // numeric input
-          value_text: metric.metric,      // text label
+          key: metric.metric,
+          value_number: Number(metric.value),
+          value_text: metric.value,
           unit: metric.unit,
         })),
       }));
 
-
-
-      //send mapped entries to the backend
       const res = await fetch("/api/exercise_data", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workoutExerciseId: Number(workout_exercise_id),
-          userId: 1,
+          userId,
           name: exerciseName,
           entries: mappedEntries,
         }),
       });
+
       if (!res.ok) throw new Error("Failed to save exercise entries");
       alert("Exercise saved!");
     } catch (err) {
@@ -134,8 +143,7 @@ export default function Page() {
     }
   };
 
-  /* ---------- Render ---------- */
-
+  // ---------- Render ----------
   if (loading) return <p>Loading entries...</p>;
 
   return (
