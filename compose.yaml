@@ -44,16 +44,6 @@ services:
     ports:
       - "5434:5432"
 
-  ai:
-    build:
-      context: ./ai-service #relative directory to python file
-    restart: always
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/fitnessdb
-    depends_on:
-      - postgres
-    ports:
-      - "8000:8000" #expose api port
 
 
 #create image file system

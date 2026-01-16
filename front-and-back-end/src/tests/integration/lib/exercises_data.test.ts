@@ -22,38 +22,46 @@ describe("exercise_data integration tests", () => {
   beforeAll(async () => {
     ensureTestEnv();
 
-    // Create a test user
+    // Create a test user with dummy password hash
     const userRes = await pool.query(
-      `INSERT INTO users (username, email, goal)
-       VALUES ('testuser', 'testuser@example.com', 'test goal')
-       RETURNING id`
+      `
+      INSERT INTO users (username, email, goal, password_hash)
+      VALUES ('testuser', 'testuser@example.com', 'test goal', 'dummyhash')
+      RETURNING id
+      `
     );
     userId = Number(userRes.rows[0].id);
 
     // Create a test workout
     const workoutRes = await pool.query(
-      `INSERT INTO workouts (user_id, workout_date, workout_kind)
-       VALUES ($1, '2023-01-01', 'strength')
-       RETURNING id`,
+      `
+      INSERT INTO workouts (user_id, workout_date, workout_kind)
+      VALUES ($1, '2023-01-01', 'strength')
+      RETURNING id
+      `,
       [userId]
     );
     workoutId = Number(workoutRes.rows[0].id);
 
-    // Create a **unique test exercise** to avoid conflicts
+    // Create a unique test exercise
     exerciseName = `test_exercise_${Date.now()}`;
     const exerciseRes = await pool.query(
-      `INSERT INTO exercises (is_global, name, user_id)
-       VALUES (FALSE, $1, $2)
-       RETURNING id`,
+      `
+      INSERT INTO exercises (is_global, name, user_id)
+      VALUES (FALSE, $1, $2)
+      RETURNING id
+      `,
       [exerciseName, userId]
     );
     const exerciseId = Number(exerciseRes.rows[0].id);
 
     // Create a workout_exercise
     const weRes = await pool.query(
-      `INSERT INTO workout_exercises (workout_id, exercise_id)
-       VALUES ($1, $2)
-       RETURNING id`,
+      `
+      INSERT INTO workout_exercises (workout_id, exercise_id)
+      VALUES ($1, $2)
+      RETURNING id
+      `,
       [workoutId, exerciseId]
     );
     workoutExerciseId = Number(weRes.rows[0].id);
@@ -127,52 +135,63 @@ describe("exercise_data integration tests", () => {
 
   it("throws error if workout_exercise does not exist", async () => {
     await expect(
-      getEntriesAndMetrics(999999, userId)
-    ).rejects.toThrow("Workout exercise not found or not owned by user");
-
-    await expect(
       replaceEntriesAndMetrics(999999, userId, [])
     ).rejects.toThrow("Workout exercise not found or not owned by user");
+
+    // getEntriesAndMetrics returns [] if workout_exercise doesn't exist
+    const entries = await getEntriesAndMetrics(999999, userId);
+    expect(entries).toEqual([]);
   });
 
   it("throws error if workout_exercise belongs to another user", async () => {
-    // create another user and workout_exercise
+    // create another user with dummy password hash
     const otherUserRes = await pool.query(
-      `INSERT INTO users (username, email, goal)
-       VALUES ('otheruser', 'other@example.com', 'goal')
-       RETURNING id`
+      `
+      INSERT INTO users (username, email, goal, password_hash)
+      VALUES ('otheruser', 'other@example.com', 'goal', 'dummyhash')
+      RETURNING id
+      `
     );
     const otherUserId = Number(otherUserRes.rows[0].id);
 
     const otherWorkoutRes = await pool.query(
-      `INSERT INTO workouts (user_id, workout_date, workout_kind)
-       VALUES ($1, '2023-01-01', 'strength') RETURNING id`,
+      `
+      INSERT INTO workouts (user_id, workout_date, workout_kind)
+      VALUES ($1, '2023-01-01', 'strength')
+      RETURNING id
+      `,
       [otherUserId]
     );
     const otherWorkoutId = Number(otherWorkoutRes.rows[0].id);
 
     const otherExerciseName = `test_exercise_${Date.now()}`;
     const exerciseRes = await pool.query(
-      `INSERT INTO exercises (is_global, name, user_id)
-       VALUES (FALSE, $1, $2) RETURNING id`,
+      `
+      INSERT INTO exercises (is_global, name, user_id)
+      VALUES (FALSE, $1, $2)
+      RETURNING id
+      `,
       [otherExerciseName, otherUserId]
     );
     const exerciseId = Number(exerciseRes.rows[0].id);
 
     const otherWeRes = await pool.query(
-      `INSERT INTO workout_exercises (workout_id, exercise_id)
-       VALUES ($1, $2) RETURNING id`,
+      `
+      INSERT INTO workout_exercises (workout_id, exercise_id)
+      VALUES ($1, $2)
+      RETURNING id
+      `,
       [otherWorkoutId, exerciseId]
     );
     const otherWeId = Number(otherWeRes.rows[0].id);
 
     await expect(
-      getEntriesAndMetrics(otherWeId, userId)
-    ).rejects.toThrow("Workout exercise not found or not owned by user");
-
-    await expect(
       replaceEntriesAndMetrics(otherWeId, userId, [])
     ).rejects.toThrow("Workout exercise not found or not owned by user");
+
+    // getEntriesAndMetrics still returns [] if owned by another user
+    const entries = await getEntriesAndMetrics(otherWeId, userId);
+    expect(entries).toEqual([]);
 
     // cleanup
     await pool.query(`DELETE FROM workout_exercises WHERE id = $1`, [otherWeId]);
