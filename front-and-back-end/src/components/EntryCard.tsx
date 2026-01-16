@@ -42,33 +42,49 @@ export default function EntryCard({ entry, index, onUpdateEntry, onRemoveEntry }
       <h3 className="font-semibold mb-2">Entry {index + 1}</h3>
 
       {entry.metrics.map((metric, metricIndex) => (
-        <div key={metricIndex} className="flex gap-2 mb-2 items-center">
-          <input
-            className="border p-1 rounded"
-            type="text"
-            placeholder="Metric"
-            value={metric.metric}
-            onChange={e => updateMetric(metricIndex, "metric", e.target.value)}
+        <div key={metricIndex} className="flex gap-3 mb-3 items-end">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium">Metric</label>
+            <input
+              className="border p-1 rounded w-32"
+              type="text"
+              placeholder="e.g. weight"
+              value={metric.metric}
+              onChange={e => updateMetric(metricIndex, "metric", e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium">Value</label>
+            <input
+              className="border p-1 rounded w-20"
+              type="text"
+              placeholder="e.g. 10"
+              value={metric.value}
+              onChange={e => updateMetric(metricIndex, "value", e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium">Unit</label>
+            <input
+              className="border p-1 rounded w-20"
+              type="text"
+              placeholder="e.g. lbs"
+              value={metric.unit}
+              onChange={e => updateMetric(metricIndex, "unit", e.target.value)}
+            />
+          </div>
+
+          <Button
+            label="– metric"
+            type="button"
+            onClick={() => removeMetric(metricIndex)}
           />
-          <input
-            className="border p-1 rounded"
-            type="text"
-            placeholder="Value"
-            value={metric.value}
-            onChange={e => updateMetric(metricIndex, "value", e.target.value)}
-          />
-          <input
-            className="border p-1 rounded"
-            type="text"
-            placeholder="Unit"
-            value={metric.unit}
-            onChange={e => updateMetric(metricIndex, "unit", e.target.value)}
-          />
-          <Button label="– metric" type="button" onClick={() => removeMetric(metricIndex)} />
         </div>
       ))}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 mt-2">
         <Button label="Add metric" type="button" onClick={addMetric} />
         <Button label="Remove entry" type="button" onClick={() => onRemoveEntry(index)} />
       </div>

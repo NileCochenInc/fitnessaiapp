@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../components/Button";
 import EntryCard, { Entry } from "../../components/EntryCard";
 
@@ -20,9 +20,37 @@ export default function Page() {
   const [draftExerciseName, setDraftExerciseName] = useState(exercise_name);
   const [isEditingName, setIsEditingName] = useState(false);
 
-  const [entries, setEntries] = useState<Entry[]>([
-    { metrics: [{ metric: "", value: "", unit: "" }] },
-  ]);
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  /* ---------- Fetch entries on page load ---------- */
+  useEffect(() => {
+    async function fetchEntries() {
+      try {
+        const res = await fetch(`/api/exercise_data?workoutExerciseId=${workout_exercise_id}&userId=1`);
+        if (!res.ok) throw new Error("Failed to fetch entries");
+        const data = await res.json();
+
+        // Map backend -> frontend
+        const mappedData: Entry[] = data.entries.map((entry: any) => ({
+          ...entry,
+          metrics: entry.metrics.map((metric: any) => ({
+            metric: metric.key, // display name
+            value: metric.value_number ?? metric.value_text ?? "",
+            unit: metric.unit ?? "",
+          })),
+        }));
+
+        setEntries(mappedData.length > 0 ? mappedData : [{ metrics: [{ metric: "", value: "", unit: "" }] }]);
+      } catch (err) {
+        console.error(err);
+        alert("Could not load exercise entries");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEntries();
+  }, [workout_exercise_id]);
 
   /* ---------- Exercise Name Actions ---------- */
 
@@ -38,9 +66,8 @@ export default function Page() {
 
   const saveExerciseName = async () => {
     if (!workout_exercise_id) return;
-
     try {
-      const response = await fetch("/api/exercises", {
+      const res = await fetch("/api/exercises", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -49,10 +76,8 @@ export default function Page() {
           userId: 1,
         }),
       });
-
-      if (!response.ok) throw new Error("Failed to update exercise name");
-
-      const updated = await response.json();
+      if (!res.ok) throw new Error("Failed to update exercise name");
+      const updated = await res.json();
       setExerciseName(updated.name);
       setIsEditingName(false);
     } catch (err) {
@@ -63,7 +88,8 @@ export default function Page() {
 
   /* ---------- Entry Actions ---------- */
 
-  const addEntry = () => setEntries(prev => [...prev, { metrics: [{ metric: "", value: "", unit: "" }] }]);
+  const addEntry = () =>
+    setEntries(prev => [...prev, { metrics: [{ metric: "", value: "", unit: "" }] }]);
 
   const updateEntry = (index: number, updatedEntry: Entry) => {
     setEntries(prev => prev.map((e, i) => (i === index ? updatedEntry : e)));
@@ -73,12 +99,44 @@ export default function Page() {
 
   /* ---------- Save All Entries ---------- */
 
-  const pushExercise = () => {
-    console.log(entries);
-    // send entries to backend
+  const pushExercise = async () => {
+    if (!workout_exercise_id) return;
+    try {
+      // <-- MAPPING GOES HERE
+      const mappedEntries = entries.map(entry => ({
+        ...entry,
+        metrics: entry.metrics.map(metric => ({
+          key: metric.metric,             // backend expects 'key'
+          value_number: Number(metric.value), // numeric input
+          value_text: metric.metric,      // text label
+          unit: metric.unit,
+        })),
+      }));
+
+
+
+      //send mapped entries to the backend
+      const res = await fetch("/api/exercise_data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workoutExerciseId: Number(workout_exercise_id),
+          userId: 1,
+          name: exerciseName,
+          entries: mappedEntries,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to save exercise entries");
+      alert("Exercise saved!");
+    } catch (err) {
+      console.error(err);
+      alert("Could not save exercise entries");
+    }
   };
 
   /* ---------- Render ---------- */
+
+  if (loading) return <p>Loading entries...</p>;
 
   return (
     <div>

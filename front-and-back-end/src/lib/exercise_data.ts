@@ -19,7 +19,8 @@ export interface EntryWithMetrics {
 
 /**
  * Fetch all entries and associated metrics for a given workout_exercise
- * Only returns entries if the workout_exercise belongs to the user
+ * If no entries exist, returns an empty array
+ * If the workout_exercise row does not exist, optionally create it or just return empty array
  */
 export async function getEntriesAndMetrics(
   workoutExerciseId: number,
@@ -27,7 +28,7 @@ export async function getEntriesAndMetrics(
 ): Promise<EntryWithMetrics[]> {
   const client = await pool.connect();
   try {
-    // Verify ownership
+    // Check if workout_exercise exists for this user
     const weRes = await client.query(
       `
       SELECT we.id
@@ -38,8 +39,10 @@ export async function getEntriesAndMetrics(
       [workoutExerciseId, userId]
     );
 
-    if (weRes.rowCount === 0)
-      throw new Error('Workout exercise not found or not owned by user');
+    // If workout_exercise doesn't exist, return empty array instead of throwing
+    if (weRes.rowCount === 0) {
+      return [];
+    }
 
     // Fetch entries
     const entriesRes = await client.query(
@@ -53,7 +56,7 @@ export async function getEntriesAndMetrics(
     );
 
     const entries = entriesRes.rows;
-    if (entries.length === 0) return [];
+    if (entries.length === 0) return []; // no entries yet → return []
 
     // Fetch metrics for all entries
     const entryIds = entries.map(e => e.entry_id);
@@ -88,7 +91,6 @@ export async function getEntriesAndMetrics(
     client.release();
   }
 }
-
 /**
  * Replace all entries and metrics for a workout_exercise
  * Only operates if the workout_exercise belongs to the user
@@ -97,9 +99,10 @@ export async function replaceEntriesAndMetrics(
   workoutExerciseId: number,
   userId: number,
   entries: {
-    entry_index: number;
+    entry_index?: number; // optional
     metrics: {
-      key: string;
+      key?: string;        // optional, in case frontend uses 'metric' instead
+      metric?: string;     // fallback for frontend
       value_number?: number;
       value_text?: string;
       unit?: string;
@@ -149,7 +152,13 @@ export async function replaceEntriesAndMetrics(
 
     const result: EntryWithMetrics[] = [];
 
-    for (const entry of entries) {
+    // Insert new entries and metrics
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+
+      // Assign entry_index automatically if missing
+      const entryIndex = entry.entry_index ?? i;
+
       // Insert entry
       const entryRes = await client.query(
         `
@@ -157,13 +166,17 @@ export async function replaceEntriesAndMetrics(
         VALUES ($1, $2)
         RETURNING id AS entry_id, entry_index
         `,
-        [workoutExerciseId, entry.entry_index]
+        [workoutExerciseId, entryIndex]
       );
       const newEntry = entryRes.rows[0];
 
       const entryMetrics: EntryMetric[] = [];
 
       for (const metric of entry.metrics) {
+        // Use metric.key if present, else fallback to metric.metric
+        const metricKey = (metric.key ?? metric.metric ?? "").trim();
+        if (!metricKey) throw new Error("Metric key is missing");
+
         // Check if metric_definition exists (global or user-specific)
         const metricRes = await client.query(
           `
@@ -171,12 +184,12 @@ export async function replaceEntriesAndMetrics(
           WHERE key = $1 AND (is_global = TRUE OR user_id = $2)
           LIMIT 1
           `,
-          [metric.key, userId]
+          [metricKey, userId]
         );
 
         let metricId: number;
 
-        if ((metricRes.rowCount ?? 0) > 0) {
+        if (metricRes.rowCount! > 0) {
           metricId = metricRes.rows[0].id;
         } else {
           // Create new user-specific metric_definition
@@ -186,7 +199,7 @@ export async function replaceEntriesAndMetrics(
             VALUES ($1, $2, FALSE)
             RETURNING id
             `,
-            [userId, metric.key]
+            [userId, metricKey]
           );
           metricId = insertMetricRes.rows[0].id;
         }
@@ -208,7 +221,7 @@ export async function replaceEntriesAndMetrics(
 
         entryMetrics.push({
           metric_id: metricId,
-          key: metric.key,
+          key: metricKey,
           value_number: metric.value_number,
           value_text: metric.value_text,
           unit: metric.unit,
