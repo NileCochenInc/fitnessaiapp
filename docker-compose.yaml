@@ -3,6 +3,7 @@ services:
   server:
     build:
       context: ./front-and-back-end
+      dockerfile: Dockerfile.dev
     environment:
       NODE_ENV: production
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/fitnessdb

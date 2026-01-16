@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  server:
+    build:
+      context: ./front-and-back-end
+      dockerfile: Dockerfile
+    env_file:
+      - ./front-and-back-end/.env.production
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    restart: always
+
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fitnessdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+
+volumes:
+  db-data:

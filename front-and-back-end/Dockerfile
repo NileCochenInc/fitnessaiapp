@@ -1,20 +1,40 @@
-# syntax=docker/dockerfile:1
-FROM node:20-alpine
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install pnpm globally
+# Install pnpm
 RUN npm install -g pnpm
 
-# Copy package files and install deps
+# Copy package files and install ALL dependencies (dev + prod)
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
-# Copy the rest of the code
+# Copy source code
 COPY . .
 
-# Expose dev port
+# Build Next.js app
+RUN pnpm build
+
+# Stage 2: Production image
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy only production dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy built Next.js files from builder
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./
+
+# Expose port
 EXPOSE 3000
 
-# Start Next.js in dev mode for hot reload
-CMD ["pnpm", "dev"]
+# Start production server
+CMD ["pnpm", "start"]
