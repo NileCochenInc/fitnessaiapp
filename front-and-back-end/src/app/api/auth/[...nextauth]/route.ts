@@ -1,6 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import pool from "@/lib/db"; // default import
 
@@ -51,16 +52,77 @@ export const authOptions: AuthOptions = {
         };
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      allowDangerousEmailAccountLinking: true,
+    }),
   ],
   session: {
     strategy: "jwt",
   },
   callbacks: {
+    // SignIn callback: handle user creation/lookup for OAuth providers
+    async signIn({ user, account }: { user: any; account: any }) {
+      if (account?.provider === "google") {
+        // Check if user exists by google_id
+        const result = await pool.query(
+          `SELECT id FROM users WHERE google_id = $1`,
+          [account.providerAccountId]
+        );
+
+        if (result.rows.length > 0) {
+          // User exists, continue with sign in
+          return true;
+        }
+
+        // Check if email exists
+        const emailResult = await pool.query(
+          `SELECT id FROM users WHERE email = $1`,
+          [user.email]
+        );
+
+        if (emailResult.rows.length > 0) {
+          // Email exists, link Google to existing account
+          await pool.query(
+            `UPDATE users SET google_id = $1, provider = 'google' WHERE email = $2`,
+            [account.providerAccountId, user.email]
+          );
+          return true;
+        }
+
+        // Create new user from Google profile
+        const username = user.name?.replace(/\s+/g, "_").toLowerCase() || user.email.split("@")[0];
+        try {
+          await pool.query(
+            `INSERT INTO users (username, email, google_id, provider, goal)
+             VALUES ($1, $2, $3, $4, $5)`,
+            [username, user.email, account.providerAccountId, "google", ""]
+          );
+          return true;
+        } catch (error) {
+          console.error("Error creating user:", error);
+          return false;
+        }
+      }
+      return true;
+    },
     // JWT callback runs on login and token refresh
-    async jwt({ token, user }: { token: JWT & any; user?: any }) {
+    async jwt({ token, user, account }: { token: JWT & any; user?: any; account?: any }) {
       if (user) {
         token.userId = user.id;
-        token.username = user.username; // store username in JWT
+        token.username = user.username;
+      }
+      // If signing in with Google, fetch user data from DB
+      if (account?.provider === "google" && !user?.username) {
+        const result = await pool.query(
+          `SELECT id, username FROM users WHERE email = $1`,
+          [token.email]
+        );
+        if (result.rows[0]) {
+          token.userId = result.rows[0].id.toString();
+          token.username = result.rows[0].username;
+        }
       }
       return token;
     },

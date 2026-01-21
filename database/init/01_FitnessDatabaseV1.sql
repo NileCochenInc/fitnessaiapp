@@ -4,7 +4,9 @@ CREATE TABLE users (
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     goal TEXT NOT NULL,
-    password_hash TEXT NOT NULL
+    password_hash TEXT,
+    google_id VARCHAR(255) UNIQUE,
+    provider VARCHAR(50)
 );
 
 --period of athletic work
