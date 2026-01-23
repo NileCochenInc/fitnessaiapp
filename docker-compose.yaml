@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/fitnessdb
     volumes:
       - ./front-and-back-end:/app
       - /app/node_modules # to avoid overwriting container node_modules
@@ -15,35 +14,39 @@ services:
     depends_on: #ensure next.js app only launches after database
       - postgres
     env_file:
-      - ./front-and-back-end/.env
+      - ./.env
   
   #production database
   postgres:
     image: postgres:16
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: fitnessdb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - db-data:/var/lib/postgresql/data #where database files are stored in container
       - ./database/init:/docker-entrypoint-initdb.d #map init files to entry point
     ports:
       - "5433:5432" #docker port 5432 to local port 5433
+    env_file:
+      - ./.env
 
   #test database
   postgres-test:
     image: postgres:16
     profiles: ["test"]
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: fitnessdb_test
+      POSTGRES_USER: ${POSTGRES_USER_TEST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST}
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
     volumes:
       - db-data-test:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
     ports:
       - "5434:5432"
+    env_file:
+      - ./.env
 
 
 

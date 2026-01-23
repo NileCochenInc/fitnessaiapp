@@ -25,5 +25,17 @@ docker compose --profile test up -d
 Stop test database
 docker compose --profile test down
 
-Run tests
-pnpm run test
+Run unit tests
+pnpm run test:unit
+
+Run frontend tests
+pnpm run test:frontend
+
+Run integration tests
+docker compose exec server pnpm run test:integration
+
+Run production service and database:
+docker compose -f docker-compose.prod.yml up -d
+
+build production service and database:
+docker compose -f docker-compose.prod.yml up -d --build

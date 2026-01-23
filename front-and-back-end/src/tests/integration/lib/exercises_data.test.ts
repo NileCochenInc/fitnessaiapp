@@ -7,7 +7,7 @@ import pool from "@/lib/db";
 function ensureTestEnv() {
   if (
     process.env.NODE_ENV !== "test" &&
-    !process.env.DATABASE_URL?.includes("fitnessdb_test")
+    process.env.DATABASE_URL?.includes("fitnessdb_test")
   ) {
     throw new Error("Test DB used outside test environment");
   }

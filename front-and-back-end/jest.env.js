@@ -1,10 +1,9 @@
 const path = require("path");
 const dotenv = require("dotenv");
 
-const envFile = process.env.NODE_ENV === "test" ? ".env.test" : ".env";
-
+// Load from root .env file
 dotenv.config({
-  path: path.resolve(__dirname, envFile),
+  path: path.resolve(__dirname, "../", ".env"),
 });
 
-console.log(`[dotenv] loaded env from ${envFile}`);
+console.log(`[dotenv] loaded env from root .env`);
