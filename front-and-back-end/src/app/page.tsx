@@ -50,11 +50,13 @@ export default function Page() {
             className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
             style={{ backgroundColor: "#5865f2" }}
           />
+
+          {/*}
           <Button
             label="AI Advice"
             className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
             style={{ backgroundColor: "#5865f2" }}
-          />
+          />*/}
         </div>
 
         {/* Logout button */}

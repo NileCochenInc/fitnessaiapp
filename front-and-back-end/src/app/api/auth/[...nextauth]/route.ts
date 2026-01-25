@@ -18,7 +18,7 @@ declare module "next-auth" {
   }
 }
 
-export const authOptions: AuthOptions = {
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -135,8 +135,9 @@ export const authOptions: AuthOptions = {
       return session;
     },
   },
+  trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
-};
+} as AuthOptions & { trustHost: boolean };
 
 const handler = NextAuth(authOptions);
 
