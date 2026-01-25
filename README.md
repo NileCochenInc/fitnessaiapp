@@ -1,6 +1,6 @@
-# 💪 Fitness Helper V2
+# 💪 Fitness Ai App
 
-A full-stack fitness journal application enabling users to track workouts, log exercises with custom metrics, and monitor progress toward personal fitness goals. Built for UofT Hacks 13.
+A full-stack fitness journal application enabling users to track workouts, log exercises with custom metrics, and monitor progress toward personal fitness goals.
 
 ## Features
 
@@ -13,23 +13,23 @@ A full-stack fitness journal application enabling users to track workouts, log e
 
 ## Tech Stack
 
-**Frontend & Full-Stack:**
+**Frontend:**
 - Next.js 16 with React 19 & TypeScript
 - Tailwind CSS 4 for styling
 - NextAuth.js 4 for authentication
 
 **Backend & Database:**
-- PostgreSQL 16 with Node.js (pg driver)
+- Next.js 16 with Node.js & TypeScript
+- PostgreSQL 16
 - Zod 4.3 for schema validation
 - Bcrypt 6 for password hashing
 
 **DevOps & Testing:**
 - Docker & Docker Compose (development & production)
 - Jest 30 with Testing Library (unit, integration, frontend tests)
-- ESLint 9 for code quality
 
 **Deployment:**
-- Docker Hub (multi-platform: linux/amd64, linux/arm64)
+- Docker Hub
 - Production-ready PostgreSQL volumes
 
 ## Quick Start
@@ -42,7 +42,7 @@ A full-stack fitness journal application enabling users to track workouts, log e
 ### Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/NileCochenInc/fitnessaiapp.git
 cd fitness-ai-app
 
 # Install dependencies
@@ -96,10 +96,10 @@ pnpm run lint         # Run ESLint
 ```
 front-and-back-end/
 ├── src/
-│   ├── app/                    # Next.js app router (pages & API routes)
+│   ├── app/                   # Next.js app router (pages & API routes)
 │   │   ├── api/               # API endpoints
 │   │   ├── login/             # Auth pages
-│   │   ├── signup/
+│   │   ├── signup/           
 │   │   ├── add_workout/       # Workout creation
 │   │   ├── add_exercise_data/ # Exercise logging
 │   │   ├── edit_exercises/    # Exercise management
@@ -114,32 +114,6 @@ front-and-back-end/
 └── package.json
 ```
 
-## API Endpoints
-
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| POST | `/api/signup` | User registration |
-| GET/POST | `/api/workouts` | Workout CRUD operations |
-| GET/POST | `/api/exercises` | Exercise CRUD operations |
-| POST | `/api/exercise_data` | Log exercise entries & metrics |
-| * | `/api/auth/[...nextauth]` | NextAuth authentication routes |
-
-## Database Schema
-
-**Core Tables:**
-- **users** — User accounts with email, password hash, Google OAuth ID, and fitness goal
-- **workouts** — Workout sessions with date and type (strength/rowing/mixed)
-- **exercises** — Exercise definitions (global or user-created)
-- **workout_exercises** — Join table linking exercises to workouts
-- **entries** — Individual set/rep instances within a workout exercise
-- **metric_definitions** — Custom metrics (weight, reps, duration, etc.)
-- **entry_metrics** — Metric values for entries
-
-**Key Design:**
-- User-specific exercises vs. global exercise library
-- Cascade delete for referential integrity
-- Flexible metrics system for any exercise type
-
 ## Testing
 
 Tests organized by scope:
@@ -151,8 +125,9 @@ Tests organized by scope:
 Run tests in Docker:
 ```bash
 docker compose --profile test up -d
-pnpm run test:integration
+pnpm run test:unit
 pnpm run test:frontend
+docker compose exec server pnpm run test:integration
 ```
 
 ## Deployment
@@ -183,42 +158,4 @@ Requires `.env` file with all required variables. PostgreSQL data persists via D
 - Session includes user ID and username
 - Protected API routes via session validation
 
-## Troubleshooting
 
-**Port conflicts:**
-- Dev: Default ports are 3000 (app), 5433 (PostgreSQL)
-- Modify `docker-compose.yaml` port mappings if needed
-
-**Google OAuth not working:**
-- Verify `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env.local`
-- Ensure redirect URI is registered in Google Console
-
-**Database connection errors:**
-- Ensure PostgreSQL is running (check `docker ps`)
-- Verify `DATABASE_URL` format: `postgresql://user:pass@host:port/dbname`
-
-**Tests failing in Docker:**
-- Run with test profile: `docker compose --profile test up -d`
-- Ensure test database is created and migrations ran
-
-## Contributing
-
-1. Create feature branch: `git checkout -b feature/your-feature`
-2. Commit with clear messages: `git commit -m "feat: description"`
-3. Run tests: `pnpm run test`
-4. Run linter: `pnpm run lint`
-5. Push and create pull request
-
-## Built With
-
-- **Framework:** Next.js 16, React 19
-- **Language:** TypeScript 5
-- **Database:** PostgreSQL 16
-- **Auth:** NextAuth.js 4
-- **Styling:** Tailwind CSS 4
-- **Testing:** Jest 30, Testing Library
-- **DevOps:** Docker, Docker Compose
-
----
-
-Built for **UofT Hacks 13** | [Live Demo](fitness-helper-v2.vercel.app)
