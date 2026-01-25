@@ -39,3 +39,12 @@ docker compose -f docker-compose.prod.yml up -d
 
 build production service and database:
 docker compose -f docker-compose.prod.yml up -d --build
+
+build and deploy next.js app
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --provenance=false \
+  -f front-and-back-end/Dockerfile \
+  -t nilecochen/fitnessaiapp:latest \
+  --push \
+  front-and-back-end
