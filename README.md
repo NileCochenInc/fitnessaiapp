@@ -34,6 +34,16 @@ A full-stack fitness journal application enabling users to track workouts, log e
 
 ## Architecture
 
+### Container Architecture
+![Container Diagram](info/ContainerDiagram.jpg)
+
+### Database Schema
+![Database Schema](info/FitnessAiApp-Schema.png)
+
+### User Flow
+![User Flow Diagram](info/UserFlow.jpg)
+
+
 ## Quick Start
 
 ### Prerequisites
