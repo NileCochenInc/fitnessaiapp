@@ -32,6 +32,8 @@ A full-stack fitness journal application enabling users to track workouts, log e
 - Docker Hub
 - Production-ready PostgreSQL volumes
 
+## Architecture
+
 ## Quick Start
 
 ### Prerequisites
@@ -88,7 +90,6 @@ pnpm run test         # Run all tests
 pnpm run test:unit    # Unit tests only
 pnpm run test:integration  # Integration tests
 pnpm run test:frontend     # Frontend component tests
-pnpm run lint         # Run ESLint
 ```
 
 ### Project Structure
