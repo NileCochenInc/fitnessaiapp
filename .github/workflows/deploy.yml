@@ -38,6 +38,7 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     steps:
       - name: Checkout code
@@ -65,8 +66,9 @@ jobs:
           provenance: false
 
   deploy:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
+    if: always()
 
     steps:
       - name: Deploy to DigitalOcean
