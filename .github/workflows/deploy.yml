@@ -62,3 +62,19 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp:latest
             ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp:sha-${{ github.sha }}
           provenance: false
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/fitnessaiapp
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
