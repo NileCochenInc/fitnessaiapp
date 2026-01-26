@@ -209,7 +209,7 @@ export default function AddExerciseDataClient() {
         />
 
         <Button
-          label="Save"
+          label="Save 💾"
           onClick={pushExercise}
           className="bg-[#5865f2] hover:bg-[#4752c4] text-white p-2 rounded-lg w-full mt-2"
         />
