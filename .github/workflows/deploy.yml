@@ -76,8 +76,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          key_path: /tmp/id_rsa
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd ~/fitnessaiapp
             docker-compose -f docker-compose.prod.yml pull
