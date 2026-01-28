@@ -37,7 +37,50 @@ export default function AddExerciseDataClient() {
   const [isEditingName, setIsEditingName] = useState(false);
 
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [lastEntry, setLastEntry] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // ---------- Helper to create new entries with prepopulation logic ----------
+  const createNewEntry = (currentEntries: Entry[], backendLastEntry: any = null): Entry => {
+    const lastEntryToUse = backendLastEntry ?? lastEntry;
+
+    // If this is the first entry and we have lastEntry data from backend, use it
+    if (currentEntries.length === 0 && lastEntryToUse && lastEntryToUse.length > 0) {
+      const transformedMetrics = lastEntryToUse
+        .map((m: any) => ({
+          metric: m.key,
+          value: "", // Empty value, only copy metric name and unit
+          unit: m.unit ?? "",
+        }))
+        .filter((m: any) => m.metric); // Only include metrics with names, skip empty ones
+
+      return {
+        metrics: transformedMetrics.length > 0 
+          ? transformedMetrics 
+          : [{ metric: "", value: "", unit: "" }],
+      };
+    }
+
+    // If we have entries on the page, copy the last entry but skip empty metrics and clear values
+    if (currentEntries.length > 0) {
+      const lastPageEntry = currentEntries[currentEntries.length - 1];
+      const copiedMetrics = lastPageEntry.metrics
+        .filter(m => m.metric) // Keep metrics that have names
+        .map(m => ({
+          ...m,
+          value: "", // Clear the value
+        }));
+
+      return {
+        metrics: copiedMetrics.length > 0 
+          ? copiedMetrics 
+          : [{ metric: "", value: "", unit: "" }],
+      };
+    }
+
+    // Default: empty entry
+    return { metrics: [{ metric: "", value: "", unit: "" }] };
+  };
 
   // ---------- Fetch entries on page load ----------
   useEffect(() => {
@@ -61,8 +104,11 @@ export default function AddExerciseDataClient() {
         setEntries(
           mappedData.length > 0
             ? mappedData
-            : [{ metrics: [{ metric: "", value: "", unit: "" }] }]
+            : [createNewEntry([], data.lastEntry)]
         );
+        
+        // Store the last entry data from backend
+        setLastEntry(data.lastEntry);
       } catch (err) {
         console.error(err);
         alert("Could not load exercise entries");
@@ -72,6 +118,11 @@ export default function AddExerciseDataClient() {
     }
     fetchEntries();
   }, [workout_exercise_id, userId]);
+
+  // ---------- Log last entry to console ----------
+  useEffect(() => {
+    console.log("Last Entry:", lastEntry);
+  }, [lastEntry]);
 
   // ---------- Exercise Name Actions ----------
   const startEditExerciseName = () => {
@@ -106,8 +157,9 @@ export default function AddExerciseDataClient() {
   };
 
   // ---------- Entry Actions ----------
-  const addEntry = () =>
-    setEntries(prev => [...prev, { metrics: [{ metric: "", value: "", unit: "" }] }]);
+  const addEntry = () => {
+    setEntries(prev => [...prev, createNewEntry(prev)]);
+  };
 
   const updateEntry = (index: number, updatedEntry: Entry) => {
     setEntries(prev => prev.map((e, i) => (i === index ? updatedEntry : e)));

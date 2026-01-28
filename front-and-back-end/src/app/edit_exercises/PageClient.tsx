@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
 import ExerciseCard from "@/components/ExerciseCard";
+import AutocompleteInput from "@/components/AutocompleteInput";
 
 type Exercise = {
   workout_exercise_id: number;
@@ -30,6 +31,10 @@ export default function PageClient() {
   const [editDate, setEditDate] = useState(workoutData.workout_date);
   const [editKind, setEditKind] = useState(workoutData.workout_kind);
 
+  //autocompolete state
+  const [availableExercises, setAvailableExercises] = useState<string[]>([]);
+
+
   if (!workoutId) {
     return <p className="text-[#ed4245] text-center">Error: No workout ID provided</p>;
   }
@@ -53,6 +58,7 @@ export default function PageClient() {
           setEditDate(data.workout_date);
           setEditKind(data.workout_kind);
           setExercises(data.exercises || []);
+          setAvailableExercises(data.available_exercises || []);
         }
       } catch (err: any) {
         console.error("Error fetching workout data:", err);
@@ -64,6 +70,11 @@ export default function PageClient() {
 
     fetchWorkoutAndExercises();
   }, [workoutId]);
+
+  // Log after state updates for debugging
+  useEffect(() => {
+    console.log(availableExercises);
+  }, [availableExercises]);
 
   const pushExercise = async () => {
     if (!workoutId || !newExerciseName.trim()) return;
@@ -267,12 +278,18 @@ export default function PageClient() {
           {/* Add exercise form */}
           <div className="bg-[#36393f] p-4 rounded-xl shadow-lg flex flex-col gap-2">
             <h2 className="text-lg font-semibold">Add exercise</h2>
-            <input
-              type="text"
+            <AutocompleteInput
               placeholder="Exercise name"
               value={newExerciseName}
-              onChange={(e) => setNewExerciseName(e.target.value)}
-              className="p-2 rounded-lg bg-[#2f3136] border border-[#72767d] text-[#dcddde] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+              onChange={(value) => {
+                setNewExerciseName(value);
+                setError(null);
+              }}
+              onSelect={(value) => {
+                setNewExerciseName(value);
+              }}
+              availableOptions={availableExercises}
+              maxSuggestions={5}
             />
             <div className="flex flex-col sm:flex-row gap-2 mt-2">
               <Button

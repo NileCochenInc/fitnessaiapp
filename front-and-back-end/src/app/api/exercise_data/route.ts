@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEntriesAndMetrics, replaceEntriesAndMetrics } from "@/lib/exercise_data";
 import { editWorkoutExercise } from "@/lib/exercises";
+import { getLastEntryForExercise, getExerciseIdFromWorkoutExercise } from "@/lib/autocomplete";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // adjust path to your NextAuth config
 
@@ -30,7 +31,14 @@ export async function GET(req: NextRequest) {
     }
 
     const entries = await getEntriesAndMetrics(workoutExerciseId, userId);
-    return NextResponse.json({ entries }, { status: 200 });
+    
+    // Fetch last entry for exercise prepopulation
+    const exerciseId = await getExerciseIdFromWorkoutExercise(workoutExerciseId);
+    const lastEntry = exerciseId ? await getLastEntryForExercise(exerciseId, userId) : null;
+    console.log("Last Entry:", lastEntry);
+
+
+    return NextResponse.json({ entries, lastEntry }, { status: 200 });
   } catch (err: any) {
     console.error("Error in GET /api/exercise-entries:", err);
     return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
