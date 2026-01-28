@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
 import ExerciseCard from "@/components/ExerciseCard";
+import AutocompleteInput from "@/components/AutocompleteInput";
 
 type Exercise = {
   workout_exercise_id: number;
@@ -277,12 +278,18 @@ export default function PageClient() {
           {/* Add exercise form */}
           <div className="bg-[#36393f] p-4 rounded-xl shadow-lg flex flex-col gap-2">
             <h2 className="text-lg font-semibold">Add exercise</h2>
-            <input
-              type="text"
+            <AutocompleteInput
               placeholder="Exercise name"
               value={newExerciseName}
-              onChange={(e) => setNewExerciseName(e.target.value)}
-              className="p-2 rounded-lg bg-[#2f3136] border border-[#72767d] text-[#dcddde] focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+              onChange={(value) => {
+                setNewExerciseName(value);
+                setError(null);
+              }}
+              onSelect={(value) => {
+                setNewExerciseName(value);
+              }}
+              availableOptions={availableExercises}
+              maxSuggestions={5}
             />
             <div className="flex flex-col sm:flex-row gap-2 mt-2">
               <Button
