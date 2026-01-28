@@ -8,6 +8,7 @@ import {
   deleteWorkoutExercise, 
   editWorkoutExercise  
 } from "@/lib/exercises";
+import { getExercisesByUserId } from "@/lib/autocomplete";
 
 /*
 Response shape:
@@ -19,6 +20,7 @@ Response shape:
     exercise_id: number;
     name: string;
   }[];
+  available_exercises: string[];
 }
 */
 
@@ -45,6 +47,9 @@ export async function GET(req: NextRequest) {
 
     const meta = await getWorkoutMeta(workoutId, userId);
     const exercises = await getExercisesForWorkout(workoutId, userId);
+    const availableExercises = await getExercisesByUserId(userId);
+
+    //console.log(availableExercises);
 
     return NextResponse.json(
       {
@@ -52,6 +57,7 @@ export async function GET(req: NextRequest) {
         workout_date: meta.workout_date,
         workout_kind: meta.workout_kind,
         exercises,
+        available_exercises: availableExercises,
       },
       { status: 200 }
     );

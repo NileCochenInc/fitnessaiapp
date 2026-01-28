@@ -7,7 +7,9 @@ export async function getExercisesByUserId(userId: number) {
          ORDER BY name`,
         [userId]
     );
-    return result.rows.map(row => row.name);
+    const returnedNames = result.rows.map(row => row.name);
+    //console.log(returnedNames);
+    return returnedNames
 }
 
 
@@ -95,4 +97,23 @@ export async function getLastEntryForExercise(exerciseId: number, userId: number
         [exerciseId, userId]
     );
     return result.rows.length > 0 ? result.rows : null;
+}
+
+/**
+ * Gets the exercise ID from a workout_exercise ID.
+ * Used to resolve the actual exercise being performed from a workout_exercise record.
+ * 
+ * @param workoutExerciseId - The workout_exercise ID
+ * @returns The exercise ID, or null if the workout_exercise doesn't exist
+ * 
+ * @example
+ * const exerciseId = await getExerciseIdFromWorkoutExercise(123);
+ * // Returns: 456
+ */
+export async function getExerciseIdFromWorkoutExercise(workoutExerciseId: number) {
+    const result = await pool.query(
+        `SELECT exercise_id FROM workout_exercises WHERE id = $1`,
+        [workoutExerciseId]
+    );
+    return result.rows.length > 0 ? result.rows[0].exercise_id : null;
 }

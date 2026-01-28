@@ -30,6 +30,10 @@ export default function PageClient() {
   const [editDate, setEditDate] = useState(workoutData.workout_date);
   const [editKind, setEditKind] = useState(workoutData.workout_kind);
 
+  //autocompolete state
+  const [availableExercises, setAvailableExercises] = useState<string[]>([]);
+
+
   if (!workoutId) {
     return <p className="text-[#ed4245] text-center">Error: No workout ID provided</p>;
   }
@@ -53,6 +57,7 @@ export default function PageClient() {
           setEditDate(data.workout_date);
           setEditKind(data.workout_kind);
           setExercises(data.exercises || []);
+          setAvailableExercises(data.available_exercises || []);
         }
       } catch (err: any) {
         console.error("Error fetching workout data:", err);
@@ -64,6 +69,11 @@ export default function PageClient() {
 
     fetchWorkoutAndExercises();
   }, [workoutId]);
+
+  // Log after state updates for debugging
+  useEffect(() => {
+    console.log(availableExercises);
+  }, [availableExercises]);
 
   const pushExercise = async () => {
     if (!workoutId || !newExerciseName.trim()) return;
