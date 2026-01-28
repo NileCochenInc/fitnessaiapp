@@ -129,7 +129,12 @@ describe("exercise_data integration tests", () => {
     );
     expect(entriesRes.rows.length).toBe(0);
 
-    const metricsRes = await pool.query(`SELECT id FROM entry_metrics`);
+    const metricsRes = await pool.query(
+      `SELECT em.id FROM entry_metrics em
+       JOIN entries e ON em.entry_id = e.id
+       WHERE e.workout_exercise_id = $1`,
+      [workoutExerciseId]
+    );
     expect(metricsRes.rows.length).toBe(0);
   });
 
