@@ -37,6 +37,7 @@ export default function AddExerciseDataClient() {
   const [isEditingName, setIsEditingName] = useState(false);
 
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [lastEntry, setLastEntry] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // ---------- Fetch entries on page load ----------
@@ -63,6 +64,9 @@ export default function AddExerciseDataClient() {
             ? mappedData
             : [{ metrics: [{ metric: "", value: "", unit: "" }] }]
         );
+        
+        // Store the last entry data from backend
+        setLastEntry(data.lastEntry);
       } catch (err) {
         console.error(err);
         alert("Could not load exercise entries");
@@ -72,6 +76,11 @@ export default function AddExerciseDataClient() {
     }
     fetchEntries();
   }, [workout_exercise_id, userId]);
+
+  // ---------- Log last entry to console ----------
+  useEffect(() => {
+    console.log("Last Entry:", lastEntry);
+  }, [lastEntry]);
 
   // ---------- Exercise Name Actions ----------
   const startEditExerciseName = () => {
