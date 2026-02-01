@@ -18,7 +18,7 @@ services:
   
   #production database
   postgres:
-    image: postgres:16
+    image: pgvector/pgvector:pg16-bookworm
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -34,7 +34,7 @@ services:
 
   #test database
   postgres-test:
-    image: postgres:16
+    image: pgvector/pgvector:pg16-bookworm
     profiles: ["test"]
     environment:
       POSTGRES_USER: ${POSTGRES_USER_TEST}
@@ -45,6 +45,18 @@ services:
       - ./database/init:/docker-entrypoint-initdb.d
     ports:
       - "5434:5432"
+    env_file:
+      - ./.env
+
+  ai:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    volumes:
+      - ./ai/app:/app/app  # Hot reload
+    command: python -m uvicorn app.main:app --host 0.0.0.0 --port 5000 --reload
+    depends_on:
+      - postgres
     env_file:
       - ./.env
 

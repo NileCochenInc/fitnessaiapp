@@ -1,4 +1,6 @@
 
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
@@ -45,6 +47,8 @@ CREATE TABLE workout_exercises (
     exercise_id BIGINT NOT NULL,
     workout_id BIGINT NOT NULL,
     note TEXT,
+    embeddings VECTOR(1024),
+    exercise_text TEXT,
     CONSTRAINT fk_workout_exercises_exercise
         FOREIGN KEY (exercise_id) REFERENCES exercises(id)
         ON DELETE CASCADE,

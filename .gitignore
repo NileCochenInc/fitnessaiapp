@@ -3,3 +3,14 @@
 .env.production
 .env.test
 .env.local
+
+
+# python
+venv/
+.venv/
+env/
+.env/
+
+
+# database dumps
+database/init/fitnessdb_prod_dump.sql

@@ -1,0 +1,8 @@
+psycopg[binary]
+psycopg2-binary
+langchain-mistralai
+python-dotenv
+fastapi
+uvicorn
+sqlmodel
+sqlalchemy

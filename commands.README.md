@@ -48,3 +48,8 @@ docker buildx build \
   -t nilecochen/fitnessaiapp:latest \
   --push \
   front-and-back-end
+
+Rebuild AI container
+
+Run python main
+docker exec fitness-ai-app-ai-1 python -m app.main 
