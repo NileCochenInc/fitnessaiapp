@@ -17,6 +17,8 @@ CREATE TABLE workouts (
     workout_date DATE NOT NULL,
     user_id BIGINT NOT NULL,
     workout_kind VARCHAR(50), -- strength, rowing, mixed, unknown
+    embeddings VECTOR(1024),
+    exercise_text TEXT,
     CONSTRAINT fk_workouts_user
         FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE

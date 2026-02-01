@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 from langchain_mistralai import ChatMistralAI
 from fastapi import FastAPI
 from . import db
-from . import embeddings
+from . import exercise_embeddings
+from . import workout_embeddings
 from . import rag
 
 
@@ -47,10 +48,11 @@ def test_ai():
 
 def endpoint():
 
-    embeddings.update_embeddings(2)
+    #exercise_embeddings.update_embeddings(2)
+    workout_embeddings.update_embeddings(2)
 
-    print("Starting RAG test...")
-    rag.retrieve_exercises("how have my squats been progressing?", 2)
+    #print("Starting RAG test...")
+    #rag.retrieve_exercises("how have my squats been progressing?", 2)
 
 endpoint()
     
