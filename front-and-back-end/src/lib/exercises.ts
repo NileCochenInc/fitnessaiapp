@@ -1,4 +1,7 @@
 import pool from './db';
+import { clearWorkoutEmbedding, clearWorkoutExerciseEmbedding } from './clearEmbeddings';
+import { clear } from 'console';
+
 
 /**
  * Add or reuse an exercise, then attach it to a workout
@@ -62,6 +65,8 @@ export async function addWorkoutExercise(
     await client.query('ROLLBACK');
     throw err;
   } finally {
+    // clear workout embedding
+    await clearWorkoutEmbedding(workoutId);
     client.release();
   }
 }
@@ -83,6 +88,8 @@ export async function deleteWorkoutExercise(
   if (res.rowCount === 0) {
     throw new Error('Workout exercise not found or unauthorized');
   }
+  // clear workout embedding
+  await clearWorkoutEmbedding(workoutExerciseId, true);
 }
 
 // /**
@@ -253,6 +260,9 @@ export async function editWorkoutExercise(
     await client.query('ROLLBACK');
     throw err;
   } finally {
+    // clear workout and workout_exercise embeddings
+    await clearWorkoutEmbedding(workoutExerciseId, true);
+    await clearWorkoutExerciseEmbedding(workoutExerciseId);
     client.release();
   }
 }

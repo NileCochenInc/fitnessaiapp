@@ -1,6 +1,7 @@
 import pool from './db';
 import { WorkoutJSON } from "@/types/workouts";
 import { WorkoutSchema } from "@/types/workouts";
+import { clearWorkoutEmbedding } from './clearEmbeddings';
 
 
 
@@ -98,6 +99,9 @@ export async function updateWorkout(workout_id: number, user_id: number, workout
     if (res.rowCount === 0) {
         throw new Error("Workout not found or you do not have permission to edit it");
     }
+
+    //clear workout embedding
+    await clearWorkoutEmbedding(workout_id);
 
     return res.rows[0];
 }

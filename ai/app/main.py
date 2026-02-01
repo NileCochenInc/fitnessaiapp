@@ -49,10 +49,10 @@ def test_ai():
 def endpoint():
 
     #exercise_embeddings.update_embeddings(2)
-    workout_embeddings.update_embeddings(2)
+    #workout_embeddings.update_embeddings(2)
 
-    #print("Starting RAG test...")
-    #rag.retrieve_exercises("how have my squats been progressing?", 2)
+    print("Starting RAG test...")
+    rag.retrieve_workouts("Is my upper body routine hitting all muscle groups?", 2)
 
 endpoint()
     

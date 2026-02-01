@@ -72,82 +72,87 @@ def get_unembedded_workouts(id: int):
         workouts_dict[w_id]['exercises'] = list(workouts_dict[w_id]['exercises'].values())
         for exercise in workouts_dict[w_id]['exercises']:
             exercise['entries'] = list(exercise['entries'].values())
-
-    print (list(workouts_dict.values()))
     
     return list(workouts_dict.values())
 
 
-def print_exercises(exercises):
-    print("making embeddings")
+def print_workouts(workouts):
+    print("printing workouts")
     print()
     
-    #exercise = exercises[1]
-    for exercise in exercises:
-        print(f"On {exercise['workout_date']} performed {exercise['exercise_name']}")
+    for workout in workouts:
+        print(f"Workout on {workout['workout_date']} ({workout['workout_kind']})")
         
-        if exercise['note'] is not None:
-            print(f"Note: {exercise['note']}")
-        
-        for entry in sorted(exercise['entries'].values(), key=lambda e: e['entry_index']):
-            # Build metric string for this entry
-            metrics_str = ", ".join([
-                f"{metric['key']} {metric['value_number']}{' ' + metric['unit'] if metric['unit'] else ''}"
-                for metric in entry['metrics']
-            ])
-            print(f"  {metrics_str}")
+        for exercise in workout['exercises']:
+            print(f"  Performed {exercise['exercise_name']}")
+            
+            if exercise['note'] is not None:
+                print(f"  Note: {exercise['note']}")
+            
+            for entry in sorted(exercise['entries'], key=lambda e: e['entry_index']):
+                # Build metric string for this entry
+                metrics_str = ", ".join([
+                    f"{metric['key']} {metric['value_number']}{' ' + metric['unit'] if metric['unit'] else ''}"
+                    for metric in entry['metrics']
+                ])
+                print(f"    {metrics_str}")
 
 # (int, str) list
-def format_exercises(exercises):
-    embeddings = []
+def format_workouts(workouts):
+    formatted = []
     
-    for exercise in exercises:
-        # Build the embedding text
-        embedding_lines = [f"On {exercise['workout_date']} performed {exercise['exercise_name']}"]
+    for workout in workouts:
+        # Build the embedding text for the entire workout
+        embedding_lines = [f"Workout on {workout['workout_date']} ({workout['workout_kind']})"]
         
-        if exercise['note'] is not None:
-            embedding_lines.append(f"Note: {exercise['note']}")
-        
-        for entry in sorted(exercise['entries'].values(), key=lambda e: e['entry_index']):
-            metrics_str = ", ".join([
-                f"{metric['key']} {metric['value_number']}{' ' + metric['unit'] if metric['unit'] else ''}"
-                for metric in entry['metrics']
-            ])
-            embedding_lines.append(f"  {metrics_str}")
+        for exercise in workout['exercises']:
+            embedding_lines.append(f"Performed {exercise['exercise_name']}")
+            
+            if exercise['note'] is not None:
+                embedding_lines.append(f"  Note: {exercise['note']}")
+            
+            for entry in sorted(exercise['entries'], key=lambda e: e['entry_index']):
+                metrics_str = ", ".join([
+                    f"{metric['key']} {metric['value_number']}{' ' + metric['unit'] if metric['unit'] else ''}"
+                    for metric in entry['metrics']
+                ])
+                embedding_lines.append(f"  {metrics_str}")
         
         # Combine lines into single string
         embedding_text = "\n".join(embedding_lines)
         
-        # Add tuple of (workout_exercise_id, embedding_text)
-        embeddings.append((exercise['workout_exercise_id'], embedding_text))
+        # Add tuple of (workout_id, embedding_text)
+        formatted.append((workout['workout_id'], embedding_text))
     
-    return embeddings
+    #print(formatted[0][1])
 
-def make_exercise_embeddings(formatted_exercises):
-    # Extract texts from (workout_exercise_id, embedding_text) tuples
-    texts = [embedding_text for _, embedding_text in formatted_exercises]
+    return formatted
+
+def make_workout_embeddings(formatted_workouts):
+    # Extract texts from (workout_id, embedding_text) tuples
+    texts = [embedding_text for _, embedding_text in formatted_workouts]
     
     # Get embeddings from LangChain
     vectors = embeddings.embed_documents(texts)
     
     # Combine vectors with original IDs and texts
     results = [
-        (vector, workout_exercise_id, embedding_text)
-        for vector, (workout_exercise_id, embedding_text) in zip(vectors, formatted_exercises)
+        (vector, workout_id, embedding_text)
+        for vector, (workout_id, embedding_text) in zip(vectors, formatted_workouts)
     ]
     
     #print(results[0])
     return results
 
 
-def save_exercise_embeddings(exercise_embeddings):
-    """Save exercise embeddings and text to the database in batch.
+def save_workout_embeddings(workout_embeddings):
+    """Save workout embeddings and text to the database in batch.
     
     Args:
-        exercise_embeddings: List of tuples (vector, workout_exercise_id, embedding_text)
+        workout_embeddings: List of tuples (vector, workout_id, embedding_text)
                            where vector is a list of floats
     """
-    if not exercise_embeddings:
+    if not workout_embeddings:
         print("No embeddings to save")
         return
     
@@ -156,30 +161,30 @@ def save_exercise_embeddings(exercise_embeddings):
     text_cases = []
     params = {}
     
-    for idx, (vector, workout_exercise_id, embedding_text) in enumerate(exercise_embeddings):
+    for idx, (vector, workout_id, embedding_text) in enumerate(workout_embeddings):
         # Convert vector list to string format for pgvector
         vector_str = "[" + ",".join(str(v) for v in vector) + "]"
         vector_key = f"vector_{idx}"
         text_key = f"text_{idx}"
         params[vector_key] = vector_str
         params[text_key] = embedding_text
-        params[f"id_{idx}"] = workout_exercise_id
+        params[f"id_{idx}"] = workout_id
         
         embedding_cases.append(f"WHEN :id_{idx} THEN :{vector_key}")
         text_cases.append(f"WHEN :id_{idx} THEN :{text_key}")
     
     # Build the batch update query
-    ids = [id for _, id, _ in exercise_embeddings]
+    ids = [id for _, id, _ in workout_embeddings]
     params["ids"] = ids
     
-    query = f"""UPDATE workout_exercises 
+    query = f"""UPDATE workouts 
                 SET embeddings = CASE id
                     {' '.join(embedding_cases)}
                     ELSE embeddings
                 END,
-                exercise_text = CASE id
+                workout_text = CASE id
                     {' '.join(text_cases)}
-                    ELSE exercise_text
+                    ELSE workout_text
                 END
                 WHERE id = ANY(:ids)"""
     
@@ -199,15 +204,14 @@ def update_embeddings(id:int) -> None:
     print("updating embeddings")
     workouts = get_unembedded_workouts(id)
 
-    #print("formatting exercises")
-    #formatted_workouts = format_workouts(workouts)
+    print("formatting workouts")
+    formatted_workouts = format_workouts(workouts)
 
-    #print("making embeddings")
-    #exercise_workouts = make_exercise_workouts(formatted_workouts)
+    print("making embeddings")
+    workout_embeddings = make_workout_embeddings(formatted_workouts)
 
-    #print("saving embeddings")
-    #save_exercise_workouts(exercise_workouts)
-
+    print("saving embeddings")
+    save_workout_embeddings(workout_embeddings)
 
 
 

@@ -1,4 +1,6 @@
+import { clear } from 'console';
 import pool from './db';
+import { clearWorkoutExerciseEmbedding, clearWorkoutEmbedding } from './clearEmbeddings';
 
 /**
  * Types for entries and metrics
@@ -241,6 +243,9 @@ export async function replaceEntriesAndMetrics(
     await client.query('ROLLBACK');
     throw err;
   } finally {
+    // clear embeddings
+    await clearWorkoutEmbedding(workoutExerciseId, true);
+    await clearWorkoutExerciseEmbedding(workoutExerciseId);
     client.release();
   }
 }
