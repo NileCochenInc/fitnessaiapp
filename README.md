@@ -5,6 +5,7 @@ A full-stack fitness journal application enabling users to track workouts, log e
 ## Features
 
 - **Goal Management 🏆** — Set, track, and manage fitness goals with progress tracking
+- **Multi Agent RAG AI Chatbot 💬** - Three-agent chatbot with workout history context and safe guardrails
 - **Workout Logging 📝** — Record dated workouts (strength, rowing, mixed) with exercise entries and custom metrics
 - **Exercise Management** — Global exercise library with user-specific custom exercises
 - **User Authentication 🧑‍💻** — Secure authentication via email/password and Google OAuth
@@ -12,6 +13,10 @@ A full-stack fitness journal application enabling users to track workouts, log e
 - **Responsive Design 📱** — Mobile-first interface optimized for desktop and mobile
 
 ## Tech Stack
+
+**AI Service**
+- Python Langchain orchestration
+- Mistral 3 3B and 8B models
 
 **Frontend:**
 - Next.js 16 with React 19 & TypeScript
@@ -33,6 +38,9 @@ A full-stack fitness journal application enabling users to track workouts, log e
 - Production-ready PostgreSQL volumes
 
 ## Architecture
+
+### Multi Agent Flow
+![Multi Agent Diagram](info/Multiagent-flow.jpeg)
 
 ### Container Architecture
 ![Container Diagram](info/ContainerDiagram.jpg)
