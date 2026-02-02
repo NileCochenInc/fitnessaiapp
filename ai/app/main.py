@@ -32,6 +32,18 @@ user_events = {}
 async def agent_task(user_id: str, prompt: str = "", context: list = []):
     """Simulated agent task: appends progress updates to user_events[user_id]."""
     try:
+
+        #update embeddings
+        user_events[user_id].append(f"Creating embeddings")
+        exercise_embeddings.update_embeddings(int(user_id))
+        workout_embeddings.update_embeddings(int(user_id))
+
+        #perform RAG retrieval
+        user_events[user_id].append(f"Retrieving relevant data")
+        prompt = rag.get_data(prompt, int(user_id))
+
+
+
         print(f"[agent_task] Starting for user {user_id}, prompt: {prompt}")
         user_events[user_id].append("System_message: Answering your question...")
 

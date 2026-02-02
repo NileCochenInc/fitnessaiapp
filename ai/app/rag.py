@@ -38,7 +38,7 @@ def retrieve_exercises(prompt: str, user_id: int, limit: int = 10):
         for row in rows
     ]
 
-    pprint(result)
+    #pprint(result)
 
     return result
 
@@ -72,6 +72,38 @@ def retrieve_workouts(prompt: str, user_id: int, limit: int = 10):
         for row in rows
     ]
 
-    pprint(result)
+    #pprint(result)
 
     return result
+
+def get_data(prompt: str, user_id: int):
+    data = retrieve_exercises(prompt, user_id, limit=10)
+
+    # Format context into clean, readable text
+    formatted_context = "\n\n".join([
+        f"{item['exercise_text']}"
+        for item in data
+    ])
+
+    full_prompt = f"""You will be given:
+                    1) A user question
+                    2) Retrieved context entries from a database
+
+                    Some context entries may be irrelevant or only partially relevant.
+                    Use only the context that helps answer the question.
+                    If the context does not contain enough information, say so clearly.
+                    Do not invent facts.
+
+                    --- USER QUESTION ---
+                    {prompt}
+
+                    --- RETRIEVED CONTEXT ---
+                    {formatted_context}
+
+                    --- INSTRUCTIONS ---
+                    Answer the question using the relevant context above.
+                    Ignore irrelevant entries."""
+    
+    print(full_prompt)
+    return full_prompt
+  
