@@ -46,7 +46,7 @@ A full-stack fitness journal application enabling users to track workouts, log e
 ![Container Diagram](info/ContainerDiagram.svg)
 
 ### Database Schema
-![Database Schema](info/FitnessAiApp-Schema.png)
+![Database Schema](info/Schema-V2.png)
 
 ### User Flow
 ![User Flow Diagram](info/Userflow.svg)
