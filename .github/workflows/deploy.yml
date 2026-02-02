@@ -53,7 +53,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push frontend/backend Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./front-and-back-end
@@ -63,6 +63,18 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp:latest
             ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp:sha-${{ github.sha }}
+          provenance: false
+
+      - name: Build and push AI Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ai
+          file: ./ai/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-ai:latest
+            ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-ai:sha-${{ github.sha }}
           provenance: false
 
   deploy:

@@ -26,9 +26,7 @@ services:
       - ./.env
 
   ai:
-    build:
-      context: ./ai
-      dockerfile: Dockerfile
+    image: nilecochen/fitnessaiapp-ai:latest
     depends_on:
       - postgres
     env_file:

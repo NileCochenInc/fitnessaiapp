@@ -53,3 +53,6 @@ Rebuild AI container
 
 Run python main
 docker exec fitness-ai-app-ai-1 python -m app.main 
+
+access produciton database
+docker exec -it fitnessaiapp-postgres-1 psql -U postgres -d fitnessdb
