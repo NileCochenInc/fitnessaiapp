@@ -151,19 +151,4 @@ if "MISTRAL_API_KEY" not in os.environ:
 print("API key loaded successfully")
 
 
-# Example endpoint to run test code (optional)
-def endpoint():
-    # exercise_embeddings.update_embeddings(2)
-    # workout_embeddings.update_embeddings(2)
-    # print("Starting RAG test...")
-    # rag.retrieve_workouts("Is my upper body routine hitting all muscle groups?", 2)
 
-    chat_messages = [
-        ("human", "Tell me about yourself."),
-        ("ai", "I am an AI assistant that helps with fitness workouts and exercises."),
-        ("human", "Can you help me create a workout plan?")
-    ]
-
-    # answerBot.chat(chat_messages)
-
-endpoint()

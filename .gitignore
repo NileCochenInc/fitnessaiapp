@@ -13,4 +13,4 @@ env/
 
 
 # database dumps
-database/init/fitnessdb_prod_dump.sql
+fitnessdb_prod_dump.sql
