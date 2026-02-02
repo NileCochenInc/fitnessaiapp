@@ -3,9 +3,12 @@ from langchain_mistralai import MistralAIEmbeddings
 from sqlmodel import text
 from pprint import pprint
 
+
 embeddings = MistralAIEmbeddings(
     model="mistral-embed",
 )
+
+
 
 def retrieve_exercises(prompt: str, user_id: int, limit: int = 10):
     # Get embedding for the query
@@ -76,14 +79,41 @@ def retrieve_workouts(prompt: str, user_id: int, limit: int = 10):
 
     return result
 
-def get_data(prompt: str, user_id: int):
-    data = retrieve_exercises(prompt, user_id, limit=10)
+def get_data(prompt: str, user_id: int, route: str) -> str:
+    
+    formatted_context = ""
+    match route:
+        case "EXERCISES":
+            data = retrieve_exercises(prompt, user_id, limit=10)
+            formatted_context = "\n\n".join([
+                f"{item['exercise_text']}"
+                for item in data
+            ])
+        case "WORKOUTS":
+            data = retrieve_workouts(prompt, user_id, limit=10)
+            formatted_context = "\n\n".join([
+                f"{item['workout_text']}"
+                for item in data
+            ])
+        case "BOTH":
+            exercises = retrieve_exercises(prompt, user_id, limit=5)
+            formatted_context = "--- EXERCISES ---\n"
+            formatted_context += "\n\n".join([
+                f"{item['exercise_text']}"
+                for item in exercises
+            ])
+            workouts = retrieve_workouts(prompt, user_id, limit=5)
+            formatted_context += "\n\n--- WORKOUTS ---\n"
+            formatted_context += "\n\n".join([
+                f"{item['workout_text']}"
+                for item in workouts
+            ])
+        case "NEITHER":
+            formatted_context = "no relevant data found"
+        case _:
+            formatted_context = "no relevant data found"
 
-    # Format context into clean, readable text
-    formatted_context = "\n\n".join([
-        f"{item['exercise_text']}"
-        for item in data
-    ])
+    print(formatted_context)
 
     full_prompt = f"""You will be given:
                     1) A user question
@@ -104,6 +134,6 @@ def get_data(prompt: str, user_id: int):
                     Answer the question using the relevant context above.
                     Ignore irrelevant entries."""
     
-    print(full_prompt)
+    #print(full_prompt)
     return full_prompt
   

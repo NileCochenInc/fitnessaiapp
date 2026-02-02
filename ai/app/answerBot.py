@@ -15,20 +15,7 @@ llm = ChatMistralAI(
     max_tokens=1000,
     # other params...
 )
-def test_ai():
-    messages = [
-        (
-            "system",
-            "You are an assistant that answers questions",
-        ),
-        ("human", "Tell me about yourself."),
-    ]
-    ai_msg = llm.invoke(messages)
-    print(ai_msg.content)
-    messages.append(("ai", ai_msg.content))
-    messages.append(("human", "Can you elaborate on that?"))
-    ai_msg = llm.invoke(messages)
-    print(ai_msg.content)
+
 
 
 # input: (role, content) list
@@ -37,5 +24,5 @@ def chat(messages: list[tuple[str, str]]):
     messages.insert(0, ("system", system_message))
 
     ai_msg = llm.invoke(messages)
-    print(ai_msg.content)
+    #print(ai_msg.content)
     return ai_msg.content

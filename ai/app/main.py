@@ -9,6 +9,7 @@ from . import exercise_embeddings
 from . import workout_embeddings
 from . import rag
 from . import answerBot
+from . import rag_director
 
 app = FastAPI()
 
@@ -32,26 +33,28 @@ user_events = {}
 async def agent_task(user_id: str, prompt: str = "", context: list = []):
     """Simulated agent task: appends progress updates to user_events[user_id]."""
     try:
-
+        
         #update embeddings
         user_events[user_id].append(f"System_message: Creating embeddings")
         exercise_embeddings.update_embeddings(int(user_id))
         workout_embeddings.update_embeddings(int(user_id))
 
+        #identify relevant data
+        user_events[user_id].append(f"System_message: Identifying relevant data")
+        route = rag_director.get_rag_direction(prompt, context)
+
         #perform RAG retrieval
         user_events[user_id].append(f"System_message: Retrieving relevant data")
-        prompt = rag.get_data(prompt, int(user_id))
+        prompt = rag.get_data(prompt, int(user_id), route)
 
-
-
-        print(f"[agent_task] Starting for user {user_id}, prompt: {prompt}")
+        #print(f"[agent_task] Starting for user {user_id}, prompt: {prompt}")
         user_events[user_id].append("System_message: Answering your question...")
 
         await asyncio.sleep(0.5)
         
-        print(f"[agent_task] Calling answerBot.chat with context length: {len(context)}")
+        #print(f"[agent_task] Calling answerBot.chat with context length: {len(context)}")
         ai_msg = answerBot.chat(context + [("human", prompt)])
-        print(f"[agent_task] Got response: {ai_msg[:100] if ai_msg else 'EMPTY'}")
+        #print(f"[agent_task] Got response: {ai_msg[:100] if ai_msg else 'EMPTY'}")
 
         if ai_msg:
             user_events[user_id].append(f"AI_message: {ai_msg}")
