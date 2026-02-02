@@ -29,11 +29,20 @@ user_events = {}
 #   }
 # ----------------------------
 
-async def agent_task(user_id: str, prompt: str = ""):
+async def agent_task(user_id: str, prompt: str = "", context: list = []):
     """Simulated agent task: appends progress updates to user_events[user_id]."""
-    for i in range(1, 6):
-        user_events[user_id].append(f"Progress: {i*20}%")
-        await asyncio.sleep(1)
+    user_events[user_id].append("Answering your question...")
+
+    await asyncio.sleep(0.5)
+    
+    ai_msg = answerBot.chat(context + [("human", prompt)])
+
+    user_events[user_id].append(ai_msg)
+    
+    
+    # for i in range(1, 6):
+    #     user_events[user_id].append(f"Progress: {i*20}%")
+    #     await asyncio.sleep(1)
     user_events[user_id].append("Finished!")
 
 @app.post("/chat")
@@ -46,12 +55,13 @@ async def start_agent(request: Request):
     # Read JSON body (optional)
     data = await request.json()
     prompt = data.get("prompt", "")
+    context = data.get("context", [])
 
     # Clear any previous events for this user
     user_events[user_id] = []
 
     # Launch agent task asynchronously
-    asyncio.create_task(agent_task(user_id, prompt))
+    asyncio.create_task(agent_task(user_id, prompt, context))
 
     return {"status": f"Agent started for user {user_id}"}
 
