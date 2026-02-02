@@ -1,0 +1,118 @@
+PLAN: Fitness AI Chatbot with Backend Memory & SSE Streaming
+
+OVERVIEW
+Build a real-time fitness coaching chatbot using Server-Sent Events (SSE) to stream responses and progress updates from the AI backend through Next.js auth proxy to the frontend. Store conversation context in ephemeral backend memory (not the database) so each chat session is fresh on page reload, but multi-turn conversations within a session can reference prior messages.
+
+Architecture: Frontend (React) → Next.js API Route (auth) → FastAPI (RAG + LLM + memory) → SSE stream back through the proxy.
+
+Key insight: Conversation memory lives on the backend, keyed by user_id:conversation_id. Frontend sends only the latest message each request, reducing payload and avoiding sync issues.
+
+STEPS
+
+1: Frontend: Generate ephemeral conversation ID on chat page load
+
+Create conversation_id = crypto.randomUUID() in React state (lost on reload)
+Send this ID with every chat message in request headers (X-Conversation-Id)
+
+
+
+2. Frontend: Send latest message only (not history)
+
+POST to /api/chat with only the user's current message
+Backend retrieves full conversation context from memory
+Frontend stores transcript in React state for display
+
+
+
+3. Next.js API route: Validate auth and proxy to FastAPI
+
+Extract user_id from NextAuth session
+Extract conversation_id from request headers
+Forward both to FastAPI endpoint as headers/query params
+Validate session before forwarding (all auth happens here)
+Pipe SSE stream directly from FastAPI response back to client (no buffering)
+
+
+
+
+4. FastAPI: Implement memory-managed chat endpoint
+
+Create in-memory memory store: conversations = {user_id:conversation_id: memory}
+Initialize ConversationBufferWindowMemory(k=6) per conversation
+On each request: add user message → retrieve context from memory → call LLM with history → stream response
+Memory automatically includes prior messages within the window (last 6 messages = 3 turns)
+
+
+
+
+5. FastAPI: Stream SSE events with progress updates
+
+Emit checkpoint events for retrieval progress (e.g., event: retrieval_start, event: documents_found)
+Stream LLM response chunks as event: response with delta tokens
+Emit event: checkpoint if memory expires mid-conversation (user can rephrase)
+Use FastAPI's StreamingResponse with generator
+
+
+
+
+6. Frontend: Parse incoming SSE stream and display
+
+Use fetch() with response.body.getReader() to read stream
+Parse SSE format: event: type\ndata: content
+Update UI on each event (show progress, then stream response chunks)
+Handle checkpoint event (notify user if memory reset)
+
+
+
+
+7. Memory cleanup: Implement TTL expiration
+
+Each conversation memory has 60-minute inactivity TTL
+On request: reset TTL timer for that conversation
+Optional: Background cleanup task to purge expired conversations
+If user returns after expiry: new memory bucket created (no error, just fresh start)
+
+
+
+
+
+8. Clear chat button: Generate new conversation ID
+
+On "New Chat" click: set conversation_id = crypto.randomUUID()
+No backend API call needed; memory cleanup happens via TTL
+Next request creates fresh memory bucket automatically
+IMPLEMENTATION DETAILS
+
+Memory key structure: f"{user_id}:{conversation_id}"
+
+Prevents cross-user collisions
+Prevents cross-tab/cross-conversation bleed
+Survives single-worker deployment
+Ready for Redis drop-in replacement later
+Window size: k=6 (3 conversation turns)
+
+Sufficient for fitness coaching context
+RAG handles historical workout/exercise data
+Prevents token bloat and context dilution
+Deployment: Single uvicorn worker (--workers 1)
+
+Correct for SSE (long-lived connections)
+Simple in-memory memory storage
+No sticky session complexity
+Scales to Redis later without code changes
+Failure handling:
+
+Memory expires mid-chat → checkpoint event + user sees "memory reset" notification
+Frontend can resend message if needed
+No silent data loss; user is informed
+
+
+
+
+FURTHER CONSIDERATIONS
+
+Redis migration path: When scaling beyond single worker, swap InMemoryChatMessageHistory() for RedisChatMessageHistory(session_id=key, ttl=3600). No API contract changes, no frontend changes—drop-in replacement.
+
+Multi-agent routing: If adding intent routing (e.g., "coach mode" vs "data mode"), memory scope remains per-conversation. Each agent reads same shared memory window.
+
+Streaming sync edge case: If frontend closes connection early (user navigates away), FastAPI generator stops. This is safe—memory is persisted, next request continues normally.
