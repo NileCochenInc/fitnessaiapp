@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Button from "@/components/Button";
+import SystemMessages from "@/components/SystemMessages";
 import ReactMarkdown from "react-markdown";
 
 type Message = {
@@ -10,10 +11,16 @@ type Message = {
   content: string;
 };
 
+type SystemMessage = {
+  id: string;
+  text: string;
+  completed: boolean;
+};
+
 export default function PageClient() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [systemMessages, setSystemMessages] = useState<string[]>([]);
+  const [systemMessages, setSystemMessages] = useState<SystemMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -28,6 +35,26 @@ export default function PageClient() {
       msg.role === "user" ? "human" : "assistant",
       msg.content,
     ]);
+  };
+
+  const addSystemMessage = (text: string) => {
+    setSystemMessages((prev) => [
+      ...prev,
+      {
+        id: `msg-${Date.now()}-${Math.random()}`,
+        text,
+        completed: false,
+      },
+    ]);
+  };
+
+  const completeLastSystemMessage = () => {
+    setSystemMessages((prev) => {
+      if (prev.length === 0) return prev;
+      const updated = [...prev];
+      updated[updated.length - 1].completed = true;
+      return updated;
+    });
   };
 
   const handleSendMessage = async () => {
@@ -94,8 +121,12 @@ export default function PageClient() {
 
       console.log("=== Progress Stream Started ===");
       let aiMessage = "";
-      let systemMessage = "";
       let currentMessageType: "system" | "ai" | null = null;
+      const messageMap: { [key: string]: string } = {
+        "Creating embeddings": "Creating embeddings",
+        "Retrieving relevant data": "Retrieving relevant data",
+        "Answering your question...": "Answering your question...",
+      };
 
       while (true) {
         const { value, done } = await reader.read();
@@ -137,51 +168,39 @@ export default function PageClient() {
             if (currentMessageType === "ai") {
               aiMessage += remaining;
               console.log("AI message accumulated, current length:", aiMessage.length);
-            } else if (currentMessageType === "system") {
-              systemMessage += remaining;
-              console.log("System message accumulated, current length:", systemMessage.length);
             }
             break;
           }
 
-          // Save previous message if switching types
-          if (nextType !== currentMessageType && nextType !== "finished") {
-            if (currentMessageType === "ai" && aiMessage) {
-              const assistantMessage: Message = {
-                id: Date.now().toString() + "_ai",
-                role: "assistant",
-                content: aiMessage.trim(),
-              };
-              console.log("=== Complete AI Message ===");
-              console.log(aiMessage);
-              console.log("Adding assistant message to state:", assistantMessage);
-              setMessages((prev) => [...prev, assistantMessage]);
-              aiMessage = "";
-            } else if (currentMessageType === "system" && systemMessage) {
-              console.log("System message (complete):", systemMessage);
-              setSystemMessages((prev) => [...prev, systemMessage.trim()]);
-              systemMessage = "";
-            }
-          }
-
           if (nextType === "system") {
+            // Mark previous message as complete when switching to new system message
+            if (currentMessageType === "system" || currentMessageType === null) {
+              completeLastSystemMessage();
+            }
+            
             currentMessageType = "system";
             const prefixLength = "data: System_message: ".length;
             const contentStart = nextIdx + prefixLength;
             const nextMarker = remaining.indexOf("data: ", contentStart);
-            systemMessage = remaining.substring(contentStart, nextMarker === -1 ? remaining.length : nextMarker);
-            console.log("System message start:", systemMessage);
-            // Set the system message immediately to the UI
-            setSystemMessages([systemMessage.trim()]);
+            const systemMessage = remaining.substring(contentStart, nextMarker === -1 ? remaining.length : nextMarker).trim();
+            console.log("System message:", systemMessage);
+            
+            // Strip "System_message: " prefix if present
+            const displayText = systemMessage.replace(/^System_message:\s*/, "");
+            addSystemMessage(displayText);
+            
             remaining = remaining.substring(nextMarker === -1 ? remaining.length : nextMarker);
           } else if (nextType === "ai") {
+            // Mark the last system message as complete when AI starts
+            completeLastSystemMessage();
+            
             currentMessageType = "ai";
             const prefixLength = "data: AI_message: ".length;
             const contentStart = nextIdx + prefixLength;
             const nextMarker = remaining.indexOf("data: ", contentStart);
             aiMessage = remaining.substring(contentStart, nextMarker === -1 ? remaining.length : nextMarker);
             console.log("AI message start (first part):", aiMessage);
-            setSystemMessages([]);
+            setSystemMessages([]); // Clear system messages when AI response starts
             remaining = remaining.substring(nextMarker === -1 ? remaining.length : nextMarker);
           } else if (nextType === "finished") {
             console.log("Received Finished signal");
@@ -289,13 +308,7 @@ export default function PageClient() {
 
           {/* System messages display */}
           {systemMessages.length > 0 && (
-            <div className="flex justify-start">
-              <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-lg bg-[#2f3136] border border-[#72767d]">
-                <p className="text-xs text-[#72767d] italic break-words">
-                  {systemMessages[systemMessages.length - 1]}
-                </p>
-              </div>
-            </div>
+            <SystemMessages messages={systemMessages} />
           )}
 
           {/* Loading indicator */}

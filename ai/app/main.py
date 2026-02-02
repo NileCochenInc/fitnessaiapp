@@ -34,12 +34,12 @@ async def agent_task(user_id: str, prompt: str = "", context: list = []):
     try:
 
         #update embeddings
-        user_events[user_id].append(f"Creating embeddings")
+        user_events[user_id].append(f"System_message: Creating embeddings")
         exercise_embeddings.update_embeddings(int(user_id))
         workout_embeddings.update_embeddings(int(user_id))
 
         #perform RAG retrieval
-        user_events[user_id].append(f"Retrieving relevant data")
+        user_events[user_id].append(f"System_message: Retrieving relevant data")
         prompt = rag.get_data(prompt, int(user_id))
 
 
