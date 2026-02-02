@@ -2,6 +2,9 @@
 
 A full-stack fitness journal application enabling users to track workouts, log exercises with custom metrics, and monitor progress toward personal fitness goals.
 
+## 🌐 Live App
+https://fitnessaiapp.duckdns.org/
+
 ## Features
 
 - **Goal Management 🏆** — Set, track, and manage fitness goals with progress tracking
