@@ -10,6 +10,7 @@ from . import workout_embeddings
 from . import rag
 from . import answerBot
 from . import rag_director
+from . import question_guardrail
 
 app = FastAPI()
 
@@ -33,24 +34,42 @@ user_events = {}
 async def agent_task(user_id: str, prompt: str = "", context: list = []):
     """Simulated agent task: appends progress updates to user_events[user_id]."""
     try:
-        
+        #check if question is inside guardrails
+        user_events[user_id].append(f"System_message: Running guardrail check")
+        guardrail_status = question_guardrail.check_guardrails(prompt, context)
+        if guardrail_status == "MEDICAL_ADVICE":
+            user_events[user_id].append(question_guardrail.MEDICAL_RESPONSE)
+            user_events[user_id].append("Finished!")
+            return
+        if guardrail_status == "NON_FITNESS":
+            user_events[user_id].append(question_guardrail.NON_FITNESS_RESPONSE)
+            user_events[user_id].append("Finished!")
+            return
+
+        await asyncio.sleep(0.1)
+
         #update embeddings
         user_events[user_id].append(f"System_message: Creating embeddings")
         exercise_embeddings.update_embeddings(int(user_id))
         workout_embeddings.update_embeddings(int(user_id))
 
+        await asyncio.sleep(0.1)
         #identify relevant data
         user_events[user_id].append(f"System_message: Identifying relevant data")
         route = rag_director.get_rag_direction(prompt, context)
 
+
+        await asyncio.sleep(0.1)
         #perform RAG retrieval
         user_events[user_id].append(f"System_message: Retrieving relevant data")
         prompt = rag.get_data(prompt, int(user_id), route)
 
+        await asyncio.sleep(0.1)
+
         #print(f"[agent_task] Starting for user {user_id}, prompt: {prompt}")
         user_events[user_id].append("System_message: Answering your question...")
 
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.1)
         
         #print(f"[agent_task] Calling answerBot.chat with context length: {len(context)}")
         ai_msg = answerBot.chat(context + [("human", prompt)])

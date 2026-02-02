@@ -113,7 +113,7 @@ def get_data(prompt: str, user_id: int, route: str) -> str:
         case _:
             formatted_context = "no relevant data found"
 
-    print(formatted_context)
+    #print(formatted_context)
 
     full_prompt = f"""You will be given:
                     1) A user question
