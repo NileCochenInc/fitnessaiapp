@@ -43,7 +43,7 @@ A full-stack fitness journal application enabling users to track workouts, log e
 ![Multi Agent Diagram](info/Multi-Agent-flow.svg)
 
 ### Container Architecture
-![Container Diagram](info/ContainerDiagram.jpg)
+![Container Diagram](info/ContainerDiagram.svg)
 
 ### Database Schema
 ![Database Schema](info/FitnessAiApp-Schema.png)
