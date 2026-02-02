@@ -34,6 +34,9 @@ A full-stack fitness journal application enabling users to track workouts, log e
 
 ## Architecture
 
+### Multi Agent Flow
+![Multi Agent Diagram](info/Multiagent-flow.jpeg)
+
 ### Container Architecture
 ![Container Diagram](info/ContainerDiagram.jpg)
 
