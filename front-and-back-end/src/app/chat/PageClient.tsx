@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import SystemMessages from "@/components/SystemMessages";
 import ReactMarkdown from "react-markdown";
@@ -18,6 +19,7 @@ type SystemMessage = {
 };
 
 export default function PageClient() {
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [systemMessages, setSystemMessages] = useState<SystemMessage[]>([]);
@@ -247,9 +249,15 @@ export default function PageClient() {
     >
       <div className="w-full max-w-2xl mx-auto flex flex-col h-screen gap-4">
         {/* Header */}
-        <div className="pt-4">
-          <h1 className="text-3xl font-bold text-center text-[#dcddde]">
-            AI Chat
+        <div className="pt-4 flex justify-center items-center relative">
+          <div className="absolute left-0">
+            <Button
+              label="🏠"
+              onClick={() => router.push("/")}
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-[#dcddde]">
+            Fit Buddy AI Chat
           </h1>
         </div>
 

@@ -18,6 +18,7 @@ export default function Page() {
 
   const goToAddWorkout = () => router.push("/add_workout");
   const goToPreviousWorkouts = () => router.push("/previous_workouts");
+  const goToChat = () => router.push("/chat");
 
   const handleLogout = () => signOut({ callbackUrl: "/login" });
 
@@ -47,6 +48,12 @@ export default function Page() {
           <Button
             label="See Previous Workouts"
             onClick={goToPreviousWorkouts}
+            className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
+            style={{ backgroundColor: "#5865f2" }}
+          />
+          <Button
+            label="Fit Buddy AI"
+            onClick={goToChat}
             className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
             style={{ backgroundColor: "#5865f2" }}
           />
