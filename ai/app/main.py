@@ -31,19 +31,29 @@ user_events = {}
 
 async def agent_task(user_id: str, prompt: str = "", context: list = []):
     """Simulated agent task: appends progress updates to user_events[user_id]."""
-    user_events[user_id].append("Answering your question...")
+    try:
+        print(f"[agent_task] Starting for user {user_id}, prompt: {prompt}")
+        user_events[user_id].append("System_message: Answering your question...")
 
-    await asyncio.sleep(0.5)
-    
-    ai_msg = answerBot.chat(context + [("human", prompt)])
+        await asyncio.sleep(0.5)
+        
+        print(f"[agent_task] Calling answerBot.chat with context length: {len(context)}")
+        ai_msg = answerBot.chat(context + [("human", prompt)])
+        print(f"[agent_task] Got response: {ai_msg[:100] if ai_msg else 'EMPTY'}")
 
-    user_events[user_id].append(ai_msg)
-    
-    
-    # for i in range(1, 6):
-    #     user_events[user_id].append(f"Progress: {i*20}%")
-    #     await asyncio.sleep(1)
-    user_events[user_id].append("Finished!")
+        if ai_msg:
+            user_events[user_id].append(f"AI_message: {ai_msg}")
+        else:
+            print(f"[agent_task] WARNING: ai_msg is empty!")
+            user_events[user_id].append("AI_message: (No response from AI)")
+        
+        user_events[user_id].append("Finished!")
+    except Exception as e:
+        print(f"[agent_task] ERROR: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        user_events[user_id].append(f"AI_message: Error: {str(e)}")
+        user_events[user_id].append("Finished!")
 
 @app.post("/chat")
 async def start_agent(request: Request):
