@@ -13,7 +13,7 @@ import pool from './db';
 export async function clearWorkoutExerciseEmbedding(workoutExerciseId: number) {
     const result = await pool.query(
         `UPDATE workout_exercises 
-         SET embedding = NULL, embedding_text = NULL
+         SET embeddings = NULL, exercise_text = NULL
          WHERE id = $1`,
         [workoutExerciseId]
     );
@@ -43,12 +43,12 @@ export async function clearWorkoutEmbedding(workoutIdOrExerciseId: number, isWor
     if (isWorkoutExerciseId) {
         // Single query: resolve workout_exercise to workout and clear in one go
         query = `UPDATE workouts 
-                 SET embedding = NULL, embedding_text = NULL
+                 SET embeddings = NULL, workout_text = NULL
                  WHERE id = (SELECT workout_id FROM workout_exercises WHERE id = $1)`;
     } else {
         // Direct update
         query = `UPDATE workouts 
-                 SET embedding = NULL, embedding_text = NULL
+                 SET embeddings = NULL, workout_text = NULL
                  WHERE id = $1`;
     }
     
