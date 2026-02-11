@@ -56,3 +56,12 @@ docker exec fitness-ai-app-ai-1 python -m app.main
 
 access produciton database
 docker exec -it fitnessaiapp-postgres-1 psql -U postgres -d fitnessdb
+
+create production database dump
+docker exec -i fitnessaiapp-postgres-1 pg_dump -U postgres -d fitnessdb -F p > ~/production_dump.sql
+
+
+Copy dump (replace user and your_vps_ip)
+scp user@your_vps_ip:~/production_dump.sql ./production_dump.sql
+
+scp root@138.68.44.246:~/production_dump.sql ./production_dump.sql

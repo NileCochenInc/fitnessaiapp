@@ -14,3 +14,7 @@ env/
 
 # database dumps
 fitnessdb_prod_dump.sql
+
+# datatool (readd this later)
+application.properties
+
