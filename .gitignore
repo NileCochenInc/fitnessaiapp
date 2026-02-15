@@ -15,6 +15,10 @@ env/
 # database dumps
 fitnessdb_prod_dump.sql
 
-# datatool (readd this later)
+# datatool (read this later)
 application.properties
 
+# admin-dash
+bin/
+obj/
+.vs/
