@@ -322,4 +322,116 @@ public class GetDataServiceTests
         // Assert
         Assert.Equal(0, result);
     }
+
+    /// <summary>
+    /// Verifies that GetWorkoutsByDayOfWeekAsync correctly distributes workouts across days of the week
+    /// and calculates accurate percentages over a 30-day period.
+    /// </summary>
+    [Fact]
+    public async Task GetWorkoutsByDayOfWeekAsync_WithDistributedWorkouts_ReturnsAllDaysWithCorrectPercentages()
+    {
+        // Arrange
+        using var context = CreateTestDbContext();
+        var service = new GetDataService(context);
+
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var user = new User { Id = 1, Username = "testuser", Email = "test@example.com", Goal = "Build muscle" };
+        context.Users.Add(user);
+
+        // Create workouts on different days: Monday (3), Tuesday (2), Wednesday (1), others (0)
+        // Total: 6 workouts in 30-day range
+        var workouts = new List<Workout>();
+        for (int i = 0; i < 6; i++)
+        {
+            var workoutDate = today.AddDays(-(i % 7)); // Cycle through days of week backwards
+            workouts.Add(new Workout { Id = workouts.Count + 1, UserId = 1, WorkoutDate = workoutDate });
+        }
+        context.Workouts.AddRange(workouts);
+        await context.SaveChangesAsync();
+
+        // Act
+        var result = await service.GetWorkoutsByDayOfWeekAsync(days: 30);
+
+        // Assert
+        Assert.NotEmpty(result);
+        Assert.Equal(7, result.Count); // All 7 days returned
+        
+        // Verify all days are present in correct order
+        var expectedDays = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+        for (int i = 0; i < 7; i++)
+        {
+            Assert.Equal(expectedDays[i], result[i].DayOfWeek);
+        }
+        
+        // Verify counts and percentages sum correctly
+        int totalCount = result.Sum(r => r.Count);
+        Assert.Equal(6, totalCount);
+        
+        decimal totalPercentage = result.Sum(r => r.Percentage);
+        Assert.Equal(100m, totalPercentage, precision: 2);
+    }
+
+    /// <summary>
+    /// Verifies that GetWorkoutsByDayOfWeekAsync filters correctly by date range and excludes
+    /// workouts outside the 30-day window.
+    /// </summary>
+    [Fact]
+    public async Task GetWorkoutsByDayOfWeekAsync_WithWorkoutsOutsideDateRange_OnlyCountsWithinRange()
+    {
+        // Arrange
+        using var context = CreateTestDbContext();
+        var service = new GetDataService(context);
+
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var withinRange = today.AddDays(-15);
+        var outsideRange = today.AddDays(-31);
+
+        var user = new User { Id = 1, Username = "testuser", Email = "test@example.com", Goal = "Build muscle" };
+        context.Users.Add(user);
+
+        // Create workouts: 3 in range (all on Monday), 2 outside range (on Monday)
+        context.Workouts.AddRange(
+            new Workout { Id = 1, UserId = 1, WorkoutDate = withinRange },
+            new Workout { Id = 2, UserId = 1, WorkoutDate = withinRange },
+            new Workout { Id = 3, UserId = 1, WorkoutDate = withinRange },
+            new Workout { Id = 4, UserId = 1, WorkoutDate = outsideRange },
+            new Workout { Id = 5, UserId = 1, WorkoutDate = outsideRange }
+        );
+        await context.SaveChangesAsync();
+
+        // Act
+        var result = await service.GetWorkoutsByDayOfWeekAsync(days: 30);
+
+        // Assert
+        var mondayResult = result.First(r => r.DayOfWeek == withinRange.DayOfWeek.ToString());
+        Assert.Equal(3, mondayResult.Count); // Only workouts in range
+        Assert.Equal(100m, mondayResult.Percentage, precision: 2); // 100% since all 3 are on Monday
+    }
+
+    /// <summary>
+    /// Verifies that GetWorkoutsByDayOfWeekAsync returns all days with zero counts and zero percentages
+    /// when no workouts exist in the database.
+    /// </summary>
+    [Fact]
+    public async Task GetWorkoutsByDayOfWeekAsync_EmptyDatabase_ReturnsAllDaysWithZeros()
+    {
+        // Arrange
+        using var context = CreateTestDbContext();
+        var service = new GetDataService(context);
+
+        // Act
+        var result = await service.GetWorkoutsByDayOfWeekAsync(days: 30);
+
+        // Assert
+        Assert.NotEmpty(result);
+        Assert.Equal(7, result.Count);
+        
+        var expectedDays = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+        for (int i = 0; i < 7; i++)
+        {
+            Assert.Equal(expectedDays[i], result[i].DayOfWeek);
+            Assert.Equal(0, result[i].Count);
+            Assert.Equal(0m, result[i].Percentage);
+        }
+    }
 }

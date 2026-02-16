@@ -6,6 +6,8 @@ namespace Admin_Dash;
 [JsonSerializable(typeof(TotalUsersResponse))]
 [JsonSerializable(typeof(List<WorkoutCountDto>))]
 [JsonSerializable(typeof(WorkoutCountDto))]
+[JsonSerializable(typeof(List<WorkoutByDayOfWeekDto>))]
+[JsonSerializable(typeof(WorkoutByDayOfWeekDto))]
 [JsonSerializable(typeof(List<ExerciseCountDto>))]
 [JsonSerializable(typeof(ExerciseCountDto))]
 [JsonSerializable(typeof(List<MetricCountDto>))]

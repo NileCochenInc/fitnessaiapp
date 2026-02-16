@@ -26,17 +26,13 @@ var getDataService = scope.ServiceProvider.GetRequiredService<GetDataService>();
 
 
 // test get workouts by date
-/*
-var workoutsByDate = await getDataService.GetWorkoutCountByDateAsync();
-Console.WriteLine("\n=== Workouts by Date ===");
-foreach (var item in workoutsByDate)
-{
-    Console.WriteLine($"{item.Date:yyyy-MM-dd}: {item.Count} workouts");
-}
-*/
 
 
-//switch to total users
+
+app.MapGet("/weekday_workout_frequency", async () => {
+    return await getDataService.GetWorkoutsByDayOfWeekAsync();
+});
+
 app.MapGet("/total_users", async () => {
     var totalUsers = await getDataService.GetTotalUsersAsync();
     return new TotalUsersResponse { TotalUsers = totalUsers };

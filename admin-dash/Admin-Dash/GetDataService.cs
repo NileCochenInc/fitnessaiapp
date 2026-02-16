@@ -35,6 +35,44 @@ public class GetDataService
         return result;
     }
 
+    public async Task<List<WorkoutByDayOfWeekDto>> GetWorkoutsByDayOfWeekAsync(int days = 30)
+    {
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-days));
+        
+        var workouts = await _dbContext.Workouts
+            .Where(w => w.WorkoutDate >= startDate)
+            .Select(w => new { w.WorkoutDate })
+            .ToListAsync();
+        
+        var totalCount = workouts.Count;
+        
+        if (totalCount == 0)
+        {
+            var daysOfWeek = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+            return daysOfWeek
+                .Select(day => new WorkoutByDayOfWeekDto { DayOfWeek = day, Count = 0, Percentage = 0 })
+                .ToList();
+        }
+        
+        var workoutsByDay = workouts
+            .GroupBy(w => w.WorkoutDate.DayOfWeek)
+            .ToDictionary(g => g.Key, g => g.Count());
+        
+        // Order Monday through Sunday
+        var orderedDays = new DayOfWeek[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday };
+        
+        var result = orderedDays
+            .Select(day => new WorkoutByDayOfWeekDto
+            {
+                DayOfWeek = day.ToString(),
+                Count = workoutsByDay.ContainsKey(day) ? workoutsByDay[day] : 0,
+                Percentage = workoutsByDay.ContainsKey(day) ? (decimal)workoutsByDay[day] / totalCount * 100 : 0
+            })
+            .ToList();
+        
+        return result;
+    }
+
     // Exercise queries
     public async Task<List<ExerciseCountDto>> GetTopExercisesByDateAsync(int days = 30, int topCount = 20)
     {
