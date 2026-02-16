@@ -43,5 +43,5 @@ jobs:
         working-directory: ./admin-dash
 
       - name: Run Admin-Dash tests
-        run: dotnet test Admin-Dash.Tests/Admin-Dash.Tests.csproj --no-build --verbosity normal
+        run: dotnet test Admin-Dash.Tests/Admin-Dash.Tests.csproj --verbosity normal
         working-directory: ./admin-dash
