@@ -30,4 +30,24 @@ public class GetDataService
         return result;
     }
 
+    // Exercise queries
+    public async Task<List<ExerciseCountDto>> GetTopExercisesByDateAsync(int days = 30, int topCount = 20)
+    {
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-days));
+        
+        var result = await _dbContext.WorkoutExercises
+            .Where(we => we.Workout.WorkoutDate >= startDate)
+            .GroupBy(we => we.Exercise.Name)
+            .Select(g => new ExerciseCountDto 
+            { 
+                ExerciseName = g.Key, 
+                Count = g.Count() 
+            })
+            .OrderByDescending(x => x.Count)
+            .Take(topCount)
+            .ToListAsync();
+        
+        return result;
+    }
+
 }
