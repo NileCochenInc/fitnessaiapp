@@ -7,6 +7,8 @@ namespace Admin_Dash;
 [JsonSerializable(typeof(WorkoutCountDto))]
 [JsonSerializable(typeof(List<ExerciseCountDto>))]
 [JsonSerializable(typeof(ExerciseCountDto))]
+[JsonSerializable(typeof(List<MetricCountDto>))]
+[JsonSerializable(typeof(MetricCountDto))]
 [JsonSerializable(typeof(HealthResponse))]
 public partial class AppJsonSerializerContext : JsonSerializerContext
 {

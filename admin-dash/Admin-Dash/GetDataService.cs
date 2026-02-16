@@ -50,4 +50,24 @@ public class GetDataService
         return result;
     }
 
+    // Metrics queries
+    public async Task<List<MetricCountDto>> GetTopMetricsByDateAsync(int days = 30, int topCount = 6)
+    {
+        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-days));
+        
+        var result = await _dbContext.EntryMetrics
+            .Where(em => em.Entry.WorkoutExercise.Workout.WorkoutDate >= startDate)
+            .GroupBy(em => em.Metric.DisplayName ?? em.Metric.Key)
+            .Select(g => new MetricCountDto 
+            { 
+                MetricName = g.Key, 
+                Count = g.Count() 
+            })
+            .OrderByDescending(x => x.Count)
+            .Take(topCount)
+            .ToListAsync();
+        
+        return result;
+    }
+
 }

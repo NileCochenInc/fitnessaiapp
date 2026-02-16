@@ -37,6 +37,10 @@ foreach (var item in workoutsByDate)
 
 
 
+app.MapGet("/popular_metrics", async () => {
+    return await getDataService.GetTopMetricsByDateAsync();
+});
+
 app.MapGet("/popular_exercises", async () => {
     return await getDataService.GetTopExercisesByDateAsync();
 });
