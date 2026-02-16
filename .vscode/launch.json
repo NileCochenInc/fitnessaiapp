@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: Debug Admin-Dash",
+            "type": "dotnet",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/admin-dash/Admin-Dash/bin/Debug/net8.0/Admin-Dash.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/admin-dash/Admin-Dash",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}

@@ -1,2 +1,3 @@
 <Solution>
+  <Project Path="Admin-Dash.Tests/Admin-Dash.Tests.csproj" />
 </Solution>

@@ -18,46 +18,16 @@ public class GetDataService
         return await _dbContext.Users.ToListAsync();
     }
 
-    public async Task<User?> GetUserByIdAsync(int id)
-    {
-        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
-    }
-
-    public async Task<int> GetUserCountAsync()
-    {
-        return await _dbContext.Users.CountAsync();
-    }
-
     // Workout queries
-    public async Task<List<Workout>> GetAllWorkoutsAsync()
+    public async Task<List<WorkoutCountDto>> GetWorkoutCountByDateAsync()
     {
-        return await _dbContext.Workouts.ToListAsync();
+        var result = await _dbContext.Workouts
+            .GroupBy(w => w.WorkoutDate)
+            .Select(g => new WorkoutCountDto { Date = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Date)
+            .ToListAsync();
+        
+        return result;
     }
 
-    public async Task<Workout?> GetWorkoutByIdAsync(int id)
-    {
-        return await _dbContext.Workouts.FirstOrDefaultAsync(w => w.Id == id);
-    }
-
-    // Exercise queries
-    public async Task<List<Exercise>> GetAllExercisesAsync()
-    {
-        return await _dbContext.Exercises.ToListAsync();
-    }
-
-    public async Task<Exercise?> GetExerciseByIdAsync(int id)
-    {
-        return await _dbContext.Exercises.FirstOrDefaultAsync(e => e.Id == id);
-    }
-
-    // Entry queries
-    public async Task<List<Entry>> GetAllEntriesAsync()
-    {
-        return await _dbContext.Entries.ToListAsync();
-    }
-
-    public async Task<Entry?> GetEntryByIdAsync(int id)
-    {
-        return await _dbContext.Entries.FirstOrDefaultAsync(e => e.Id == id);
-    }
 }
