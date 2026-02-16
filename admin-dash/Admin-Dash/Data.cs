@@ -1,34 +1,14 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Admin_Dash.Models;
-using DotNetEnv;
 
 namespace Admin_Dash;
 
 
 public static class Data
 {
-
-    public static void LoadEnv()
-    {
-        // Navigate up to fitness-ai-app root where .env is located
-        var repoRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..","..");
-        var envPath = Path.Combine(repoRoot, ".env");
-        
-        if (File.Exists(envPath))
-        {
-            DotNetEnv.Env.Load(envPath);
-        }
-        else
-        {
-            throw new FileNotFoundException($".env file not found at {Path.GetFullPath(envPath)}");
-        }
-    }
-
     public static string GetConnectionString()
     {
-        LoadEnv();
-        
         var host = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost";
         var port = Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5433";
         var user = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "postgres";

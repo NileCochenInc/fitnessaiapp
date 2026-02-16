@@ -35,6 +35,19 @@ jobs:
         run: pnpm test:frontend
         working-directory: ./front-and-back-end
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore Admin-Dash dependencies
+        run: dotnet restore
+        working-directory: ./admin-dash
+
+      - name: Run Admin-Dash tests
+        run: dotnet test Admin-Dash.Tests/Admin-Dash.Tests.csproj --verbosity normal
+        working-directory: ./admin-dash
+
   build:
     needs: test
     runs-on: ubuntu-latest

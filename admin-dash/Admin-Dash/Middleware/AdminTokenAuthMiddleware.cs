@@ -12,8 +12,7 @@ public class AdminTokenAuthMiddleware
     public AdminTokenAuthMiddleware(RequestDelegate next)
     {
         _next = next;
-        Data.LoadEnv();
-        _apiToken = Environment.GetEnvironmentVariable("GrafanaSettings__ApiToken") ?? throw new InvalidOperationException("GrafanaSettings__ApiToken is not configured in .env");
+        _apiToken = Environment.GetEnvironmentVariable("GrafanaSettings__ApiToken") ?? throw new InvalidOperationException("GrafanaSettings__ApiToken is not configured");
     }
 
     public async Task InvokeAsync(HttpContext context)

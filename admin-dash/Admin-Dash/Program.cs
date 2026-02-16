@@ -7,6 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 Data.ConfigureDatabase(builder);
 builder.Services.AddScoped<GetDataService>();
 
+// Configure JSON serialization for AOT
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.TypeInfoResolver = AppJsonSerializerContext.Default;
+});
+
 var app = builder.Build();
 
 // Add token authentication middleware
@@ -34,6 +40,6 @@ app.MapGet("/workouts_by_date", async () => {
     return await getDataService.GetWorkoutCountByDateAsync();
 });
 
-app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+app.MapGet("/health", () => new HealthResponse { Status = "healthy", Timestamp = DateTime.UtcNow });
 
 app.Run();
