@@ -90,6 +90,18 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-ai:sha-${{ github.sha }}
           provenance: false
 
+      - name: Build and push Admin-Dash Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./admin-dash
+          file: ./admin-dash/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-admin-dash:latest
+            ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-admin-dash:sha-${{ github.sha }}
+          provenance: false
+
   deploy:
     needs: build
     runs-on: ubuntu-latest

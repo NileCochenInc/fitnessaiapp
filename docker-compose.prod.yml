@@ -32,5 +32,17 @@ services:
     env_file:
       - ./.env
 
+  admin-dash:
+    image: nilecochen/fitnessaiapp-admin-dash:latest
+    ports:
+      - "5103:5103"
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env
+    environment:
+      ASPNETCORE_URLS: http://+:5103
+    restart: always
+
 volumes:
   db-data:
