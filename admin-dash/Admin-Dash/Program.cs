@@ -36,6 +36,11 @@ foreach (var item in workoutsByDate)
 */
 
 
+//switch to total users
+app.MapGet("/total_users", async () => {
+    var totalUsers = await getDataService.GetTotalUsersAsync();
+    return new TotalUsersResponse { TotalUsers = totalUsers };
+});
 
 app.MapGet("/popular_metrics", async () => {
     return await getDataService.GetTopMetricsByDateAsync();

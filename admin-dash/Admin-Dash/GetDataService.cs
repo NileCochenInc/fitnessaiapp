@@ -18,6 +18,11 @@ public class GetDataService
         return await _dbContext.Users.ToListAsync();
     }
 
+    public async Task<int> GetTotalUsersAsync()
+    {
+        return await _dbContext.Users.CountAsync();
+    }
+
     // Workout queries
     public async Task<List<WorkoutCountDto>> GetWorkoutCountByDateAsync()
     {

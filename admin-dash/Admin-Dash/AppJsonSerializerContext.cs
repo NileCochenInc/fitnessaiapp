@@ -3,6 +3,7 @@ using Admin_Dash.Models;
 
 namespace Admin_Dash;
 
+[JsonSerializable(typeof(TotalUsersResponse))]
 [JsonSerializable(typeof(List<WorkoutCountDto>))]
 [JsonSerializable(typeof(WorkoutCountDto))]
 [JsonSerializable(typeof(List<ExerciseCountDto>))]
@@ -12,6 +13,11 @@ namespace Admin_Dash;
 [JsonSerializable(typeof(HealthResponse))]
 public partial class AppJsonSerializerContext : JsonSerializerContext
 {
+}
+
+public class TotalUsersResponse
+{
+    public int TotalUsers { get; set; }
 }
 
 public class HealthResponse

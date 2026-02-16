@@ -279,4 +279,47 @@ public class GetDataServiceTests
         // Assert
         Assert.Empty(result);
     }
+
+    /// <summary>
+    /// Verifies that GetTotalUsersAsync correctly returns the total count of all users
+    /// in the database.
+    /// </summary>
+    [Fact]
+    public async Task GetTotalUsersAsync_WithMultipleUsers_ReturnsTotalCount()
+    {
+        // Arrange
+        using var context = CreateTestDbContext();
+        var service = new GetDataService(context);
+
+        context.Users.AddRange(
+            new User { Id = 1, Username = "user1", Email = "user1@example.com", Goal = "Build muscle" },
+            new User { Id = 2, Username = "user2", Email = "user2@example.com", Goal = "Lose weight" },
+            new User { Id = 3, Username = "user3", Email = "user3@example.com", Goal = "Improve endurance" },
+            new User { Id = 4, Username = "user4", Email = "user4@example.com", Goal = "Get stronger" }
+        );
+        await context.SaveChangesAsync();
+
+        // Act
+        var result = await service.GetTotalUsersAsync();
+
+        // Assert
+        Assert.Equal(4, result);
+    }
+
+    /// <summary>
+    /// Verifies that GetTotalUsersAsync returns 0 when no users exist in the database.
+    /// </summary>
+    [Fact]
+    public async Task GetTotalUsersAsync_EmptyDatabase_ReturnsZero()
+    {
+        // Arrange
+        using var context = CreateTestDbContext();
+        var service = new GetDataService(context);
+
+        // Act
+        var result = await service.GetTotalUsersAsync();
+
+        // Assert
+        Assert.Equal(0, result);
+    }
 }
