@@ -32,9 +32,15 @@ https://fitnessaiapp.duckdns.org/
 - Zod 4.3 for schema validation
 - Bcrypt 6 for password hashing
 
+**Admin Data Dashboard**
+- Secured admin-only API provides aggregated global user data
+- ASP.NET Core API with C# .NET 10
+- Entity Core ORM
+
 **DevOps & Testing:**
 - Docker & Docker Compose (development & production)
 - Jest 30 with Testing Library (unit, integration, frontend tests)
+- xUnit for .NET admin data API testing
 
 **Deployment:**
 - Docker Hub
