@@ -118,3 +118,13 @@ jobs:
             cd ~/fitnessaiapp
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
+            
+            # Clean up old images and containers
+            docker system prune -af
+            
+            # Clean up old logs (keep last 100MB)
+            journalctl --vacuum=100M
+            
+            # Remove old log files
+            rm -f /var/log/btmp*
+            rm -f /var/log/wtmp*

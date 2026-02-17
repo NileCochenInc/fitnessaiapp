@@ -7,49 +7,45 @@ var builder = WebApplication.CreateBuilder(args);
 Data.ConfigureDatabase(builder);
 builder.Services.AddScoped<GetDataService>();
 
-// Configure JSON serialization for AOT
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.TypeInfoResolver = AppJsonSerializerContext.Default;
 });
 
+builder.Services.AddOpenApi();
+
 var app = builder.Build();
 
-// Add token authentication middleware
 app.UseAdminTokenAuth();
+app.MapOpenApi();
 
-// Test database connection
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 await Data.TestDatabaseConnectionAsync(dbContext);
 var getDataService = scope.ServiceProvider.GetRequiredService<GetDataService>();
 
+app.MapGet("/weekday_workout_frequency", async () =>
+    await getDataService.GetWorkoutsByDayOfWeekAsync())
+    .WithWorkoutFrequencyOpenApi();
 
-// test get workouts by date
+app.MapGet("/total_users", async () =>
+    new TotalUsersResponse { TotalUsers = await getDataService.GetTotalUsersAsync() })
+    .WithTotalUsersOpenApi();
 
+app.MapGet("/popular_metrics", async () =>
+    await getDataService.GetTopMetricsByDateAsync())
+    .WithPopularMetricsOpenApi();
 
+app.MapGet("/popular_exercises", async () =>
+    await getDataService.GetTopExercisesByDateAsync())
+    .WithPopularExercisesOpenApi();
 
-app.MapGet("/weekday_workout_frequency", async () => {
-    return await getDataService.GetWorkoutsByDayOfWeekAsync();
-});
+app.MapGet("/workouts_by_date", async () =>
+    await getDataService.GetWorkoutCountByDateAsync())
+    .WithWorkoutsByDateOpenApi();
 
-app.MapGet("/total_users", async () => {
-    var totalUsers = await getDataService.GetTotalUsersAsync();
-    return new TotalUsersResponse { TotalUsers = totalUsers };
-});
-
-app.MapGet("/popular_metrics", async () => {
-    return await getDataService.GetTopMetricsByDateAsync();
-});
-
-app.MapGet("/popular_exercises", async () => {
-    return await getDataService.GetTopExercisesByDateAsync();
-});
-
-app.MapGet("/workouts_by_date", async () => {
-    return await getDataService.GetWorkoutCountByDateAsync();
-});
-
-app.MapGet("/health", () => new HealthResponse { Status = "healthy", Timestamp = DateTime.UtcNow });
+app.MapGet("/health", () =>
+    new HealthResponse { Status = "healthy", Timestamp = DateTime.UtcNow })
+    .WithHealthOpenApi();
 
 app.Run();
