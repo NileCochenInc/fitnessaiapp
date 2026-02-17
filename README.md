@@ -48,11 +48,11 @@ https://fitnessaiapp.duckdns.org/
 
 ## Architecture
 
-### Multi Agent Flow
-![Multi Agent Diagram](info/Multi-Agent-flow.svg)
-
 ### Container Architecture
 ![Container Diagram](info/ContainerDiagram.drawio.svg)
+
+### Multi Agent Flow
+![Multi Agent Diagram](info/Multi-Agent-flow.svg)
 
 ### Database Schema
 ![Database Schema](info/Schema-V2.png)
