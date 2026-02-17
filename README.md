@@ -52,7 +52,7 @@ https://fitnessaiapp.duckdns.org/
 ![Multi Agent Diagram](info/Multi-Agent-flow.svg)
 
 ### Container Architecture
-![Container Diagram](info/ContainerDiagram.svg)
+![Container Diagram](info/ContainerDiagram.drawio.svg)
 
 ### Database Schema
 ![Database Schema](info/Schema-V2.png)
