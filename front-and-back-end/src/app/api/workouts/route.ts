@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // adjust path to your NextAuth config
 import { createWorkout, getWorkoutsByUserId, updateWorkout, deleteWorkout } from "@/lib/workouts";
 import { WorkoutSchema } from "@/types/workouts";
+import { publishWorkoutLogged } from "@/lib/kafka";
 
 // GET /api/workouts
 export async function GET(req: NextRequest) {
@@ -49,6 +50,10 @@ export async function POST(req: NextRequest) {
 
     // Create workout with userId from session
     const workout = await createWorkout({ user_id: userId, ...parsed.data });
+    
+    // Publish Kafka event for embedding worker
+    await publishWorkoutLogged(userId);
+    
     return NextResponse.json(workout, { status: 201 });
   } catch (err: any) {
     console.error("Error in POST /api/workouts:", err);
@@ -89,6 +94,10 @@ export async function PUT(req: NextRequest) {
     }
 
     const updatedWorkout = await updateWorkout(workoutId, userId, parsed.data);
+    
+    // Publish Kafka event for embedding worker
+    await publishWorkoutLogged(userId);
+    
     return NextResponse.json(updatedWorkout);
   } catch (err: any) {
     console.error("Error in PUT /api/workouts:", err);

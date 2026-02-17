@@ -6,3 +6,4 @@ fastapi
 uvicorn
 sqlmodel
 sqlalchemy
+confluent-kafka
