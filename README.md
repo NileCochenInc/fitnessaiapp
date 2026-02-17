@@ -167,10 +167,6 @@ This streaming approach gives users confidence the system is processing their re
 
 The Admin Dashboard provides real-time analytics and system metrics accessible via a secured REST API.
 
-**Access:** `http://localhost:5103`
-
-**OpenAPI Documentation:** `http://localhost:5103/openapi/v1.json`
-
 **Endpoints:**
 
 | Endpoint | Description |
@@ -181,6 +177,7 @@ The Admin Dashboard provides real-time analytics and system metrics accessible v
 | `GET /popular_exercises` | Top 20 most popular exercises (last 30 days) |
 | `GET /popular_metrics` | Top 6 most popular metrics tracked (last 30 days) |
 | `GET /workouts_by_date` | Workout count grouped by date (most recent first) |
+| `GET /openapi/v1.json` | OpenAPI documentation for all endpoints |
 
 **Authentication:**
 
@@ -190,7 +187,7 @@ All endpoints (except `/health`) require the `X-Admin-Token` header with a valid
 ADMIN_TOKEN=<your-secure-admin-token>
 ```
 
-**Built with:** C# ASP.NET Core with Entity Framework, PostgreSQL integration, OpenAPI/Swagger support.
+**Built with:** C# ASP.NET Core with Entity Framework, PostgreSQL integration, OpenAPI support.
 
 ## Quick Start
 
