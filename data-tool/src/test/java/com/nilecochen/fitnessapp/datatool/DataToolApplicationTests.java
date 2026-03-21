@@ -1,6 +1,7 @@
 package com.nilecochen.fitnessapp.datatool;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.hibernate.Session;
@@ -10,6 +11,7 @@ import java.util.List;
 import com.nilecochen.fitnessapp.datatool.entities.User;
 
 @SpringBootTest
+@Tag("integration")
 class DataToolApplicationTests {
 
 	@Autowired
