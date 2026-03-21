@@ -12,10 +12,10 @@ public interface EntryRepository extends JpaRepository<Entry, Long> {
 
     // Count entries for a specific exercise within a date range
     @Query("SELECT COUNT(e) FROM Entry e WHERE e.workoutExercise.exercise.id = ?1 " +
-           "AND e.createdDate BETWEEN ?2 AND ?3")
+           "AND e.workoutExercise.workout.workoutDate BETWEEN ?2 AND ?3")
     long countEntriesByExerciseAndDateRange(Long exerciseId, LocalDate startDate, LocalDate endDate);
 
     // Find all entries for a specific exercise within a date range
-    List<Entry> findByWorkoutExerciseExerciseIdAndCreatedDateBetween(
+    List<Entry> findByWorkoutExerciseExerciseIdAndWorkoutExerciseWorkoutWorkoutDateBetween(
         Long exerciseId, LocalDate startDate, LocalDate endDate);
 }

@@ -43,6 +43,7 @@ class EntryRepositoryTest {
         testUser = new User();
         testUser.setUsername("testuser");
         testUser.setEmail("test@test.com");
+        testUser.setGoal("test goal");
         testUser = userRepository.save(testUser);
 
         // Create test exercise
@@ -92,7 +93,7 @@ class EntryRepositoryTest {
         Entry e3 = createEntry(workoutExercise, monthStart.minusMonths(1)); // Outside range
 
         // Act
-        List<Entry> result = entryRepository.findByWorkoutExerciseExerciseIdAndCreatedDateBetween(
+        List<Entry> result = entryRepository.findByWorkoutExerciseExerciseIdAndWorkoutExerciseWorkoutWorkoutDateBetween(
             testExercise.getId(), monthStart, monthEnd
         );
 
@@ -128,11 +129,23 @@ class EntryRepositoryTest {
     }
 
     private Entry createEntry(WorkoutExercise we, LocalDate date) {
+        // Create a new workout with the specified date
+        Workout dateWorkout = new Workout();
+        dateWorkout.setUser(testUser);
+        dateWorkout.setWorkoutDate(date);
+        dateWorkout = workoutRepository.save(dateWorkout);
+
+        // Create a new workout exercise on the dated workout
+        WorkoutExercise dateWorkoutExercise = new WorkoutExercise();
+        dateWorkoutExercise.setWorkout(dateWorkout);
+        dateWorkoutExercise.setExercise(testExercise);
+        dateWorkoutExercise = workoutExerciseRepository.save(dateWorkoutExercise);
+
+        // Create entry on the dated workout exercise
         Entry entry = new Entry();
-        entry.setWorkoutExercise(we);
+        entry.setWorkoutExercise(dateWorkoutExercise);
         entry.setEntryIndex(1L);
         Entry saved = entryRepository.save(entry);
-        // Update created_date (normally this would be set by @CreationTimestamp)
         return saved;
     }
 }

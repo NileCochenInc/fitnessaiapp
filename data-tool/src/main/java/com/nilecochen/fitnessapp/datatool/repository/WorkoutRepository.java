@@ -16,12 +16,12 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
 
     // Count distinct exercises for a user within a date range
     @Query("SELECT COUNT(DISTINCT we.exercise.id) FROM Workout w " +
-           "JOIN w.workoutExercises we WHERE w.userId = ?1 AND w.workoutDate BETWEEN ?2 AND ?3")
+           "JOIN w.workoutExercises we WHERE w.user.id = ?1 AND w.workoutDate BETWEEN ?2 AND ?3")
     long countDistinctExercises(Long userId, LocalDate startDate, LocalDate endDate);
 
     // Get all exercises a user has ever done with their latest date
     @Query("SELECT we.exercise.id as exerciseId, we.exercise.name as exerciseName, MAX(w.workoutDate) as latestDate " +
-           "FROM Workout w JOIN w.workoutExercises we WHERE w.userId = ?1 GROUP BY we.exercise.id, we.exercise.name " +
+           "FROM Workout w JOIN w.workoutExercises we WHERE w.user.id = ?1 GROUP BY we.exercise.id, we.exercise.name " +
            "ORDER BY MAX(w.workoutDate) DESC")
     List<Map<String, Object>> findUserExerciseHistory(Long userId);
 }

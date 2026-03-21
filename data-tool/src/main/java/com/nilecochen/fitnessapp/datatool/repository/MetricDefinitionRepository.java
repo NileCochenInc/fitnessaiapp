@@ -10,8 +10,8 @@ import java.util.List;
 public interface MetricDefinitionRepository extends JpaRepository<MetricDefinition, Long> {
 
     // Find all metric definitions for a specific exercise via the junction table
-    @Query("SELECT md FROM MetricDefinition md " +
-           "JOIN MetricExerciseJunction mej ON md.id = mej.metricDefinition.id " +
+    @Query("SELECT DISTINCT md FROM MetricDefinition md " +
+           "JOIN MetricExerciseJunction mej ON mej.metricDefinition.id = md.id " +
            "WHERE mej.exercise.id = ?1")
     List<MetricDefinition> findByExerciseId(Long exerciseId);
 }

@@ -49,6 +49,7 @@ class EntryMetricRepositoryTest {
         testUser = new User();
         testUser.setUsername("testuser");
         testUser.setEmail("test@test.com");
+        testUser.setGoal("test goal");
         testUser = userRepository.save(testUser);
 
         // Create test exercise

@@ -29,9 +29,6 @@ public class Workout {
     @Column(name = "workout_kind")
     private String workoutKind;
 
-    @Column(columnDefinition = "vector(1024)")
-    private String embeddings;
-
     @Column(columnDefinition = "TEXT")
     private String workoutText;
 

@@ -22,7 +22,7 @@ public class MetricDefinition {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "\"key\"", nullable = false)
     private String key;
 
     @Column(name = "is_global", nullable = false)
