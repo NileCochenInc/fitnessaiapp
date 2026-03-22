@@ -75,8 +75,23 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:5103
 
-
-
+  data-tool:
+    build:
+      context: ./data-tool
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      SERVER_PORT: 8080
 
 #create image file system
 #allow database to persist even if container dies
