@@ -11,7 +11,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { exerciseId: string } }
+  { params }: { params: Promise<{ exerciseId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -20,7 +20,8 @@ export async function GET(
     }
 
     const userId = session.user.id;
-    const exerciseId = Number(params.exerciseId);
+    const { exerciseId: exerciseIdStr } = await params;
+    const exerciseId = Number(exerciseIdStr);
 
     // Validate exerciseId
     if (!Number.isInteger(exerciseId) || exerciseId <= 0) {

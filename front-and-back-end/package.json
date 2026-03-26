@@ -25,6 +25,7 @@
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
     "react-spinners": "^0.17.0",
+    "recharts": "^2.10.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {

@@ -10,7 +10,7 @@ services:
       - ./front-and-back-end:/app
       - /app/node_modules # to avoid overwriting container node_modules
     ports:
-      - 3001:3000
+      - 3000:3000
     depends_on: #ensure next.js app only launches after database
       - postgres
     env_file:
