@@ -2,11 +2,9 @@ package com.nilecochen.fitnessapp.datatool.service;
 
 import com.nilecochen.fitnessapp.datatool.dto.ExerciseStatsDTO;
 import com.nilecochen.fitnessapp.datatool.entities.Exercise;
-import com.nilecochen.fitnessapp.datatool.entities.MetricDefinition;
 import com.nilecochen.fitnessapp.datatool.repository.EntryMetricRepository;
 import com.nilecochen.fitnessapp.datatool.repository.EntryRepository;
 import com.nilecochen.fitnessapp.datatool.repository.ExerciseRepository;
-import com.nilecochen.fitnessapp.datatool.repository.MetricDefinitionRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -21,16 +19,13 @@ public class ExerciseQueryService {
     private final ExerciseRepository exerciseRepository;
     private final EntryRepository entryRepository;
     private final EntryMetricRepository entryMetricRepository;
-    private final MetricDefinitionRepository metricDefinitionRepository;
 
     public ExerciseQueryService(ExerciseRepository exerciseRepository,
                                EntryRepository entryRepository,
-                               EntryMetricRepository entryMetricRepository,
-                               MetricDefinitionRepository metricDefinitionRepository) {
+                               EntryMetricRepository entryMetricRepository) {
         this.exerciseRepository = exerciseRepository;
         this.entryRepository = entryRepository;
         this.entryMetricRepository = entryMetricRepository;
-        this.metricDefinitionRepository = metricDefinitionRepository;
     }
 
     /**
@@ -53,6 +48,7 @@ public class ExerciseQueryService {
 
     /**
      * Get maximum metric values for a specific exercise for a user this month
+     * Queries all metrics that were actually logged, not what's configured in the junction table
      */
     public ExerciseStatsDTO getExerciseStats(Long userId, Long exerciseId) {
         LocalDate[] dateRange = getCurrentMonthDateRange();
@@ -67,18 +63,17 @@ public class ExerciseQueryService {
         // Get frequency for this month
         Long frequency = getExerciseFrequency(userId, exerciseId);
         
-        // Get all metrics defined for this exercise
-        List<MetricDefinition> metrics = metricDefinitionRepository.findByExerciseId(exerciseId);
+        // Get all metrics that were actually logged for this exercise this month
+        List<Object[]> loggedMetrics = entryMetricRepository.findLoggedMetricsWithMaxValues(
+            exerciseId, dateRange[0], dateRange[1]
+        );
         
         // Build map of metric name -> max value for this month
         Map<String, Double> maxMetrics = new HashMap<>();
-        for (MetricDefinition metric : metrics) {
-            Optional<Double> maxValue = entryMetricRepository.findMaxMetricValue(
-                exerciseId, metric.getId(), dateRange[0], dateRange[1]
-            );
-            if (maxValue.isPresent()) {
-                maxMetrics.put(metric.getDisplayName(), maxValue.get());
-            }
+        for (Object[] row : loggedMetrics) {
+            String metricDisplayName = (String) row[0];
+            Double maxValue = (Double) row[1];
+            maxMetrics.put(metricDisplayName, maxValue);
         }
         
         return new ExerciseStatsDTO(exerciseId, exercise.getName(), frequency, maxMetrics);

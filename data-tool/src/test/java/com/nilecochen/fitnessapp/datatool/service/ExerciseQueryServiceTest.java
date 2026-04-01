@@ -2,11 +2,9 @@ package com.nilecochen.fitnessapp.datatool.service;
 
 import com.nilecochen.fitnessapp.datatool.dto.ExerciseStatsDTO;
 import com.nilecochen.fitnessapp.datatool.entities.Exercise;
-import com.nilecochen.fitnessapp.datatool.entities.MetricDefinition;
 import com.nilecochen.fitnessapp.datatool.repository.EntryMetricRepository;
 import com.nilecochen.fitnessapp.datatool.repository.EntryRepository;
 import com.nilecochen.fitnessapp.datatool.repository.ExerciseRepository;
-import com.nilecochen.fitnessapp.datatool.repository.MetricDefinitionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +31,6 @@ class ExerciseQueryServiceTest {
 
     @Mock
     private EntryMetricRepository entryMetricRepository;
-
-    @Mock
-    private MetricDefinitionRepository metricDefinitionRepository;
 
     @InjectMocks
     private ExerciseQueryService service;
@@ -68,23 +64,16 @@ class ExerciseQueryServiceTest {
         mockExercise.setName("Squat");
         mockExercise.setIsGlobal(true);
 
-        MetricDefinition metric1 = new MetricDefinition();
-        metric1.setId(1L);
-        metric1.setDisplayName("Weight");
-
-        MetricDefinition metric2 = new MetricDefinition();
-        metric2.setId(2L);
-        metric2.setDisplayName("Reps");
+        // Prepare logged metrics result: List<Object[]> where each element is [displayName, maxValue]
+        List<Object[]> loggedMetrics = new ArrayList<>();
+        loggedMetrics.add(new Object[]{"Weight", 225.0});
+        loggedMetrics.add(new Object[]{"Reps", 12.0});
 
         when(exerciseRepository.findById(testExerciseId)).thenReturn(Optional.of(mockExercise));
         when(entryRepository.countEntriesByExerciseAndDateRange(testExerciseId, monthStart, monthEnd))
             .thenReturn(5L);
-        when(metricDefinitionRepository.findByExerciseId(testExerciseId))
-            .thenReturn(List.of(metric1, metric2));
-        when(entryMetricRepository.findMaxMetricValue(testExerciseId, 1L, monthStart, monthEnd))
-            .thenReturn(Optional.of(225.0));
-        when(entryMetricRepository.findMaxMetricValue(testExerciseId, 2L, monthStart, monthEnd))
-            .thenReturn(Optional.of(12.0));
+        when(entryMetricRepository.findLoggedMetricsWithMaxValues(testExerciseId, monthStart, monthEnd))
+            .thenReturn(loggedMetrics);
 
         // Act
         ExerciseStatsDTO result = service.getExerciseStats(testUserId, testExerciseId);
@@ -109,7 +98,8 @@ class ExerciseQueryServiceTest {
         when(exerciseRepository.findById(testExerciseId)).thenReturn(Optional.of(mockExercise));
         when(entryRepository.countEntriesByExerciseAndDateRange(testExerciseId, monthStart, monthEnd))
             .thenReturn(0L);
-        when(metricDefinitionRepository.findByExerciseId(testExerciseId)).thenReturn(List.of());
+        when(entryMetricRepository.findLoggedMetricsWithMaxValues(testExerciseId, monthStart, monthEnd))
+            .thenReturn(new ArrayList<>()); // Return empty list for no logged metrics
 
         // Act
         ExerciseStatsDTO result = service.getExerciseStats(testUserId, testExerciseId);
@@ -127,29 +117,17 @@ class ExerciseQueryServiceTest {
         mockExercise.setId(testExerciseId);
         mockExercise.setName("Bench Press");
 
-        MetricDefinition metric1 = new MetricDefinition();
-        metric1.setId(1L);
-        metric1.setDisplayName("Weight (lbs)");
-
-        MetricDefinition metric2 = new MetricDefinition();
-        metric2.setId(2L);
-        metric2.setDisplayName("Reps");
-
-        MetricDefinition metric3 = new MetricDefinition();
-        metric3.setId(3L);
-        metric3.setDisplayName("Rest (sec)");
+        // Prepare logged metrics with 3 different metrics
+        List<Object[]> loggedMetrics = new ArrayList<>();
+        loggedMetrics.add(new Object[]{"Weight (lbs)", 185.0});
+        loggedMetrics.add(new Object[]{"Reps", 8.0});
+        loggedMetrics.add(new Object[]{"Rest (sec)", 90.0});
 
         when(exerciseRepository.findById(testExerciseId)).thenReturn(Optional.of(mockExercise));
         when(entryRepository.countEntriesByExerciseAndDateRange(testExerciseId, monthStart, monthEnd))
             .thenReturn(10L);
-        when(metricDefinitionRepository.findByExerciseId(testExerciseId))
-            .thenReturn(List.of(metric1, metric2, metric3));
-        when(entryMetricRepository.findMaxMetricValue(eq(testExerciseId), eq(1L), any(), any()))
-            .thenReturn(Optional.of(185.0));
-        when(entryMetricRepository.findMaxMetricValue(eq(testExerciseId), eq(2L), any(), any()))
-            .thenReturn(Optional.of(8.0));
-        when(entryMetricRepository.findMaxMetricValue(eq(testExerciseId), eq(3L), any(), any()))
-            .thenReturn(Optional.of(90.0));
+        when(entryMetricRepository.findLoggedMetricsWithMaxValues(testExerciseId, monthStart, monthEnd))
+            .thenReturn(loggedMetrics);
 
         // Act
         ExerciseStatsDTO result = service.getExerciseStats(testUserId, testExerciseId);
