@@ -121,12 +121,12 @@ export default function StatsPage() {
 
   const topExercisesData = Array.from(frequencyMap.entries())
     .map(([name, freq]) => ({
-      name: name.substring(0, 15),
+      name: name,
       frequency: freq,
       fullName: name,
     }))
     .sort((a, b) => b.frequency - a.frequency)
-    .slice(0, 8);
+    .slice(0, 5);
 
   const COLORS = ["#5865f2", "#4752c4"];
 
@@ -202,15 +202,15 @@ export default function StatsPage() {
           {/* Exercise Frequency Chart */}
           <StatsCard title="Top Exercises">
             <div className="w-full">
-              <ResponsiveContainer width="100%" height={Math.max(300, topExercisesData.length * 50)}>
+              <ResponsiveContainer width="100%" height={Math.max(300, topExercisesData.length * 60)}>
                 <BarChart
                   data={topExercisesData}
                   layout="vertical"
-                  margin={{ top: 5, right: 30, left: 200, bottom: 5 }}
+                  margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#72767d" />
                   <XAxis type="number" stroke="#dcddde" />
-                  <YAxis dataKey="name" type="category" stroke="#dcddde" width={190} />
+                  <YAxis dataKey="name" type="category" stroke="#dcddde" width={215} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "#36393f",
