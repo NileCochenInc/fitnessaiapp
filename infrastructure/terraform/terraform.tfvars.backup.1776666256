@@ -1,0 +1,58 @@
+# Azure Resources
+resource_group_name = "Fitness-AI-App"
+location            = "eastus"
+environment         = "production"
+
+# Key Vault Configuration
+key_vault_name             = "Fitness-AI-App-Secrets"
+key_vault_resource_group   = "Fitness-AI-App"
+
+# Container App Configuration
+container_app_name        = "fitness-ai-app"
+container_environment_name = "fitness-ai-app-env"
+
+# Container Image
+container_image = "nilecochen/fitnessaiapp:latest"
+
+# Container Resources
+container_port = 3000
+cpu_cores      = "0.5"    # Can be: 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, etc.
+memory_gb      = "1Gi"    # Can be: 0.5Gi, 1Gi, 1.5Gi, 2Gi, etc. (must match cpu cores)
+
+# Scaling
+min_replicas = 0
+max_replicas = 1
+
+# Ingress
+ingress_enabled = true
+
+# Key Vault Secret Mapping
+key_vault_secrets = {
+  "DatabaseUrl"       = "DATABASE_URL"
+  "GoogleClientID"    = "GOOGLE_CLIENT_ID"
+  "GoogleClientSecret" = "GOOGLE_CLIENT_SECRET"
+  "NextAuthSecret"    = "NEXTAUTH_SECRET"
+  "MistralAPIKey"     = "MISTRAL_API_KEY"
+  "AiServiceURL"      = "AI_SERVICE_URL"
+}
+
+# Static Environment Variables
+static_env_vars = {
+  "NODE_ENV" = "production"
+}
+
+# Google OAuth Configuration
+google_project_id = "fitnessaiapp"
+google_oauth_client_id = "1063380245175-nn3rjm87fot642bhjrpta9srbhcd1sg2.apps.googleusercontent.com"
+
+# Authorized JavaScript origins for Google OAuth
+oauth_authorized_javascript_origins = [
+  "http://localhost:3000",
+  "https://fitnessaiapp.duckdns.org"
+]
+
+# Authorized redirect URIs for Google OAuth
+oauth_authorized_redirect_uris = [
+  "http://localhost:3000/api/auth/callback/google",
+  "https://fitnessaiapp.duckdns.org/api/auth/callback/google"
+]

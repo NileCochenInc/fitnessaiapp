@@ -99,3 +99,34 @@ variable "static_env_vars" {
     "NODE_ENV" = "production"
   }
 }
+
+# Google OAuth Configuration
+variable "google_project_id" {
+  description = "Google Cloud Project ID for OAuth management"
+  type        = string
+  default     = "fitnessaiapp"
+}
+
+variable "google_oauth_client_id" {
+  description = "Google OAuth 2.0 Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "oauth_authorized_javascript_origins" {
+  description = "Authorized JavaScript origins for Google OAuth app"
+  type        = list(string)
+  default = [
+    "http://localhost:3000",
+    "https://fitnessaiapp.duckdns.org"
+  ]
+}
+
+variable "oauth_authorized_redirect_uris" {
+  description = "Authorized redirect URIs for Google OAuth app"
+  type        = list(string)
+  default = [
+    "http://localhost:3000/api/auth/callback/google",
+    "https://fitnessaiapp.duckdns.org/api/auth/callback/google"
+  ]
+}
