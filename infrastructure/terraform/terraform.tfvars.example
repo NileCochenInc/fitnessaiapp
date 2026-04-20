@@ -1,0 +1,48 @@
+# Azure Authentication - Obtain these from Azure Portal or Azure CLI
+subscription_id = "YOUR_SUBSCRIPTION_ID"
+tenant_id       = "YOUR_TENANT_ID"
+client_id       = "YOUR_CLIENT_ID"
+client_secret   = "YOUR_CLIENT_SECRET"
+
+# Azure Resources
+resource_group_name = "Fitness-AI-App"
+location            = "eastus"
+environment         = "production"
+
+# Key Vault Configuration
+key_vault_name             = "Fitness-AI-App-Secrets"
+key_vault_resource_group   = "Fitness-AI-App"
+
+# Container App Configuration
+container_app_name        = "fitness-ai-app"
+container_environment_name = "fitness-ai-app-env"
+
+# Container Image
+container_image = "fitnessaiapp:latest"
+
+# Container Resources
+container_port = 3000
+cpu_cores      = "0.5"   # Can be: 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, etc.
+memory_gb      = "1"     # Can be: 0.5, 1, 1.5, 2, etc. (must match cpu cores)
+
+# Scaling
+min_replicas = 1
+max_replicas = 1  # Increase for autoscaling (e.g., 3)
+
+# Ingress
+ingress_enabled = true
+
+# Key Vault Secret Mapping
+key_vault_secrets = {
+  "DatabaseUrl"       = "DATABASE_URL"
+  "GoogleClientID"    = "GOOGLE_CLIENT_ID"
+  "GoogleClientSecret" = "GOOGLE_CLIENT_SECRET"
+  "NextAuthSecret"    = "NEXTAUTH_SECRET"
+  "MistralAPIKey"     = "MISTRAL_API_KEY"
+  "AiServiceURL"      = "AI_SERVICE_URL"
+}
+
+# Static Environment Variables
+static_env_vars = {
+  "NODE_ENV" = "production"
+}
