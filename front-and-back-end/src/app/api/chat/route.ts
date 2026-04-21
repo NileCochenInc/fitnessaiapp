@@ -32,8 +32,16 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json(); // contains { prompt: "...", context: [...] }
 
+    // Get AI service URL from environment variable (falls back to Docker Compose hostname)
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai:5000";
+    const chatUrl = `${aiServiceUrl}/chat`;
+
+    console.log(`[chat] Calling AI service: POST ${chatUrl}`);
+    console.log(`[chat] User ID: ${userId}`);
+    console.log(`[chat] Request body:`, JSON.stringify(body).substring(0, 200));
+
     // Forward request to Python backend
-    const pythonRes = await fetch("http://ai:5000/chat", {
+    const pythonRes = await fetch(chatUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +50,17 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(body),
     });
 
+    console.log(`[chat] AI service response status: ${pythonRes.status}`);
+
+    // Check for errors from AI service
+    if (!pythonRes.ok) {
+      const errorText = await pythonRes.text();
+      console.error(`[chat] AI service error response:`, errorText);
+      throw new Error(`AI service returned ${pythonRes.status}: ${errorText.substring(0, 200)}`);
+    }
+
     const data = await pythonRes.json();
+    console.log(`[chat] Successfully parsed AI response`);
     return NextResponse.json(data, { status: pythonRes.status });
   } catch (err: any) {
     console.error("Error in POST /api/chat:", err);

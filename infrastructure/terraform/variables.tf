@@ -98,6 +98,52 @@ variable "key_vault_secrets" {
   }
 }
 
+# AI Service Container Variables
+variable "ai_container_image" {
+  description = "AI service Docker image URI"
+  type        = string
+  default     = "nilecochen/fitnessaiapp-ai:v1-prod"
+}
+
+variable "ai_container_port" {
+  description = "AI service container port"
+  type        = number
+  default     = 5000
+}
+
+variable "ai_container_name" {
+  description = "AI service container app name"
+  type        = string
+  default     = "fitness-ai-app-ai"
+}
+
+variable "ai_deployment_version" {
+  description = "AI service deployment version for force redeploy"
+  type        = string
+  default     = "1"
+}
+
+variable "ai_cpu_cores" {
+  description = "AI service CPU cores"
+  type        = string
+  default     = "1.0"
+}
+
+variable "ai_memory_gb" {
+  description = "AI service memory in GB"
+  type        = string
+  default     = "2Gi"
+}
+
+variable "ai_key_vault_secrets" {
+  description = "Map of Key Vault secrets for AI service"
+  type        = map(string)
+  default = {
+    "DatabaseUrl"   = "DATABASE_URL"
+    "MistralAPIKey" = "MISTRAL_API_KEY"
+  }
+}
+
 variable "static_env_vars" {
   description = "Static environment variables (non-secret)"
   type        = map(string)

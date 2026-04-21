@@ -48,6 +48,16 @@ output "location" {
   value       = data.azurerm_resource_group.app.location
 }
 
+output "ai_container_app_fqdn" {
+  description = "Fully Qualified Domain Name of the AI Container App"
+  value       = azurerm_container_app.ai.ingress[0].fqdn
+}
+
+output "ai_container_app_name" {
+  description = "Name of the AI Container App"
+  value       = azurerm_container_app.ai.name
+}
+
 output "access_url" {
   description = "Public URL to access the Container App"
   value       = "https://${azurerm_container_app.app.ingress[0].fqdn}"

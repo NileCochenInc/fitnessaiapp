@@ -133,3 +133,78 @@ resource "azurerm_container_app" "app" {
 
   depends_on = [azurerm_role_assignment.container_app_kv_access]
 }
+
+# AI Service Container App
+resource "azurerm_container_app" "ai" {
+  name                         = var.ai_container_name
+  container_app_environment_id = azurerm_container_app_environment.app.id
+  resource_group_name          = data.azurerm_resource_group.app.name
+  revision_mode                = "Single"
+
+  # Define secrets from Key Vault (only needed secrets for AI service)
+  dynamic "secret" {
+    for_each = { for key, _ in var.ai_key_vault_secrets : key => data.azurerm_key_vault_secret.secrets[key].value }
+    content {
+      name  = lower(secret.key)
+      value = secret.value
+    }
+  }
+
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app.id]
+  }
+
+  template {
+    container {
+      name   = "fitness-ai-app-ai"
+      image  = var.ai_container_image
+      cpu    = var.ai_cpu_cores
+      memory = var.ai_memory_gb
+
+      env {
+        name  = "ENVIRONMENT"
+        value = "production"
+      }
+
+      env {
+        name  = "DEPLOYMENT_VERSION"
+        value = var.ai_deployment_version
+      }
+
+      # Secret environment variables from Key Vault
+      dynamic "env" {
+        for_each = var.ai_key_vault_secrets
+        content {
+          name        = env.value
+          secret_name = lower(env.key)
+        }
+      }
+    }
+
+    min_replicas = 1
+    max_replicas = 1
+  }
+
+  # Internal-only ingress (no external traffic)
+  ingress {
+    allow_insecure_connections = true
+    external_enabled           = false
+    target_port                = var.ai_container_port
+    transport                  = "auto"
+
+    traffic_weight {
+      latest_revision = true
+      percentage      = 100
+    }
+  }
+
+  tags = {
+    Environment = var.environment
+    Application = "fitness-ai-app"
+    Service     = "AI"
+    DeploymentVersion = var.ai_deployment_version
+  }
+
+  depends_on = [azurerm_role_assignment.container_app_kv_access]
+}
