@@ -5,6 +5,20 @@ import { createWorkout, getWorkoutsByUserId, updateWorkout, deleteWorkout } from
 import { WorkoutSchema } from "@/types/workouts";
 import { publishWorkoutLogged } from "@/lib/kafka";
 
+// Helper function to detect database errors
+function isDatabaseError(err: any): boolean {
+  if (!err) return false;
+  const message = err.message || '';
+  return (
+    message.includes('Database connection failed') ||
+    message.includes('pool') ||
+    message.includes('ECONNREFUSED') ||
+    message.includes('connect ETIMEDOUT') ||
+    message.includes('SSL') ||
+    message.includes('authentication failed')
+  );
+}
+
 // GET /api/workouts
 export async function GET(req: NextRequest) {
   try {
@@ -22,6 +36,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(workouts);
   } catch (err: any) {
     console.error("Error in GET /api/workouts:", err);
+    
+    if (isDatabaseError(err)) {
+      return NextResponse.json(
+        { error: `Database error: ${err.message}` },
+        { status: 503 }
+      );
+    }
+    
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -51,12 +73,22 @@ export async function POST(req: NextRequest) {
     // Create workout with userId from session
     const workout = await createWorkout({ user_id: userId, ...parsed.data });
     
-    // Publish Kafka event for embedding worker
-    await publishWorkoutLogged(userId);
+    // Publish Kafka event for embedding worker (non-blocking)
+    publishWorkoutLogged(userId).catch((err) => {
+      console.warn("Failed to publish workout logged event (non-critical):", err.message);
+    });
     
     return NextResponse.json(workout, { status: 201 });
   } catch (err: any) {
     console.error("Error in POST /api/workouts:", err);
+    
+    if (isDatabaseError(err)) {
+      return NextResponse.json(
+        { error: `Database error: ${err.message}` },
+        { status: 503 }
+      );
+    }
+    
     return NextResponse.json({ error: "Failed to create workout" }, { status: 500 });
   }
 }
@@ -95,12 +127,22 @@ export async function PUT(req: NextRequest) {
 
     const updatedWorkout = await updateWorkout(workoutId, userId, parsed.data);
     
-    // Publish Kafka event for embedding worker
-    await publishWorkoutLogged(userId);
+    // Publish Kafka event for embedding worker (non-blocking)
+    publishWorkoutLogged(userId).catch((err) => {
+      console.warn("Failed to publish workout logged event (non-critical):", err.message);
+    });
     
     return NextResponse.json(updatedWorkout);
   } catch (err: any) {
     console.error("Error in PUT /api/workouts:", err);
+    
+    if (isDatabaseError(err)) {
+      return NextResponse.json(
+        { error: `Database error: ${err.message}` },
+        { status: 503 }
+      );
+    }
+    
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -129,6 +171,7 @@ export async function DELETE(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Invalid user session ID" }, { status: 400 });
     }
+    
     const deleted = await deleteWorkout(userId, workoutId);
     if (!deleted) {
       return NextResponse.json({ error: "Workout not found or not owned by you" }, { status: 404 });
@@ -137,6 +180,14 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ message: "Workout deleted successfully" });
   } catch (err: any) {
     console.error("Error in DELETE /api/workouts:", err);
+    
+    if (isDatabaseError(err)) {
+      return NextResponse.json(
+        { error: `Database error: ${err.message}` },
+        { status: 503 }
+      );
+    }
+    
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
