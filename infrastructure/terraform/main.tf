@@ -85,6 +85,11 @@ resource "azurerm_container_app" "app" {
         value = "production"
       }
 
+      env {
+        name  = "DEPLOYMENT_VERSION"
+        value = var.deployment_version
+      }
+
       # Static environment variables (non-secret)
       dynamic "env" {
         for_each = var.static_env_vars
@@ -101,20 +106,6 @@ resource "azurerm_container_app" "app" {
           name        = env.value
           secret_name = lower(env.key)
         }
-      }
-
-      # Liveness probe - check if app is still running
-      liveness_probe {
-        transport = "HTTP"
-        port      = var.container_port
-        path      = "/"
-      }
-
-      # Readiness probe - check if app is ready to receive traffic
-      readiness_probe {
-        transport = "HTTP"
-        port      = var.container_port
-        path      = "/"
       }
     }
 
@@ -137,6 +128,7 @@ resource "azurerm_container_app" "app" {
   tags = {
     Environment = var.environment
     Application = "fitness-ai-app"
+    DeploymentVersion = var.deployment_version
   }
 
   depends_on = [azurerm_role_assignment.container_app_kv_access]

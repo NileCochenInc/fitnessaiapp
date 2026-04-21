@@ -15,6 +15,12 @@ variable "environment" {
   default     = "production"
 }
 
+variable "deployment_version" {
+  description = "Version number for triggering container redeploy (increment to force new deployment)"
+  type        = string
+  default     = "1"
+}
+
 variable "key_vault_name" {
   description = "Name of existing Key Vault containing secrets"
   type        = string
