@@ -144,6 +144,52 @@ variable "ai_key_vault_secrets" {
   }
 }
 
+# Admin Dashboard Container Variables
+variable "admin_container_image" {
+  description = "Admin Dashboard Docker image URI"
+  type        = string
+  default     = "nilecochen/fitnessaiapp-admin-dash:v1-prod"
+}
+
+variable "admin_container_port" {
+  description = "Admin Dashboard container port"
+  type        = number
+  default     = 5103
+}
+
+variable "admin_container_name" {
+  description = "Admin Dashboard container app name"
+  type        = string
+  default     = "fitness-ai-app-admin"
+}
+
+variable "admin_deployment_version" {
+  description = "Admin Dashboard deployment version for force redeploy"
+  type        = string
+  default     = "1"
+}
+
+variable "admin_cpu_cores" {
+  description = "Admin Dashboard CPU cores"
+  type        = string
+  default     = "1.0"
+}
+
+variable "admin_memory_gb" {
+  description = "Admin Dashboard memory in GB"
+  type        = string
+  default     = "1Gi"
+}
+
+variable "admin_key_vault_secrets" {
+  description = "Map of Key Vault secrets for Admin Dashboard"
+  type        = map(string)
+  default = {
+    "PostgresPassword"         = "POSTGRES_PASSWORD"
+    "GrafanaSettings-ApiToken" = "GrafanaSettings__ApiToken"
+  }
+}
+
 variable "static_env_vars" {
   description = "Static environment variables (non-secret)"
   type        = map(string)

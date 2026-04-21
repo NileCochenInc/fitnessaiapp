@@ -20,7 +20,7 @@ public static class Data
             throw new InvalidOperationException("Missing required environment variables: POSTGRES_PASSWORD or POSTGRES_DB");
         }
 
-        return $"Host={host};Port={port};Database={database};Username={user};Password={password}";
+        return $"Host={host};Port={port};Database={database};Username={user};Password={password};SslMode=Require";
     }
 
     public static void ConfigureDatabase(WebApplicationBuilder builder)
