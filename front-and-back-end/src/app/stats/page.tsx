@@ -42,7 +42,9 @@ export default function StatsPage() {
 
       try {
         setLoading(true);
-        const response = await fetch("/api/data/user-stats");
+        const response = await fetch("/api/data/user-stats", {
+          credentials: "include",
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch stats: ${response.statusText}`);

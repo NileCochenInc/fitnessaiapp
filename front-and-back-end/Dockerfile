@@ -17,25 +17,6 @@ COPY . .
 RUN pnpm build
 
 # Stage 2: Production image
-# Stage 1: Build
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# Install pnpm
-RUN npm install -g pnpm
-
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-# Copy source code
-COPY . .
-
-# Build Next.js app
-RUN pnpm build
-
-# Stage 2: Production image
 FROM node:20-alpine AS runner
 
 WORKDIR /app

@@ -1,0 +1,407 @@
+
+> pair-program-app@0.1.0 e2e:prod
+> playwright test --config=playwright.config.ts
+
+◇ injected env (4) from .env.e2e // tip: ⌘ enable debugging { debug: true }
+
+Running 4 tests using 1 worker
+
+◇ injected env (0) from .env.e2e // tip: ◈ encrypted .env [www.dotenvx.com]
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Full stats flow - login to display
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  1 [chromium] › e2e/stats.spec.ts:38:5 › Full stats flow - login to display (375ms)
+◇ injected env (0) from .env.e2e // tip: ⌁ auth for agents [www.vestauth.com]
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Full stats flow - login to display
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  2 [chromium] › e2e/stats.spec.ts:38:5 › Full stats flow - login to display (retry #1) (184ms)
+◇ injected env (0) from .env.e2e // tip: ⌘ suppress logs { quiet: true }
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Data flow chain verification
+
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  3 [chromium] › e2e/stats.spec.ts:125:5 › Data flow chain verification - frontend to data-tool (156ms)
+◇ injected env (0) from .env.e2e // tip: ⌘ suppress logs { quiet: true }
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Data flow chain verification
+
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  4 [chromium] › e2e/stats.spec.ts:125:5 › Data flow chain verification - frontend to data-tool (retry #1) (149ms)
+◇ injected env (0) from .env.e2e // tip: ⌘ enable debugging { debug: true }
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Error handling - capture 500 errors
+
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  5 [chromium] › e2e/stats.spec.ts:196:5 › Error handling - capture 500 errors for diagnosis (168ms)
+◇ injected env (0) from .env.e2e // tip: ⌁ auth for agents [www.vestauth.com]
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Error handling - capture 500 errors
+
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  6 [chromium] › e2e/stats.spec.ts:196:5 › Error handling - capture 500 errors for diagnosis (retry #1) (151ms)
+◇ injected env (0) from .env.e2e // tip: ◈ encrypted .env [www.dotenvx.com]
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Network error recovery
+
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  7 [chromium] › e2e/stats.spec.ts:264:5 › Network error recovery (157ms)
+◇ injected env (0) from .env.e2e // tip: ◈ encrypted .env [www.dotenvx.com]
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.azurewebsites.net
+
+📋 Test: Network error recovery
+
+Logging in test user: e2e-test@fitness.local
+
+🏁 All E2E tests completed
+
+  ✘  8 [chromium] › e2e/stats.spec.ts:264:5 › Network error recovery (retry #1) (158ms)
+
+
+  1) [chromium] › e2e/stats.spec.ts:38:5 › Full stats flow - login to display ──────────────────────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:42:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Full-stats-flow---login-to-display-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Full-stats-flow---login-to-display-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Full-stats-flow---login-to-display-chromium/error-context.md
+
+    Error Context: test-results/stats-Full-stats-flow---login-to-display-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:42:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Full-stats-flow---login-to-display-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Full-stats-flow---login-to-display-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Full-stats-flow---login-to-display-chromium-retry1/error-context.md
+
+    Error Context: test-results/stats-Full-stats-flow---login-to-display-chromium-retry1/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stats-Full-stats-flow---login-to-display-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stats-Full-stats-flow---login-to-display-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e/stats.spec.ts:125:5 › Data flow chain verification - frontend to data-tool ───
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:129:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md
+
+    Error Context: test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:129:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md
+
+    Error Context: test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e/stats.spec.ts:196:5 › Error handling - capture 500 errors for diagnosis ──────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:200:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md
+
+    Error Context: test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:200:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md
+
+    Error Context: test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › e2e/stats.spec.ts:264:5 › Network error recovery ─────────────────────────────────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:268:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Network-error-recovery-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Network-error-recovery-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Network-error-recovery-chromium/error-context.md
+
+    Error Context: test-results/stats-Network-error-recovery-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://fitness-ai-app.azurewebsites.net/
+    Call log:
+    [2m  - navigating to "https://fitness-ai-app.azurewebsites.net/", waiting until "load"[22m
+
+
+       at utils/test-user.ts:19
+
+      17 |
+      18 |   // Navigate to login page
+    > 19 |   await page.goto('/');
+         |              ^
+      20 |
+      21 |   // Click login button or navigate to login
+      22 |   // Adjust selector based on your actual login UI
+        at loginTestUser (/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/utils/test-user.ts:19:14)
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:268:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stats-Network-error-recovery-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/stats-Network-error-recovery-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stats-Network-error-recovery-chromium-retry1/error-context.md
+
+    Error Context: test-results/stats-Network-error-recovery-chromium-retry1/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stats-Network-error-recovery-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stats-Network-error-recovery-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [chromium] › e2e/stats.spec.ts:38:5 › Full stats flow - login to display ───────────────────────
+    [chromium] › e2e/stats.spec.ts:125:5 › Data flow chain verification - frontend to data-tool ────
+    [chromium] › e2e/stats.spec.ts:196:5 › Error handling - capture 500 errors for diagnosis ───────
+    [chromium] › e2e/stats.spec.ts:264:5 › Network error recovery ──────────────────────────────────
+
+[36m  Serving HTML report at http://localhost:54842. Press Ctrl+C to quit.[39m

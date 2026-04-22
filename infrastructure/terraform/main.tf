@@ -134,8 +134,8 @@ resource "azurerm_container_app" "app" {
   }
 
   tags = {
-    Environment = var.environment
-    Application = "fitness-ai-app"
+    Environment       = var.environment
+    Application       = "fitness-ai-app"
     DeploymentVersion = var.deployment_version
   }
 
@@ -194,10 +194,10 @@ resource "azurerm_container_app" "ai" {
     max_replicas = 1
   }
 
-  # Internal-only ingress (no external traffic)
+  # Ingress enabled for internal service discovery
   ingress {
     allow_insecure_connections = true
-    external_enabled           = false
+    external_enabled           = true
     target_port                = var.ai_container_port
     transport                  = "auto"
 
@@ -208,9 +208,9 @@ resource "azurerm_container_app" "ai" {
   }
 
   tags = {
-    Environment = var.environment
-    Application = "fitness-ai-app"
-    Service     = "AI"
+    Environment       = var.environment
+    Application       = "fitness-ai-app"
+    Service           = "AI"
     DeploymentVersion = var.ai_deployment_version
   }
 
@@ -307,10 +307,117 @@ resource "azurerm_container_app" "admin" {
   }
 
   tags = {
-    Environment = var.environment
-    Application = "fitness-ai-app"
-    Service     = "AdminDashboard"
+    Environment       = var.environment
+    Application       = "fitness-ai-app"
+    Service           = "AdminDashboard"
     DeploymentVersion = var.admin_deployment_version
+  }
+
+  depends_on = [azurerm_role_assignment.container_app_kv_access]
+}
+
+# Data Tool Service Container App
+resource "azurerm_container_app" "data_tool" {
+  name                         = var.data_tool_container_name
+  container_app_environment_id = azurerm_container_app_environment.app.id
+  resource_group_name          = data.azurerm_resource_group.app.name
+  revision_mode                = "Single"
+
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app.id]
+  }
+
+  template {
+    container {
+      name   = var.data_tool_container_name
+      image  = var.data_tool_container_image
+      cpu    = var.data_tool_cpu_cores
+      memory = var.data_tool_memory_gb
+
+      env {
+        name  = "DEPLOYMENT_VERSION"
+        value = var.data_tool_deployment_version
+      }
+
+      env {
+        name  = "POSTGRES_HOST"
+        value = "ep-proud-surf-a8ief0p1.eastus2.azure.neon.tech"
+      }
+
+      env {
+        name  = "POSTGRES_PORT"
+        value = "5432"
+      }
+
+      env {
+        name  = "POSTGRES_DB"
+        value = "neondb"
+      }
+
+      env {
+        name  = "POSTGRES_USER"
+        value = "neondb_owner"
+      }
+
+      env {
+        name  = "SERVER_PORT"
+        value = "8080"
+      }
+
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+
+      env {
+        name  = "DB_HOST"
+        value = "ep-proud-surf-a8ief0p1.eastus2.azure.neon.tech"
+      }
+
+      env {
+        name  = "DB_NAME"
+        value = "neondb"
+      }
+
+      env {
+        name  = "DB_USER"
+        value = "neondb_owner"
+      }
+
+      env {
+        name  = "DB_PASSWORD"
+        value = "npg_jlOyptWIk73x"
+      }
+
+      env {
+        name  = "DATABASE_URL"
+        value = "postgresql://neondb_owner:npg_jlOyptWIk73x@ep-proud-surf-a8ief0p1.eastus2.azure.neon.tech:5432/neondb?sslmode=require&channel_binding=require"
+      }
+    }
+
+    min_replicas = 1
+    max_replicas = 1
+  }
+
+  # Ingress enabled for internal service discovery
+  ingress {
+    allow_insecure_connections = true
+    external_enabled           = true
+    target_port                = var.data_tool_container_port
+    transport                  = "auto"
+
+    traffic_weight {
+      latest_revision = true
+      percentage      = 100
+    }
+  }
+
+  tags = {
+    Environment       = var.environment
+    Application       = "fitness-ai-app"
+    Service           = "DataTool"
+    DeploymentVersion = var.data_tool_deployment_version
   }
 
   depends_on = [azurerm_role_assignment.container_app_kv_access]

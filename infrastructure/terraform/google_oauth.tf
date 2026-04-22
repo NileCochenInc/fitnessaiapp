@@ -40,14 +40,14 @@ resource "null_resource" "google_oauth_uri_updater" {
       echo "  Client ID: $CLIENT_ID"
       echo ""
       echo "📍 Authorized JavaScript Origins:"
-      %{ for origin in local.oauth_javascript_origins ~}
+      %{for origin in local.oauth_javascript_origins~}
       echo "   • ${origin}"
-      %{ endfor ~}
+      %{endfor~}
       echo ""
       echo "📍 Authorized Redirect URIs:"
-      %{ for uri in local.oauth_redirect_uris ~}
+      %{for uri in local.oauth_redirect_uris~}
       echo "   • ${uri}"
-      %{ endfor ~}
+      %{endfor~}
       echo ""
       echo "⚠️  Note: Redirect URIs are managed in Google Cloud Console."
       echo "   If you need to update redirect URIs in the OAuth app:"
@@ -66,12 +66,12 @@ resource "null_resource" "google_oauth_uri_updater" {
 output "oauth_configuration_summary" {
   description = "Summary of Google OAuth configuration for manual verification"
   value = {
-    client_id                      = var.google_oauth_client_id
-    project_id                     = var.google_project_id
-    authorized_javascript_origins  = local.oauth_javascript_origins
-    authorized_redirect_uris       = local.oauth_redirect_uris
-    console_link                   = "https://console.cloud.google.com/apis/credentials?project=${var.google_project_id}"
-    setup_instructions             = "Update the URIs above in Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID settings"
+    client_id                     = var.google_oauth_client_id
+    project_id                    = var.google_project_id
+    authorized_javascript_origins = local.oauth_javascript_origins
+    authorized_redirect_uris      = local.oauth_redirect_uris
+    console_link                  = "https://console.cloud.google.com/apis/credentials?project=${var.google_project_id}"
+    setup_instructions            = "Update the URIs above in Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID settings"
   }
   sensitive = true
 }

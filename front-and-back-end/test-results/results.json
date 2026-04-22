@@ -1,0 +1,899 @@
+{
+  "config": {
+    "configFile": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/playwright.config.ts",
+    "rootDir": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/junit.xml"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "stats.spec.ts",
+      "file": "stats.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Full stats flow - login to display",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18919,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "\n🚀 Starting Data Tool E2E Tests\n\n"
+                    },
+                    {
+                      "text": "✓ Secrets loaded from environment variables\n"
+                    },
+                    {
+                      "text": "✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io\n"
+                    },
+                    {
+                      "text": "\n📋 Test: Full stats flow - login to display\n"
+                    },
+                    {
+                      "text": "Logging in test user: statstest@example.com\n"
+                    },
+                    {
+                      "text": "After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/\n"
+                    },
+                    {
+                      "text": "✓ Test user logged in successfully\n"
+                    },
+                    {
+                      "text": "\n📊 Resetting user data...\n"
+                    },
+                    {
+                      "text": "Resetting test user data (clearing workouts)...\n"
+                    },
+                    {
+                      "text": "Workout delete endpoint not found, attempting alternative cleanup...\n"
+                    },
+                    {
+                      "text": "No workouts found to delete (page is already clean)\n"
+                    },
+                    {
+                      "text": "\n📊 Creating test data...\n"
+                    },
+                    {
+                      "text": "Creating 5 dummy workouts for test user...\n"
+                    },
+                    {
+                      "text": "  - Creating: Push-ups\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Running\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Squats\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Bench Press\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Pull-ups\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "✓ Dummy workouts creation completed\n"
+                    },
+                    {
+                      "text": "\n📊 Navigating to /stats page...\n"
+                    },
+                    {
+                      "text": "\n📊 Verifying stats display...\n"
+                    },
+                    {
+                      "text": "  ✓ Stats content visible on page\n"
+                    },
+                    {
+                      "text": "  ✓ No error messages on page\n"
+                    },
+                    {
+                      "text": "\n✅ Test passed: Stats flow working end-to-end\n\n"
+                    },
+                    {
+                      "text": "Logging out test user...\n"
+                    },
+                    {
+                      "text": "✓ Test user logged out\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "Warning: Could not verify login status. Continuing anyway...\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-04-22T07:58:26.364Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9a556c9a72d046cd2b56-4c037f31dbadfcb10566",
+          "file": "stats.spec.ts",
+          "line": 38,
+          "column": 5
+        },
+        {
+          "title": "Data flow chain verification - frontend to data-tool",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 28754,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:138:28",
+                    "location": {
+                      "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                      "column": 28,
+                      "line": 138
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`  1. Frontend → Server: ${frontendStatus}`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 138 |\u001b[39m     expect(frontendStatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 139 |\u001b[39m\n \u001b[90m 140 |\u001b[39m     \u001b[90m// Verify response headers\u001b[39m\n \u001b[90m 141 |\u001b[39m     \u001b[36mconst\u001b[39m contentType \u001b[33m=\u001b[39m frontendResponse\u001b[33m.\u001b[39mheaders()[\u001b[32m'content-type'\u001b[39m]\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                        "column": 28,
+                        "line": 138
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n\n\u001b[0m \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`  1. Frontend → Server: ${frontendStatus}`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 138 |\u001b[39m     expect(frontendStatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 139 |\u001b[39m\n \u001b[90m 140 |\u001b[39m     \u001b[90m// Verify response headers\u001b[39m\n \u001b[90m 141 |\u001b[39m     \u001b[36mconst\u001b[39m contentType \u001b[33m=\u001b[39m frontendResponse\u001b[33m.\u001b[39mheaders()[\u001b[32m'content-type'\u001b[39m]\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:138:28\u001b[22m"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "\n📋 Test: Data flow chain verification\n\n"
+                    },
+                    {
+                      "text": "Logging in test user: statstest@example.com\n"
+                    },
+                    {
+                      "text": "After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/\n"
+                    },
+                    {
+                      "text": "✓ Test user logged in successfully\n"
+                    },
+                    {
+                      "text": "Resetting test user data (clearing workouts)...\n"
+                    },
+                    {
+                      "text": "Workout delete endpoint not found, attempting alternative cleanup...\n"
+                    },
+                    {
+                      "text": "No workouts found to delete (page is already clean)\n"
+                    },
+                    {
+                      "text": "Creating 3 dummy workouts for test user...\n"
+                    },
+                    {
+                      "text": "  - Creating: Push-ups\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Running\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Squats\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "✓ Dummy workouts creation completed\n"
+                    },
+                    {
+                      "text": "\n🔗 Tracing data flow chain...\n"
+                    },
+                    {
+                      "text": "  1. Frontend → Server: 500\n"
+                    },
+                    {
+                      "text": "Logging out test user...\n"
+                    },
+                    {
+                      "text": "✓ Test user logged out\n"
+                    },
+                    {
+                      "text": "\n🏁 All E2E tests completed\n\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "Warning: Could not verify login status. Continuing anyway...\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-04-22T07:58:45.660Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                    "column": 28,
+                    "line": 138
+                  }
+                },
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 28656,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:138:28",
+                    "location": {
+                      "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                      "column": 28,
+                      "line": 138
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`  1. Frontend → Server: ${frontendStatus}`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 138 |\u001b[39m     expect(frontendStatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 139 |\u001b[39m\n \u001b[90m 140 |\u001b[39m     \u001b[90m// Verify response headers\u001b[39m\n \u001b[90m 141 |\u001b[39m     \u001b[36mconst\u001b[39m contentType \u001b[33m=\u001b[39m frontendResponse\u001b[33m.\u001b[39mheaders()[\u001b[32m'content-type'\u001b[39m]\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                        "column": 28,
+                        "line": 138
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n\n\u001b[0m \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`  1. Frontend → Server: ${frontendStatus}`\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 138 |\u001b[39m     expect(frontendStatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 139 |\u001b[39m\n \u001b[90m 140 |\u001b[39m     \u001b[90m// Verify response headers\u001b[39m\n \u001b[90m 141 |\u001b[39m     \u001b[36mconst\u001b[39m contentType \u001b[33m=\u001b[39m frontendResponse\u001b[33m.\u001b[39mheaders()[\u001b[32m'content-type'\u001b[39m]\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:138:28\u001b[22m"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "\n🚀 Starting Data Tool E2E Tests\n\n"
+                    },
+                    {
+                      "text": "✓ Secrets loaded from environment variables\n"
+                    },
+                    {
+                      "text": "✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io\n"
+                    },
+                    {
+                      "text": "\n📋 Test: Data flow chain verification\n\n"
+                    },
+                    {
+                      "text": "Logging in test user: statstest@example.com\n"
+                    },
+                    {
+                      "text": "After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/\n"
+                    },
+                    {
+                      "text": "✓ Test user logged in successfully\n"
+                    },
+                    {
+                      "text": "Resetting test user data (clearing workouts)...\n"
+                    },
+                    {
+                      "text": "Workout delete endpoint not found, attempting alternative cleanup...\n"
+                    },
+                    {
+                      "text": "No workouts found to delete (page is already clean)\n"
+                    },
+                    {
+                      "text": "Creating 3 dummy workouts for test user...\n"
+                    },
+                    {
+                      "text": "  - Creating: Push-ups\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Running\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Squats\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "✓ Dummy workouts creation completed\n"
+                    },
+                    {
+                      "text": "\n🔗 Tracing data flow chain...\n"
+                    },
+                    {
+                      "text": "  1. Frontend → Server: 500\n"
+                    },
+                    {
+                      "text": "Logging out test user...\n"
+                    },
+                    {
+                      "text": "✓ Test user logged out\n"
+                    },
+                    {
+                      "text": "\n🏁 All E2E tests completed\n\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "Warning: Could not verify login status. Continuing anyway...\n"
+                    }
+                  ],
+                  "retry": 1,
+                  "startTime": "2026-04-22T07:59:15.086Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                    "column": 28,
+                    "line": 138
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9a556c9a72d046cd2b56-0c23776674d85aa92077",
+          "file": "stats.spec.ts",
+          "line": 110,
+          "column": 5
+        },
+        {
+          "title": "Error handling - capture 500 errors for diagnosis",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 28640,
+                  "error": {
+                    "message": "Error: Data Tool API returned 500: {\"error\":\"fetch failed\"}",
+                    "stack": "Error: Data Tool API returned 500: {\"error\":\"fetch failed\"}\n    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:241:13",
+                    "location": {
+                      "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                      "column": 13,
+                      "line": 241
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 239 |\u001b[39m\n \u001b[90m 240 |\u001b[39m       \u001b[90m// This is the error being reported - document it\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 241 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Data Tool API returned 500: ${errorBody}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 242 |\u001b[39m     }\n \u001b[90m 243 |\u001b[39m\n \u001b[90m 244 |\u001b[39m     \u001b[90m// If we reach here, there's no 500 error\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                        "column": 13,
+                        "line": 241
+                      },
+                      "message": "Error: Data Tool API returned 500: {\"error\":\"fetch failed\"}\n\n\u001b[0m \u001b[90m 239 |\u001b[39m\n \u001b[90m 240 |\u001b[39m       \u001b[90m// This is the error being reported - document it\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 241 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Data Tool API returned 500: ${errorBody}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 242 |\u001b[39m     }\n \u001b[90m 243 |\u001b[39m\n \u001b[90m 244 |\u001b[39m     \u001b[90m// If we reach here, there's no 500 error\u001b[39m\u001b[0m\n\u001b[2m    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:241:13\u001b[22m"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "\n🚀 Starting Data Tool E2E Tests\n\n"
+                    },
+                    {
+                      "text": "✓ Secrets loaded from environment variables\n"
+                    },
+                    {
+                      "text": "✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io\n"
+                    },
+                    {
+                      "text": "\n📋 Test: Error handling - capture 500 errors\n\n"
+                    },
+                    {
+                      "text": "Logging in test user: statstest@example.com\n"
+                    },
+                    {
+                      "text": "After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/\n"
+                    },
+                    {
+                      "text": "✓ Test user logged in successfully\n"
+                    },
+                    {
+                      "text": "Resetting test user data (clearing workouts)...\n"
+                    },
+                    {
+                      "text": "Workout delete endpoint not found, attempting alternative cleanup...\n"
+                    },
+                    {
+                      "text": "No workouts found to delete (page is already clean)\n"
+                    },
+                    {
+                      "text": "Creating 2 dummy workouts for test user...\n"
+                    },
+                    {
+                      "text": "  - Creating: Push-ups\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Running\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "✓ Dummy workouts creation completed\n"
+                    },
+                    {
+                      "text": "\n🔍 Attempting to fetch stats and capture any errors...\n"
+                    },
+                    {
+                      "text": "\n📊 API Response:\n      Status: 500\n      Headers: {\n  \"content-type\": \"application/json\",\n  \"date\": \"Wed, 22 Apr 2026 08:00:12 GMT\",\n  \"vary\": \"rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch\"\n}\n    \n"
+                    },
+                    {
+                      "text": "Logging out test user...\n"
+                    },
+                    {
+                      "text": "✓ Test user logged out\n"
+                    },
+                    {
+                      "text": "\n🏁 All E2E tests completed\n\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "Warning: Could not verify login status. Continuing anyway...\n"
+                    },
+                    {
+                      "text": "\n🚨 500 ERROR DETECTED!\n\n"
+                    },
+                    {
+                      "text": "Error Body: {\"error\":\"fetch failed\"}\n"
+                    },
+                    {
+                      "text": "Screenshot saved: error-500-screenshot.png\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-04-22T07:59:44.457Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                    "column": 13,
+                    "line": 241
+                  }
+                },
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 28712,
+                  "error": {
+                    "message": "Error: Data Tool API returned 500: {\"error\":\"fetch failed\"}",
+                    "stack": "Error: Data Tool API returned 500: {\"error\":\"fetch failed\"}\n    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:241:13",
+                    "location": {
+                      "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                      "column": 13,
+                      "line": 241
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 239 |\u001b[39m\n \u001b[90m 240 |\u001b[39m       \u001b[90m// This is the error being reported - document it\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 241 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Data Tool API returned 500: ${errorBody}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 242 |\u001b[39m     }\n \u001b[90m 243 |\u001b[39m\n \u001b[90m 244 |\u001b[39m     \u001b[90m// If we reach here, there's no 500 error\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                        "column": 13,
+                        "line": 241
+                      },
+                      "message": "Error: Data Tool API returned 500: {\"error\":\"fetch failed\"}\n\n\u001b[0m \u001b[90m 239 |\u001b[39m\n \u001b[90m 240 |\u001b[39m       \u001b[90m// This is the error being reported - document it\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 241 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Data Tool API returned 500: ${errorBody}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 242 |\u001b[39m     }\n \u001b[90m 243 |\u001b[39m\n \u001b[90m 244 |\u001b[39m     \u001b[90m// If we reach here, there's no 500 error\u001b[39m\u001b[0m\n\u001b[2m    at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:241:13\u001b[22m"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "\n🚀 Starting Data Tool E2E Tests\n\n"
+                    },
+                    {
+                      "text": "✓ Secrets loaded from environment variables\n"
+                    },
+                    {
+                      "text": "✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io\n"
+                    },
+                    {
+                      "text": "\n📋 Test: Error handling - capture 500 errors\n\n"
+                    },
+                    {
+                      "text": "Logging in test user: statstest@example.com\n"
+                    },
+                    {
+                      "text": "After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/\n"
+                    },
+                    {
+                      "text": "✓ Test user logged in successfully\n"
+                    },
+                    {
+                      "text": "Resetting test user data (clearing workouts)...\n"
+                    },
+                    {
+                      "text": "Workout delete endpoint not found, attempting alternative cleanup...\n"
+                    },
+                    {
+                      "text": "No workouts found to delete (page is already clean)\n"
+                    },
+                    {
+                      "text": "Creating 2 dummy workouts for test user...\n"
+                    },
+                    {
+                      "text": "  - Creating: Push-ups\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "  - Creating: Running\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "✓ Dummy workouts creation completed\n"
+                    },
+                    {
+                      "text": "\n🔍 Attempting to fetch stats and capture any errors...\n"
+                    },
+                    {
+                      "text": "\n📊 API Response:\n      Status: 500\n      Headers: {\n  \"content-type\": \"application/json\",\n  \"date\": \"Wed, 22 Apr 2026 08:00:42 GMT\",\n  \"vary\": \"rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch\"\n}\n    \n"
+                    },
+                    {
+                      "text": "Logging out test user...\n"
+                    },
+                    {
+                      "text": "✓ Test user logged out\n"
+                    },
+                    {
+                      "text": "\n🏁 All E2E tests completed\n\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "Warning: Could not verify login status. Continuing anyway...\n"
+                    },
+                    {
+                      "text": "\n🚨 500 ERROR DETECTED!\n\n"
+                    },
+                    {
+                      "text": "Error Body: {\"error\":\"fetch failed\"}\n"
+                    },
+                    {
+                      "text": "Screenshot saved: error-500-screenshot.png\n"
+                    }
+                  ],
+                  "retry": 1,
+                  "startTime": "2026-04-22T08:00:13.828Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts",
+                    "column": 13,
+                    "line": 241
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9a556c9a72d046cd2b56-2dcd6cd5f835b78acc99",
+          "file": "stats.spec.ts",
+          "line": 188,
+          "column": 5
+        },
+        {
+          "title": "Network error recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15863,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "\n🚀 Starting Data Tool E2E Tests\n\n"
+                    },
+                    {
+                      "text": "✓ Secrets loaded from environment variables\n"
+                    },
+                    {
+                      "text": "✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io\n"
+                    },
+                    {
+                      "text": "\n📋 Test: Network error recovery\n\n"
+                    },
+                    {
+                      "text": "Logging in test user: statstest@example.com\n"
+                    },
+                    {
+                      "text": "After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/\n"
+                    },
+                    {
+                      "text": "✓ Test user logged in successfully\n"
+                    },
+                    {
+                      "text": "Resetting test user data (clearing workouts)...\n"
+                    },
+                    {
+                      "text": "Workout delete endpoint not found, attempting alternative cleanup...\n"
+                    },
+                    {
+                      "text": "No workouts found to delete (page is already clean)\n"
+                    },
+                    {
+                      "text": "Creating 1 dummy workouts for test user...\n"
+                    },
+                    {
+                      "text": "  - Creating: Push-ups\n"
+                    },
+                    {
+                      "text": "    ✓ Workout created successfully\n"
+                    },
+                    {
+                      "text": "✓ Dummy workouts creation completed\n"
+                    },
+                    {
+                      "text": "\n🌐 Normal load successful\n"
+                    },
+                    {
+                      "text": "Testing page handles data load gracefully...\n"
+                    },
+                    {
+                      "text": "✓ Page renders even with potential network issues\n\n"
+                    },
+                    {
+                      "text": "Logging out test user...\n"
+                    },
+                    {
+                      "text": "✓ Test user logged out\n"
+                    },
+                    {
+                      "text": "\n🏁 All E2E tests completed\n\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "Warning: Could not verify login status. Continuing anyway...\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-04-22T08:00:43.202Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9a556c9a72d046cd2b56-0cf142b9313713887aac",
+          "file": "stats.spec.ts",
+          "line": 258,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-04-22T07:58:25.898Z",
+    "duration": 153326.75,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

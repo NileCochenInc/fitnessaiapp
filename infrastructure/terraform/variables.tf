@@ -190,11 +190,56 @@ variable "admin_key_vault_secrets" {
   }
 }
 
+# Data Tool Service Container Variables
+variable "data_tool_container_image" {
+  description = "Data Tool Docker image URI"
+  type        = string
+  default     = "nilecochen/fitnessaiapp-data-tool:v1-prod-amd64"
+}
+
+variable "data_tool_container_port" {
+  description = "Data Tool container port"
+  type        = number
+  default     = 8080
+}
+
+variable "data_tool_container_name" {
+  description = "Data Tool container app name"
+  type        = string
+  default     = "fitness-ai-app-data-tool"
+}
+
+variable "data_tool_deployment_version" {
+  description = "Data Tool deployment version for force redeploy"
+  type        = string
+  default     = "4"
+}
+
+variable "data_tool_cpu_cores" {
+  description = "Data Tool CPU cores"
+  type        = string
+  default     = "0.5"
+}
+
+variable "data_tool_memory_gb" {
+  description = "Data Tool memory in GB"
+  type        = string
+  default     = "1Gi"
+}
+
+variable "data_tool_key_vault_secrets" {
+  description = "Map of Key Vault secrets for Data Tool"
+  type        = map(string)
+  default     = {}
+}
+
 variable "static_env_vars" {
   description = "Static environment variables (non-secret)"
   type        = map(string)
   default = {
-    "NODE_ENV" = "production"
+    "NODE_ENV"       = "production"
+    "AI_SERVICE_URL" = "http://fitness-ai-app-ai"
+    "DATA_TOOL_URL"  = "http://fitness-ai-app-data-tool:8080"
   }
 }
 

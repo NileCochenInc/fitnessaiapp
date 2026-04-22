@@ -1,0 +1,409 @@
+<testsuites id="" name="" tests="4" failures="1" skipped="0" errors="1" time="153.32675">
+<testsuite name="stats.spec.ts" timestamp="2026-04-22T07:58:26.055Z" hostname="chromium" tests="4" failures="1" skipped="0" time="149.544" errors="1">
+<testcase name="Full stats flow - login to display" classname="stats.spec.ts" time="18.919">
+<system-out>
+<![CDATA[
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io
+
+📋 Test: Full stats flow - login to display
+Logging in test user: statstest@example.com
+After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/
+✓ Test user logged in successfully
+
+📊 Resetting user data...
+Resetting test user data (clearing workouts)...
+Workout delete endpoint not found, attempting alternative cleanup...
+No workouts found to delete (page is already clean)
+
+📊 Creating test data...
+Creating 5 dummy workouts for test user...
+  - Creating: Push-ups
+    ✓ Workout created successfully
+  - Creating: Running
+    ✓ Workout created successfully
+  - Creating: Squats
+    ✓ Workout created successfully
+  - Creating: Bench Press
+    ✓ Workout created successfully
+  - Creating: Pull-ups
+    ✓ Workout created successfully
+✓ Dummy workouts creation completed
+
+📊 Navigating to /stats page...
+
+📊 Verifying stats display...
+  ✓ Stats content visible on page
+  ✓ No error messages on page
+
+✅ Test passed: Stats flow working end-to-end
+
+Logging out test user...
+✓ Test user logged out
+]]>
+</system-out>
+<system-err>
+<![CDATA[Warning: Could not verify login status. Continuing anyway...
+]]>
+</system-err>
+</testcase>
+<testcase name="Data flow chain verification - frontend to data-tool" classname="stats.spec.ts" time="57.41">
+<system-out>
+<![CDATA[
+📋 Test: Data flow chain verification
+
+Logging in test user: statstest@example.com
+After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/
+✓ Test user logged in successfully
+Resetting test user data (clearing workouts)...
+Workout delete endpoint not found, attempting alternative cleanup...
+No workouts found to delete (page is already clean)
+Creating 3 dummy workouts for test user...
+  - Creating: Push-ups
+    ✓ Workout created successfully
+  - Creating: Running
+    ✓ Workout created successfully
+  - Creating: Squats
+    ✓ Workout created successfully
+✓ Dummy workouts creation completed
+
+🔗 Tracing data flow chain...
+  1. Frontend → Server: 500
+Logging out test user...
+✓ Test user logged out
+
+🏁 All E2E tests completed
+
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/video.webm]]
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md]]
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md]]
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io
+
+📋 Test: Data flow chain verification
+
+Logging in test user: statstest@example.com
+After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/
+✓ Test user logged in successfully
+Resetting test user data (clearing workouts)...
+Workout delete endpoint not found, attempting alternative cleanup...
+No workouts found to delete (page is already clean)
+Creating 3 dummy workouts for test user...
+  - Creating: Push-ups
+    ✓ Workout created successfully
+  - Creating: Running
+    ✓ Workout created successfully
+  - Creating: Squats
+    ✓ Workout created successfully
+✓ Dummy workouts creation completed
+
+🔗 Tracing data flow chain...
+  1. Frontend → Server: 500
+Logging out test user...
+✓ Test user logged out
+
+🏁 All E2E tests completed
+
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/test-failed-1.png]]
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/video.webm]]
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md]]
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md]]
+
+[[ATTACHMENT|stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[Warning: Could not verify login status. Continuing anyway...
+Warning: Could not verify login status. Continuing anyway...
+]]>
+</system-err>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [chromium] › stats.spec.ts:110:5 › Data flow chain verification - frontend to data-tool ──────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+      136 |
+      137 |     console.log(`  1. Frontend → Server: ${frontendStatus}`);
+    > 138 |     expect(frontendStatus).toBe(200);
+          |                            ^
+      139 |
+      140 |     // Verify response headers
+      141 |     const contentType = frontendResponse.headers()['content-type'];
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:138:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md
+
+    Error Context: ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+      136 |
+      137 |     console.log(`  1. Frontend → Server: ${frontendStatus}`);
+    > 138 |     expect(frontendStatus).toBe(200);
+          |                            ^
+      139 |
+      140 |     // Verify response headers
+      141 |     const contentType = frontendResponse.headers()['content-type'];
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:138:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md
+
+    Error Context: ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace ../test-results/stats-Data-flow-chain-verification---frontend-to-data-tool-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="Error handling - capture 500 errors for diagnosis" classname="stats.spec.ts" time="57.352">
+<system-out>
+<![CDATA[
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io
+
+📋 Test: Error handling - capture 500 errors
+
+Logging in test user: statstest@example.com
+After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/
+✓ Test user logged in successfully
+Resetting test user data (clearing workouts)...
+Workout delete endpoint not found, attempting alternative cleanup...
+No workouts found to delete (page is already clean)
+Creating 2 dummy workouts for test user...
+  - Creating: Push-ups
+    ✓ Workout created successfully
+  - Creating: Running
+    ✓ Workout created successfully
+✓ Dummy workouts creation completed
+
+🔍 Attempting to fetch stats and capture any errors...
+
+📊 API Response:
+      Status: 500
+      Headers: {
+  "content-type": "application/json",
+  "date": "Wed, 22 Apr 2026 08:00:12 GMT",
+  "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+}
+    
+Logging out test user...
+✓ Test user logged out
+
+🏁 All E2E tests completed
+
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium/video.webm]]
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md]]
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md]]
+
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io
+
+📋 Test: Error handling - capture 500 errors
+
+Logging in test user: statstest@example.com
+After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/
+✓ Test user logged in successfully
+Resetting test user data (clearing workouts)...
+Workout delete endpoint not found, attempting alternative cleanup...
+No workouts found to delete (page is already clean)
+Creating 2 dummy workouts for test user...
+  - Creating: Push-ups
+    ✓ Workout created successfully
+  - Creating: Running
+    ✓ Workout created successfully
+✓ Dummy workouts creation completed
+
+🔍 Attempting to fetch stats and capture any errors...
+
+📊 API Response:
+      Status: 500
+      Headers: {
+  "content-type": "application/json",
+  "date": "Wed, 22 Apr 2026 08:00:42 GMT",
+  "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+}
+    
+Logging out test user...
+✓ Test user logged out
+
+🏁 All E2E tests completed
+
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/test-failed-1.png]]
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/video.webm]]
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md]]
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md]]
+
+[[ATTACHMENT|stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[Warning: Could not verify login status. Continuing anyway...
+
+🚨 500 ERROR DETECTED!
+
+Error Body: {"error":"fetch failed"}
+Screenshot saved: error-500-screenshot.png
+Warning: Could not verify login status. Continuing anyway...
+
+🚨 500 ERROR DETECTED!
+
+Error Body: {"error":"fetch failed"}
+Screenshot saved: error-500-screenshot.png
+]]>
+</system-err>
+<error message="Data Tool API returned 500: {&quot;error&quot;:&quot;fetch failed&quot;}" type="Error">
+<![CDATA[  [chromium] › stats.spec.ts:188:5 › Error handling - capture 500 errors for diagnosis ─────────────
+
+    Error: Data Tool API returned 500: {"error":"fetch failed"}
+
+      239 |
+      240 |       // This is the error being reported - document it
+    > 241 |       throw new Error(`Data Tool API returned 500: ${errorBody}`);
+          |             ^
+      242 |     }
+      243 |
+      244 |     // If we reach here, there's no 500 error
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:241:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md
+
+    Error Context: ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: Data Tool API returned 500: {"error":"fetch failed"}
+
+      239 |
+      240 |       // This is the error being reported - document it
+    > 241 |       throw new Error(`Data Tool API returned 500: ${errorBody}`);
+          |             ^
+      242 |     }
+      243 |
+      244 |     // If we reach here, there's no 500 error
+        at /Users/nilecochen/Documents/FullStack/pairProgram/fitness-ai-app/front-and-back-end/e2e/stats.spec.ts:241:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md
+
+    Error Context: ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace ../test-results/stats-Error-handling---capture-500-errors-for-diagnosis-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="Network error recovery" classname="stats.spec.ts" time="15.863">
+<system-out>
+<![CDATA[
+🚀 Starting Data Tool E2E Tests
+
+✓ Secrets loaded from environment variables
+✓ All secrets validated. App URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io
+
+📋 Test: Network error recovery
+
+Logging in test user: statstest@example.com
+After login - Current URL: https://fitness-ai-app.ashycliff-d78872a9.canadacentral.azurecontainerapps.io/
+✓ Test user logged in successfully
+Resetting test user data (clearing workouts)...
+Workout delete endpoint not found, attempting alternative cleanup...
+No workouts found to delete (page is already clean)
+Creating 1 dummy workouts for test user...
+  - Creating: Push-ups
+    ✓ Workout created successfully
+✓ Dummy workouts creation completed
+
+🌐 Normal load successful
+Testing page handles data load gracefully...
+✓ Page renders even with potential network issues
+
+Logging out test user...
+✓ Test user logged out
+
+🏁 All E2E tests completed
+
+]]>
+</system-out>
+<system-err>
+<![CDATA[Warning: Could not verify login status. Continuing anyway...
+]]>
+</system-err>
+</testcase>
+</testsuite>
+</testsuites>
