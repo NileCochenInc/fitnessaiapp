@@ -109,9 +109,11 @@ export const authOptions = {
     },
     // JWT callback runs on login and token refresh
     async jwt({ token, user, account }: { token: JWT & any; user?: any; account?: any }) {
+      console.log(`[auth-jwt] JWT callback triggered. User:`, user ? `${user.id}` : 'undefined', `Account provider:`, account?.provider || 'none');
       if (user) {
         token.userId = user.id;
         token.username = user.username;
+        console.log(`[auth-jwt] Token updated with userId: ${user.id}, username: ${user.username}`);
       }
       // If signing in with Google, fetch user data from DB
       if (account?.provider === "google" && !user?.username) {
@@ -122,16 +124,23 @@ export const authOptions = {
         if (result.rows[0]) {
           token.userId = result.rows[0].id.toString();
           token.username = result.rows[0].username;
+          console.log(`[auth-jwt] Google provider: fetched userId: ${token.userId}`);
         }
       }
+      console.log(`[auth-jwt] JWT callback complete. Token has userId: ${!!token.userId}`);
       return token;
     },
     // Session callback runs whenever session is checked
     async session({ session, token }: { session: any; token: any }) {
+      console.log(`[auth-session] Session callback triggered. Token has userId: ${!!token.userId}`);
       if (session.user && token.userId) {
         session.user.id = token.userId;
         session.user.username = token.username; // make username available in session
+        console.log(`[auth-session] Session updated with userId: ${token.userId}`);
+      } else {
+        console.warn(`[auth-session] ⚠️  Session update skipped. session.user exists: ${!!session.user}, token.userId exists: ${!!token.userId}`);
       }
+      console.log(`[auth-session] Session callback complete. Session user ID:`, session.user?.id || 'undefined');
       return session;
     },
   },
