@@ -22,3 +22,12 @@ application.properties
 bin/
 obj/
 .vs/
+
+# terraform
+infrastructure/terraform/.terraform/
+infrastructure/terraform/terraform.tfstate*
+infrastructure/terraform/.terraform.tfstate.lock.info
+infrastructure/terraform/.terraform.lock.hcl
+
+# e2e tests
+front-and-back-end/src/tests/e2e/
