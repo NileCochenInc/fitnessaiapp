@@ -30,7 +30,10 @@ export async function GET(
 
     // Call data-tool endpoint
     const dataToolRes = await fetch(
-      `http://data-tool:8080/api/exercise-stats/${userId}/${exerciseId}`
+      `http://fitness-ai-app-data-tool.internal.ashycliff-d78872a9.canadacentral.azurecontainerapps.io:8080/api/exercise-stats/${userId}/${exerciseId}`,
+      {
+        signal: AbortSignal.timeout(30000), // 30 second timeout
+      }
     );
     const data = await dataToolRes.json();
 

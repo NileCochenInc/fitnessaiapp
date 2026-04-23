@@ -33,7 +33,7 @@ export async function GET(req: Request) {
     const userId = session.user.id;
 
     // 2️⃣ Call Python SSE endpoint
-    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai:5000";
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://fitness-ai-app-ai:5000";
     const progressUrl = `${aiServiceUrl}/progress`;
 
     console.log(`[progress] Connecting to AI service: ${progressUrl}`);

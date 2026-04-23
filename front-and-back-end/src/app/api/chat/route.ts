@@ -32,15 +32,15 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json(); // contains { prompt: "...", context: [...] }
 
-    // Get AI service URL from environment variable (falls back to Docker Compose hostname)
-    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://ai:5000";
+    // Get AI service URL from environment variable (falls back to Azure Container Apps internal service name)
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://fitness-ai-app-ai:5000";
     const chatUrl = `${aiServiceUrl}/chat`;
 
     console.log(`[chat] Calling AI service: POST ${chatUrl}`);
     console.log(`[chat] User ID: ${userId}`);
     console.log(`[chat] Request body:`, JSON.stringify(body).substring(0, 200));
 
-    // Forward request to Python backend
+    // Forward request to Python backend with 30s timeout
     const pythonRes = await fetch(chatUrl, {
       method: "POST",
       headers: {
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
         "user-id": userId, // forward user id for per-user events
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(30000), // 30 second timeout instead of default 10s
     });
 
     console.log(`[chat] AI service response status: ${pythonRes.status}`);
