@@ -53,12 +53,6 @@ export default function Page() {
             style={{ backgroundColor: "#5865f2" }}
           />
           <Button
-            label="View Stats"
-            onClick={goToStats}
-            className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
-            style={{ backgroundColor: "#5865f2" }}
-          />
-          <Button
             label="Fit Buddy AI"
             onClick={goToChat}
             className="w-full sm:w-auto text-white hover:bg-[#4752c4]"
