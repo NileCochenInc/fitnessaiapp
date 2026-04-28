@@ -46,3 +46,15 @@ key_vault_secrets = {
 static_env_vars = {
   "NODE_ENV" = "production"
 }
+
+# Data Tool Configuration
+data_tool_container_name     = "fitness-ai-app-data-tool"
+data_tool_container_port     = 8080
+data_tool_container_image    = "nilecochen/fitnessaiapp-data-tool:latest"
+data_tool_deployment_version = "1"
+data_tool_cpu_cores          = "1.0"
+data_tool_memory_gb          = "2Gi"
+
+data_tool_key_vault_secrets = {
+  "PostgresPassword" = "DB_PASSWORD"
+}

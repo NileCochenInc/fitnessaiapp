@@ -62,3 +62,13 @@ output "access_url" {
   description = "Public URL to access the Container App"
   value       = "https://${azurerm_container_app.app.ingress[0].fqdn}"
 }
+
+output "data_tool_container_app_fqdn" {
+  description = "Internal FQDN of the Data Tool Container App"
+  value       = azurerm_container_app.data_tool.ingress[0].fqdn
+}
+
+output "data_tool_container_app_name" {
+  description = "Name of the Data Tool Container App"
+  value       = azurerm_container_app.data_tool.name
+}

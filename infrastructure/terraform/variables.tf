@@ -70,7 +70,7 @@ variable "memory_gb" {
 variable "min_replicas" {
   description = "Minimum number of replicas"
   type        = number
-  default     = 1
+  default     = 0
 }
 
 variable "max_replicas" {
@@ -187,6 +187,51 @@ variable "admin_key_vault_secrets" {
   default = {
     "PostgresPassword"         = "POSTGRES_PASSWORD"
     "GrafanaSettings-ApiToken" = "GrafanaSettings__ApiToken"
+  }
+}
+
+# Data Tool Container Variables
+variable "data_tool_container_image" {
+  description = "Data Tool Docker image URI"
+  type        = string
+  default     = "nilecochen/fitnessaiapp-data-tool:latest"
+}
+
+variable "data_tool_container_port" {
+  description = "Data Tool container port"
+  type        = number
+  default     = 8080
+}
+
+variable "data_tool_container_name" {
+  description = "Data Tool container app name"
+  type        = string
+  default     = "fitness-ai-app-data-tool"
+}
+
+variable "data_tool_deployment_version" {
+  description = "Data Tool deployment version for force redeploy"
+  type        = string
+  default     = "1"
+}
+
+variable "data_tool_cpu_cores" {
+  description = "Data Tool CPU cores"
+  type        = string
+  default     = "1.0"
+}
+
+variable "data_tool_memory_gb" {
+  description = "Data Tool memory in GB"
+  type        = string
+  default     = "2Gi"
+}
+
+variable "data_tool_key_vault_secrets" {
+  description = "Map of Key Vault secrets for Data Tool"
+  type        = map(string)
+  default = {
+    "PostgresPassword" = "DB_PASSWORD"
   }
 }
 

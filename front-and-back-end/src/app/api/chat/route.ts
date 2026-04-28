@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         "user-id": userId, // forward user id for per-user events
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(30000), // 30 second timeout instead of default 10s
+      signal: AbortSignal.timeout(90000), // 90s — covers AI service cold start from zero
     });
 
     console.log(`[chat] AI service response status: ${pythonRes.status}`);

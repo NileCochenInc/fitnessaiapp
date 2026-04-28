@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, request } from "@playwright/test";
 
 const EMAIL = process.env.TEST_USER_EMAIL ?? "statstest@example.com";
 const PASSWORD = process.env.TEST_USER_PASSWORD ?? "testpass123";
@@ -93,5 +93,20 @@ test.describe("Cross-container communication — AI service reachability", () =>
     const text2 = await secondBubble.innerText();
     expect(text2.trim().length).toBeGreaterThan(10);
     expect(text2).not.toMatch(/Can't reconnect|invalid transaction/i);
+  });
+});
+
+test.describe("Data-tool reachability", () => {
+  test("GET /api/data/user-stats returns 200 — data-tool container reachable from server", async ({
+    page,
+  }) => {
+    await login(page);
+    const res = await page.request.get("/api/data/user-stats");
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    // Valid response has these keys (values may be zero for a fresh user)
+    expect(body).toHaveProperty("totalWorkoutsThisMonth");
+    expect(body).toHaveProperty("averageWorkoutsPerWeek");
+    expect(body).toHaveProperty("exerciseFrequencyThisMonth");
   });
 });

@@ -29,8 +29,9 @@ export async function GET(
     }
 
     // Call data-tool endpoint
+    const dataToolUrl = process.env.DATA_TOOL_URL || "http://fitness-ai-app-data-tool.internal.ashycliff-d78872a9.canadacentral.azurecontainerapps.io";
     const dataToolRes = await fetch(
-      `http://fitness-ai-app-data-tool.internal.ashycliff-d78872a9.canadacentral.azurecontainerapps.io:8080/api/exercise-stats/${userId}/${exerciseId}`,
+      `${dataToolUrl}/api/exercise-stats/${userId}/${exerciseId}`,
       {
         signal: AbortSignal.timeout(30000), // 30 second timeout
       }

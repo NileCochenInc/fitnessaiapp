@@ -190,11 +190,11 @@ resource "azurerm_container_app" "ai" {
       }
     }
 
-    min_replicas = 1
+    min_replicas = 0
     max_replicas = 1
   }
 
-  # Internal-only ingress (no external traffic)
+  # Internal-only ingress (no external traffic) — min 0 allows scale-to-zero
   ingress {
     allow_insecure_connections = true
     external_enabled           = false
@@ -290,7 +290,7 @@ resource "azurerm_container_app" "admin" {
       }
     }
 
-    min_replicas = 1
+    min_replicas = 0
     max_replicas = 1
   }
 
@@ -311,6 +311,108 @@ resource "azurerm_container_app" "admin" {
     Application = "fitness-ai-app"
     Service     = "AdminDashboard"
     DeploymentVersion = var.admin_deployment_version
+  }
+
+  depends_on = [azurerm_role_assignment.container_app_kv_access]
+}
+
+# Data Tool Container App
+resource "azurerm_container_app" "data_tool" {
+  name                         = var.data_tool_container_name
+  container_app_environment_id = azurerm_container_app_environment.app.id
+  resource_group_name          = data.azurerm_resource_group.app.name
+  revision_mode                = "Single"
+
+  dynamic "secret" {
+    for_each = { for key, _ in var.data_tool_key_vault_secrets : key => data.azurerm_key_vault_secret.admin_secrets[key].value }
+    content {
+      name  = lower(secret.key)
+      value = secret.value
+    }
+  }
+
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app.id]
+  }
+
+  template {
+    container {
+      name   = var.data_tool_container_name
+      image  = var.data_tool_container_image
+      cpu    = var.data_tool_cpu_cores
+      memory = var.data_tool_memory_gb
+
+      env {
+        name  = "DB_HOST"
+        value = "ep-proud-surf-a8ief0p1.eastus2.azure.neon.tech"
+      }
+
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+
+      env {
+        name  = "DB_NAME"
+        value = "neondb"
+      }
+
+      env {
+        name  = "DB_USER"
+        value = "neondb_owner"
+      }
+
+      env {
+        name  = "DB_SSL_PARAMS"
+        value = "?sslmode=require"
+      }
+
+      env {
+        name  = "DDL_AUTO"
+        value = "none"
+      }
+
+      env {
+        name  = "SERVER_PORT"
+        value = "8080"
+      }
+
+      env {
+        name  = "DEPLOYMENT_VERSION"
+        value = var.data_tool_deployment_version
+      }
+
+      dynamic "env" {
+        for_each = var.data_tool_key_vault_secrets
+        content {
+          name        = env.value
+          secret_name = lower(env.key)
+        }
+      }
+    }
+
+    min_replicas = 0
+    max_replicas = 1
+  }
+
+  ingress {
+    allow_insecure_connections = true
+    external_enabled           = false
+    target_port                = var.data_tool_container_port
+    transport                  = "auto"
+
+    traffic_weight {
+      latest_revision = true
+      percentage      = 100
+    }
+  }
+
+  tags = {
+    Environment       = var.environment
+    Application       = "fitness-ai-app"
+    Service           = "DataTool"
+    DeploymentVersion = var.data_tool_deployment_version
   }
 
   depends_on = [azurerm_role_assignment.container_app_kv_access]
