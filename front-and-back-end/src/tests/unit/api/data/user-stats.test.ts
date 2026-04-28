@@ -19,6 +19,7 @@ const mockSession = { user: { id: "123" } };
 beforeEach(() => {
   jest.clearAllMocks();
   (getServerSession as jest.Mock).mockResolvedValue(mockSession);
+  process.env.DATA_TOOL_URL = "http://data-tool:8080";
 });
 
 describe("GET /api/data/user-stats", () => {
@@ -42,7 +43,10 @@ describe("GET /api/data/user-stats", () => {
     const req = {} as NextRequest;
     const res = await GET(req);
 
-    expect(fetch).toHaveBeenCalledWith("http://data-tool:8080/api/user-stats/123");
+    expect(fetch).toHaveBeenCalledWith(
+      "http://data-tool:8080/api/user-stats/123",
+      expect.objectContaining({ signal: expect.anything() })
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json).toEqual(mockData);
