@@ -1,0 +1,47 @@
+name: Rollback Azure Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Commit SHA to roll back to (e.g. abc1234)'
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    name: Roll back Azure Container Apps
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Roll back server
+        run: |
+          az containerapp update \
+            --name fitness-ai-app \
+            --resource-group Fitness-AI-App \
+            --image ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp:sha-${{ github.event.inputs.commit_sha }}
+
+      - name: Roll back AI service
+        run: |
+          az containerapp update \
+            --name fitness-ai-app-ai \
+            --resource-group Fitness-AI-App \
+            --image ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-ai:sha-${{ github.event.inputs.commit_sha }}
+
+      - name: Roll back admin dashboard
+        run: |
+          az containerapp update \
+            --name fitness-ai-app-admin \
+            --resource-group Fitness-AI-App \
+            --image ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-admin-dash:sha-${{ github.event.inputs.commit_sha }}
+
+      - name: Roll back data tool
+        run: |
+          az containerapp update \
+            --name fitness-ai-app-data-tool \
+            --resource-group Fitness-AI-App \
+            --image ${{ secrets.DOCKER_USERNAME }}/fitnessaiapp-data-tool:sha-${{ github.event.inputs.commit_sha }}
