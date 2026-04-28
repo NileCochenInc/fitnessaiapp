@@ -28,16 +28,18 @@ public class AdminTokenAuthMiddleware
         if (!context.Request.Headers.TryGetValue("Authorization", out var authHeader))
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsJsonAsync(new { error = "Unauthorized" });
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");
             return;
         }
 
         var token = authHeader.ToString().StartsWith("Bearer ") ? authHeader.ToString()[7..] : authHeader.ToString();
-        
+
         if (token != _apiToken)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsJsonAsync(new { error = "Unauthorized" });
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");
             return;
         }
 

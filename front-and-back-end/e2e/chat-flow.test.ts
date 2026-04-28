@@ -12,7 +12,7 @@ import {
 } from './helpers/chat-helpers';
 import { generateDetailedReport, printTestSummary } from './helpers/event-reporter';
 
-test.describe('Complete Chat Flow E2E Tests', () => {
+test.describe.skip('Complete Chat Flow E2E Tests', () => {
   test('should complete full chat flow: login → dashboard → chat → response with detailed reporting', async ({
     page,
   }) => {

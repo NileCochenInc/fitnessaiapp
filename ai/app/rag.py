@@ -18,17 +18,17 @@ def retrieve_exercises(prompt: str, user_id: int, limit: int = 10):
     vector_str = "[" + ",".join(str(v) for v in query_vector) + "]"
 
     # Search database using cosine similarity
-    result = db.session.execute(text("""
-        SELECT we.id, we.exercise_text,
-               we.embeddings <=> :query_vector AS distance
-        FROM workout_exercises we
-        JOIN workouts w ON we.workout_id = w.id
-        WHERE w.user_id = :user_id AND we.embeddings IS NOT NULL
-        ORDER BY we.embeddings <=> :query_vector
-        LIMIT :limit
-    """), {"query_vector": vector_str, "user_id": user_id, "limit": limit})
-    
-    rows = result.fetchall()
+    with db.get_session() as session:
+        result = session.execute(text("""
+            SELECT we.id, we.exercise_text,
+                   we.embeddings <=> :query_vector AS distance
+            FROM workout_exercises we
+            JOIN workouts w ON we.workout_id = w.id
+            WHERE w.user_id = :user_id AND we.embeddings IS NOT NULL
+            ORDER BY we.embeddings <=> :query_vector
+            LIMIT :limit
+        """), {"query_vector": vector_str, "user_id": user_id, "limit": limit})
+        rows = result.fetchall()
     
     # Convert rows to dictionaries with similarity score
 
@@ -54,16 +54,16 @@ def retrieve_workouts(prompt: str, user_id: int, limit: int = 10):
     vector_str = "[" + ",".join(str(v) for v in query_vector) + "]"
 
     # Search database using cosine similarity
-    result = db.session.execute(text("""
-        SELECT w.id, w.workout_text,
-               w.embeddings <=> :query_vector AS distance
-        FROM workouts w
-        WHERE w.user_id = :user_id AND w.embeddings IS NOT NULL
-        ORDER BY w.embeddings <=> :query_vector
-        LIMIT :limit
-    """), {"query_vector": vector_str, "user_id": user_id, "limit": limit})
-    
-    rows = result.fetchall()
+    with db.get_session() as session:
+        result = session.execute(text("""
+            SELECT w.id, w.workout_text,
+                   w.embeddings <=> :query_vector AS distance
+            FROM workouts w
+            WHERE w.user_id = :user_id AND w.embeddings IS NOT NULL
+            ORDER BY w.embeddings <=> :query_vector
+            LIMIT :limit
+        """), {"query_vector": vector_str, "user_id": user_id, "limit": limit})
+        rows = result.fetchall()
     
     # Convert rows to dictionaries with similarity score
     result = [

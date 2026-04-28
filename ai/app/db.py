@@ -1,20 +1,30 @@
 import os
+from contextlib import contextmanager
 from dotenv import load_dotenv
-from sqlmodel import SQLModel, create_engine, Session
+from sqlmodel import create_engine, Session
 
-# Load environment variables
 load_dotenv()
 
-# Database connection
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set")
 
-# Convert postgres:// to postgresql:// for SQLAlchemy 2.0+
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,  # re-validates connections before use; handles Neon idle drops
+    pool_recycle=300,    # recycle connections every 5 min to avoid stale handles
+)
 
-engine = create_engine(DATABASE_URL)
-
-session = Session(engine)
+@contextmanager
+def get_session():
+    session = Session(engine)
+    try:
+        yield session
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()

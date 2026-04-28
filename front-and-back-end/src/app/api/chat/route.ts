@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json(); // contains { prompt: "...", context: [...] }
 
     // Get AI service URL from environment variable (falls back to Azure Container Apps internal service name)
-    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://fitness-ai-app-ai:5000";
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://fitness-ai-app-ai.internal.ashycliff-d78872a9.canadacentral.azurecontainerapps.io";
     const chatUrl = `${aiServiceUrl}/chat`;
 
     console.log(`[chat] Calling AI service: POST ${chatUrl}`);

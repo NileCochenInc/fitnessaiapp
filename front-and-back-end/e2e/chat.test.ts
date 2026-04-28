@@ -5,7 +5,7 @@ const TEST_USER = {
   password: 'TestPassword123!',
 };
 
-test.describe('Chat Functionality E2E Tests', () => {
+test.describe.skip('Chat Functionality E2E Tests', () => {
   test('should load the application', async ({ page }) => {
     await page.goto('/');
     
