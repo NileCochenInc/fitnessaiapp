@@ -20,7 +20,10 @@ export async function GET(req: NextRequest) {
     const userId = session.user.id;
 
     // Call data-tool endpoint
-    const dataToolRes = await fetch(`http://data-tool:8080/api/user-stats/${userId}`);
+    const dataToolUrl = process.env.DATA_TOOL_URL || "http://fitness-ai-app-data-tool.internal.ashycliff-d78872a9.canadacentral.azurecontainerapps.io";
+    const dataToolRes = await fetch(`${dataToolUrl}/api/user-stats/${userId}`, {
+      signal: AbortSignal.timeout(30000), // 30 second timeout
+    });
     const data = await dataToolRes.json();
 
     return NextResponse.json(data, { status: dataToolRes.status });

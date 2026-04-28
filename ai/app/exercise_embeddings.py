@@ -7,29 +7,31 @@ embeddings = MistralAIEmbeddings(
 )
 
 def get_unembedded_exercises(id: int):
-    result = db.session.execute(text("""SELECT 
-                                            we.id AS workout_exercise_id,
-                                            e.name AS exercise_name,
-                                            we.note,
-                                            w.workout_date,
-                                            en.id AS entry_id,
-                                            en.entry_index,
-                                            md.key AS metric_key,
-                                            em.value_number,
-                                            em.value_text,
-                                            em.unit
-                                        FROM workout_exercises we
-                                        JOIN exercises e ON we.exercise_id = e.id
-                                        JOIN workouts w ON we.workout_id = w.id
-                                        LEFT JOIN entries en ON we.id = en.workout_exercise_id
-                                        LEFT JOIN entry_metrics em ON en.id = em.entry_id
-                                        LEFT JOIN metric_definitions md ON em.metric_id = md.id
-                                        WHERE we.embeddings IS NULL
-                                        AND w.user_id = :user_id
-                                        ORDER BY we.id, en.entry_index;"""), {"user_id": id})
+    with db.get_session() as session:
+        result = session.execute(text("""SELECT
+                                                we.id AS workout_exercise_id,
+                                                e.name AS exercise_name,
+                                                we.note,
+                                                w.workout_date,
+                                                en.id AS entry_id,
+                                                en.entry_index,
+                                                md.key AS metric_key,
+                                                em.value_number,
+                                                em.value_text,
+                                                em.unit
+                                            FROM workout_exercises we
+                                            JOIN exercises e ON we.exercise_id = e.id
+                                            JOIN workouts w ON we.workout_id = w.id
+                                            LEFT JOIN entries en ON we.id = en.workout_exercise_id
+                                            LEFT JOIN entry_metrics em ON en.id = em.entry_id
+                                            LEFT JOIN metric_definitions md ON em.metric_id = md.id
+                                            WHERE we.embeddings IS NULL
+                                            AND w.user_id = :user_id
+                                            ORDER BY we.id, en.entry_index;"""), {"user_id": id})
+        rows = result.fetchall()
 
     workouts = {}
-    for row in result:
+    for row in rows:
         we_id = row.workout_exercise_id
         if we_id not in workouts:
             workouts[we_id] = {
@@ -163,11 +165,11 @@ def save_exercise_embeddings(exercise_embeddings):
                 WHERE id = ANY(:ids)"""
     
     try:
-        result = db.session.execute(text(query), params)
-        db.session.commit()
-        print(f"Successfully saved {result.rowcount} embeddings")
+        with db.get_session() as session:
+            result = session.execute(text(query), params)
+            session.commit()
+            print(f"Successfully saved {result.rowcount} embeddings")
     except Exception as e:
-        db.session.rollback()
         print(f"Error saving embeddings: {e}")
         raise
 

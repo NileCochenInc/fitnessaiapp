@@ -45,3 +45,19 @@ jobs:
       - name: Run Admin-Dash tests
         run: dotnet test Admin-Dash.Tests/Admin-Dash.Tests.csproj --verbosity normal
         working-directory: ./admin-dash
+
+  test-data-tool:
+    name: Test — Data Tool (Java/Maven)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run tests
+        run: mvn test -B
+        working-directory: ./data-tool

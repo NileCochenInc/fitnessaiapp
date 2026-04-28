@@ -30,10 +30,12 @@ def get_unembedded_workouts(id: int):
                 AND w.user_id = :user_id
                 ORDER BY w.id, we.id, en.entry_index;"""
     
-    result = db.session.execute(text(query), {"user_id": id})
+    with db.get_session() as session:
+        result = session.execute(text(query), {"user_id": id})
+        rows = result.fetchall()
 
     workouts_dict = {}
-    for row in result:
+    for row in rows:
         w_id = row.workout_id
         we_id = row.workout_exercise_id
         
@@ -189,11 +191,11 @@ def save_workout_embeddings(workout_embeddings):
                 WHERE id = ANY(:ids)"""
     
     try:
-        result = db.session.execute(text(query), params)
-        db.session.commit()
-        print(f"Successfully saved {result.rowcount} embeddings")
+        with db.get_session() as session:
+            result = session.execute(text(query), params)
+            session.commit()
+            print(f"Successfully saved {result.rowcount} embeddings")
     except Exception as e:
-        db.session.rollback()
         print(f"Error saving embeddings: {e}")
         raise
 

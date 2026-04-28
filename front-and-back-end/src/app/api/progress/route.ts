@@ -33,9 +33,23 @@ export async function GET(req: Request) {
     const userId = session.user.id;
 
     // 2️⃣ Call Python SSE endpoint
-    const pythonRes = await fetch("http://ai:5000/progress", {
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://fitness-ai-app-ai:5000";
+    const progressUrl = `${aiServiceUrl}/progress`;
+
+    console.log(`[progress] Connecting to AI service: ${progressUrl}`);
+
+    const pythonRes = await fetch(progressUrl, {
       headers: { "user-id": String(userId) },
     });
+
+    console.log(`[progress] AI service response status: ${pythonRes.status}`);
+
+    // Check for errors from AI service
+    if (!pythonRes.ok) {
+      const errorText = await pythonRes.text();
+      console.error(`[progress] AI service error response:`, errorText);
+      throw new Error(`AI service returned ${pythonRes.status}: ${errorText.substring(0, 200)}`);
+    }
 
     if (!pythonRes.body) {
       throw new Error("Python SSE endpoint did not return a body");

@@ -7,7 +7,7 @@ export async function getExercisesByUserId(userId: number) {
          ORDER BY name`,
         [userId]
     );
-    const returnedNames = result.rows.map(row => row.name);
+    const returnedNames = result.rows.map((row: any) => row.name);
     //console.log(returnedNames);
     return returnedNames
 }
