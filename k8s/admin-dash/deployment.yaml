@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-dash
+  namespace: fitnessapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-dash
+  template:
+    metadata:
+      labels:
+        app: admin-dash
+    spec:
+      containers:
+        - name: admin-dash
+          image: fitnessaiapp-admin-dash:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5103
+          envFrom:
+            - configMapRef:
+                name: fitnessapp-config
+            - secretRef:
+                name: fitnessapp-secret
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5103
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5103
+            initialDelaySeconds: 30
+            periodSeconds: 15

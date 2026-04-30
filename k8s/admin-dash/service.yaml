@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-dash
+  namespace: fitnessapp
+spec:
+  selector:
+    app: admin-dash
+  ports:
+    - port: 5103
+      targetPort: 5103
+      nodePort: 30103
+  type: NodePort

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fitnessapp-config
+  namespace: fitnessapp
+data:
+  POSTGRES_USER: "postgres"
+  POSTGRES_DB: "fitnessdb"
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  NEXTAUTH_URL: "http://localhost:3000"
+  GOOGLE_CLIENT_ID: "1063380245175-nn3rjm87fot642bhjrpta9srbhcd1sg2.apps.googleusercontent.com"
+  AI_SERVICE_URL: "http://ai:5000"
+  NODE_ENV: "production"
+  ASPNETCORE_URLS: "http://+:5103"

@@ -31,3 +31,17 @@ infrastructure/terraform/.terraform.lock.hcl
 
 # e2e tests
 front-and-back-end/src/tests/e2e/
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# python bytecode
+__pycache__/
+*.pyc
+
+# database init (derived from backup_init, created during local setup)
+database/init/
+
+# kubernetes secrets (base64 is not encryption)
+k8s/secret.yaml
