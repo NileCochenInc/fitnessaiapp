@@ -100,6 +100,9 @@ test.describe("Data-tool reachability", () => {
   test("GET /api/data/user-stats returns 200 — data-tool container reachable from server", async ({
     page,
   }) => {
+    // data-tool now scales to zero; cold start (image pull + JVM boot) can
+    // exceed 2 minutes, so this needs more headroom than the global timeout.
+    test.setTimeout(180_000);
     await login(page);
     const res = await page.request.get("/api/data/user-stats");
     expect(res.status()).toBe(200);

@@ -33,7 +33,7 @@ export async function GET(
     const dataToolRes = await fetch(
       `${dataToolUrl}/api/exercise-stats/${userId}/${exerciseId}`,
       {
-        signal: AbortSignal.timeout(30000), // 30s — data-tool is always warm (min_replicas=1)
+        signal: AbortSignal.timeout(150000), // 150s — data-tool scales to zero; cold start (image pull + JVM boot) can exceed 2min
       }
     );
     const data = await dataToolRes.json();

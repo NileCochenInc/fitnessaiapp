@@ -98,6 +98,20 @@ resource "azurerm_container_app" "app" {
         value = var.deployment_version
       }
 
+      # Internal service URLs — plain literals, not Key Vault secrets
+      # (matching the fallback URLs hardcoded in the Next.js API routes).
+      # Order matters here: this must match the live container's env list
+      # order exactly, or Terraform diffs it as a full positional reshuffle.
+      env {
+        name  = "AI_SERVICE_URL"
+        value = "http://fitness-ai-app-ai.internal.ashycliff-d78872a9.canadacentral.azurecontainerapps.io"
+      }
+
+      env {
+        name  = "DATA_TOOL_URL"
+        value = "http://fitness-ai-app-data-tool.internal.ashycliff-d78872a9.canadacentral.azurecontainerapps.io"
+      }
+
       # Static environment variables (non-secret)
       dynamic "env" {
         for_each = var.static_env_vars
@@ -317,6 +331,10 @@ resource "azurerm_container_app" "admin" {
 }
 
 # Data Tool Container App
+# NOTE: unlike the other three apps, this one runs with no managed identity —
+# it was created directly via `az containerapp create` outside Terraform, and
+# secrets are materialized as literal values at plan time (via Terraform's
+# own credentials), so the container never needed one at runtime.
 resource "azurerm_container_app" "data_tool" {
   name                         = var.data_tool_container_name
   container_app_environment_id = azurerm_container_app_environment.app.id
@@ -329,11 +347,6 @@ resource "azurerm_container_app" "data_tool" {
       name  = lower(secret.key)
       value = secret.value
     }
-  }
-
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.container_app.id]
   }
 
   template {
@@ -390,14 +403,38 @@ resource "azurerm_container_app" "data_tool" {
           secret_name = lower(env.key)
         }
       }
+
+      # Spring Boot's own datasource config — the app reads these directly;
+      # DB_HOST/PORT/NAME/USER above are additional custom vars, not consumed
+      # by Spring itself. Order matches the live container's env list exactly
+      # (Terraform diffs this as an ordered list, not by name).
+      env {
+        name  = "SPRING_DATASOURCE_URL"
+        value = "jdbc:postgresql://ep-proud-surf-a8ief0p1.eastus2.azure.neon.tech:5432/neondb?sslmode=require"
+      }
+
+      env {
+        name  = "SPRING_DATASOURCE_USERNAME"
+        value = "neondb_owner"
+      }
+
+      env {
+        name        = "SPRING_DATASOURCE_PASSWORD"
+        secret_name = "postgrespassword"
+      }
+
+      env {
+        name  = "SPRING_JPA_HIBERNATE_DDL_AUTO"
+        value = "none"
+      }
     }
 
-    min_replicas = 1
+    min_replicas = 0
     max_replicas = 1
   }
 
   ingress {
-    allow_insecure_connections = true
+    allow_insecure_connections = false
     external_enabled           = false
     target_port                = var.data_tool_container_port
     transport                  = "auto"

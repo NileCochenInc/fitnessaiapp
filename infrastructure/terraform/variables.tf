@@ -58,13 +58,13 @@ variable "container_port" {
 variable "cpu_cores" {
   description = "CPU cores allocated to container (0.25, 0.5, 0.75, 1.0, etc.)"
   type        = string
-  default     = "0.5"
+  default     = "1.0"
 }
 
 variable "memory_gb" {
   description = "Memory in GB allocated to container (0.5, 1, 1.5, 2, etc.)"
   type        = string
-  default     = "1"
+  default     = "2Gi"
 }
 
 variable "min_replicas" {
@@ -93,8 +93,8 @@ variable "key_vault_secrets" {
     "GoogleClientID"     = "GOOGLE_CLIENT_ID"
     "GoogleClientSecret" = "GOOGLE_CLIENT_SECRET"
     "NextAuthSecret"     = "NEXTAUTH_SECRET"
+    "NextAuthUrl"        = "NEXTAUTH_URL"
     "MistralAPIKey"      = "MISTRAL_API_KEY"
-    "AiServiceURL"       = "AI_SERVICE_URL"
   }
 }
 
@@ -178,7 +178,7 @@ variable "admin_cpu_cores" {
 variable "admin_memory_gb" {
   description = "Admin Dashboard memory in GB"
   type        = string
-  default     = "1Gi"
+  default     = "2Gi"
 }
 
 variable "admin_key_vault_secrets" {

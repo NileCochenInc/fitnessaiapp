@@ -16,13 +16,13 @@ terraform {
     }
   }
 
-  # Uncomment and configure for remote state management (optional)
-  # backend "azurerm" {
-  #   resource_group_name  = "your-rg"
-  #   storage_account_name = "yourstorageaccount"
-  #   container_name       = "tfstate"
-  #   key                  = "container-apps.tfstate"
-  # }
+  backend "azurerm" {
+    resource_group_name  = "Fitness-AI-App"
+    storage_account_name = "fitnessaiapptfstate"
+    container_name       = "tfstate"
+    key                  = "container-apps.tfstate"
+    use_azuread_auth     = true
+  }
 }
 
 provider "azurerm" {
